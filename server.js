@@ -1,11 +1,11 @@
-const express = require('express');
-const cors = require('cors');
+import express from 'express';
+import cors from 'cors';
 
-// Import PrismaClient with require
-const { PrismaClient } = require('@prisma/client');
+// Import PrismaClient with import
+import { PrismaClient } from '@prisma/client';
 
 // Import dynamic API routes
-const dynamicApiRoutes = require('./src/app/api/dynamic-api');
+import dynamicApiRoutes from './src/app/api/dynamic-api.js';
 
 const app = express();
 const prisma = new PrismaClient();
