@@ -16,7 +16,6 @@ import {
     HelpCircle
 } from 'lucide-react';
 import { systemDataService } from '../services/system-data';
-import { dynamicApiService } from '../services/api-client';
 
 interface AIAssistantProps {
     dashboardData?: any;
@@ -41,17 +40,9 @@ export const AIAssistant: React.FC<AIAssistantProps> = ({
     }, [conversation]);
 
     const generateResponse = async (userMessage: string) => {
-        // Dynamic system data integration with fallback to static
+        // Complete system data integration
         const lowerMessage = userMessage.toLowerCase();
-
-        // Try to get dynamic data first, fallback to static if API is not available
-        let systemData;
-        try {
-            systemData = await dynamicApiService.getSystemOverview();
-        } catch (error) {
-            console.warn('Dynamic API not available, using static data');
-            systemData = systemDataService.getSystemOverview();
-        }
+        const systemData = systemDataService.getSystemOverview();
 
         // Check for specific mail ID queries first
         if (lowerMessage.includes('inw-') || lowerMessage.includes('out-') || lowerMessage.includes('trk-')) {
@@ -62,14 +53,7 @@ export const AIAssistant: React.FC<AIAssistantProps> = ({
 
                 // Check if it's an inward mail
                 if (mailId.startsWith('INW-')) {
-                    let mailDetails;
-                    try {
-                        mailDetails = await dynamicApiService.getMailDetails(mailId, 'inward');
-                    } catch (error) {
-                        console.warn('Dynamic API failed for mail details, using static data');
-                        mailDetails = systemDataService.getMailDetails(mailId, 'inward');
-                    }
-
+                    const mailDetails = systemDataService.getMailDetails(mailId, 'inward');
                     if (mailDetails) {
                         return {
                             text: `📥 Inward Mail Details (${new Date().toLocaleTimeString()})
@@ -95,14 +79,7 @@ Need more actions? Ask "Track ${mailId}" or "Update status ${mailId}"`,
 
                 // Check if it's an outward mail
                 if (mailId.startsWith('OUT-')) {
-                    let mailDetails;
-                    try {
-                        mailDetails = await dynamicApiService.getMailDetails(mailId, 'outward');
-                    } catch (error) {
-                        console.warn('Dynamic API failed for mail details, using static data');
-                        mailDetails = systemDataService.getMailDetails(mailId, 'outward');
-                    }
-
+                    const mailDetails = systemDataService.getMailDetails(mailId, 'outward');
                     if (mailDetails) {
                         return {
                             text: `📤 Outward Mail Details (${new Date().toLocaleTimeString()})
@@ -128,14 +105,7 @@ Need more actions? Ask "Track ${mailId}" or "Update status ${mailId}"`,
 
                 // Check if it's a tracking ID
                 if (mailId.startsWith('TRK-')) {
-                    let trackingDetails;
-                    try {
-                        trackingDetails = await dynamicApiService.getTrackingDetails(mailId);
-                    } catch (error) {
-                        console.warn('Dynamic API failed for tracking details, using static data');
-                        trackingDetails = systemDataService.getTrackingDetails(mailId);
-                    }
-
+                    const trackingDetails = systemDataService.getTrackingDetails(mailId);
                     if (trackingDetails) {
                         const timeline = trackingDetails.timeline.slice(-3).map((event, index) =>
                             `${index + 1}. 📋 ${event.status}
@@ -172,7 +142,7 @@ Need more actions? Ask "Full timeline ${mailId}"`,
                     text: `❌ Mail/Tracking ID "${mailId}" not found in the system.
 
 Available IDs:
-📥 Inward: INW-2024-001, INW-2024-002, INW-2024-003
+📥 Inward: INW-2024-001, INW-2024-002, INW-2024-003, INW-2024-004
 📤 Outward: OUT-2024-001, OUT-2024-002, OUT-2024-003
 🔍 Tracking: TRK-2401, TRK-2402
 
@@ -185,7 +155,7 @@ Please check the ID and try again.`,
         if (lowerMessage.includes('hello') || lowerMessage.includes('hi') || lowerMessage.includes('namaste')) {
             const currentTime = new Date().toLocaleTimeString();
             return {
-                text: `👋 Hello! I'm your AI Assistant. Current time: ${currentTime}
+                text: `👋 Namaste! Main aapka AI Assistant hun. Current time: ${currentTime}
 
 System Status: ✅ All modules active
 Total Data: ${systemData.totalInwardMails + systemData.totalOutwardMails} mails, ${systemData.totalUsers} users, ${systemData.totalDepartments} departments
@@ -239,14 +209,7 @@ Need more details? Ask "Show all inward mails" or "Inward mail status"`,
         }
 
         if (lowerMessage.includes('outward') || lowerMessage.includes('outgoing')) {
-            let outwardMails;
-            try {
-                outwardMails = await dynamicApiService.getOutwardMails();
-            } catch (error) {
-                console.warn('Dynamic API failed for outward mails, using static data');
-                outwardMails = systemDataService.getOutwardMails();
-            }
-
+            const outwardMails = systemDataService.getOutwardMails();
             const deliveredCount = outwardMails.filter(m => m.status === 'delivered').length;
             const inTransitCount = outwardMails.filter(m => m.status === 'in-transit').length;
 
@@ -282,14 +245,7 @@ Need more details? Ask "Show all outward mails" or "Outward mail status"`,
         }
 
         if (lowerMessage.includes('user') || lowerMessage.includes('people') || lowerMessage.includes('employee')) {
-            let users;
-            try {
-                users = await dynamicApiService.getUsers();
-            } catch (error) {
-                console.warn('Dynamic API failed for users, using static data');
-                users = systemDataService.getUsers();
-            }
-
+            const users = systemDataService.getUsers();
             const activeUsers = users.filter(u => u.status === 'Active');
             const adminUsers = users.filter(u => u.role === 'Admin');
             const officerUsers = users.filter(u => u.role === 'Officer');
@@ -325,14 +281,7 @@ Need more details? Ask "Show all users" or "User by department"`,
         }
 
         if (lowerMessage.includes('department') || lowerMessage.includes('dept')) {
-            let departments;
-            try {
-                departments = await dynamicApiService.getDepartments();
-            } catch (error) {
-                console.warn('Dynamic API failed for departments, using static data');
-                departments = systemDataService.getDepartments();
-            }
-
+            const departments = systemDataService.getDepartments();
             const activeDepts = departments.filter(d => d.status === 'Active');
 
             if (departments.length > 0) {
@@ -364,14 +313,7 @@ Need more details? Ask "Show all departments" or "Department statistics"`,
         }
 
         if (lowerMessage.includes('track') || lowerMessage.includes('tracking')) {
-            let trackingEvents;
-            try {
-                trackingEvents = await dynamicApiService.getTrackingEvents();
-            } catch (error) {
-                console.warn('Dynamic API failed for tracking events, using static data');
-                trackingEvents = systemDataService.getTrackingEvents();
-            }
-
+            const trackingEvents = systemDataService.getTrackingEvents();
             const activeTracking = trackingEvents.filter(t => t.currentStatus !== 'Delivered');
 
             if (trackingEvents.length > 0) {
@@ -405,17 +347,8 @@ Need more details? Ask "Show all tracking" or "Tracking by status"`,
         }
 
         if (lowerMessage.includes('stats') || lowerMessage.includes('statistics') || lowerMessage.includes('data')) {
-            let deptStats, userActivity;
-            try {
-                [deptStats, userActivity] = await Promise.all([
-                    dynamicApiService.getDepartmentStats(),
-                    dynamicApiService.getUserActivitySummary()
-                ]);
-            } catch (error) {
-                console.warn('Dynamic API failed for statistics, using static data');
-                deptStats = systemDataService.getDepartmentStats();
-                userActivity = systemDataService.getUserActivitySummary();
-            }
+            const deptStats = systemDataService.getDepartmentStats();
+            const userActivity = systemDataService.getUserActivitySummary();
 
             return {
                 text: `📊 Complete System Statistics (${new Date().toLocaleTimeString()})
@@ -452,14 +385,7 @@ Last Updated: Just now!`,
             ).join('');
 
             if (searchTerms) {
-                let searchResults;
-                try {
-                    searchResults = await dynamicApiService.searchAll(searchTerms);
-                } catch (error) {
-                    console.warn('Dynamic API failed for search, using static data');
-                    searchResults = systemDataService.searchAll(searchTerms);
-                }
-
+                const searchResults = systemDataService.searchAll(searchTerms);
                 const totalResults = Object.keys(searchResults).reduce((sum, key) => sum + searchResults[key].length, 0);
 
                 return {
@@ -570,7 +496,7 @@ All systems operational!`,
 
         // Default response with system overview
         return {
-            text: `🤔 You said: "${userMessage}"
+            text: `🤔 Aap ye keh rahe hain: "${userMessage}"
 
 Current System Status (${new Date().toLocaleTimeString()}):
 📧 ${systemData.totalMails} mails processed

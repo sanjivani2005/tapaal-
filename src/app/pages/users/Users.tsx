@@ -99,26 +99,24 @@ export function Users() {
         </Button>
       </div>
 
-      <Card className="border-gray-200 shadow-sm overflow-hidden">
+      <Card className="p-6">
         {/* Filters Toolbar */}
-        <div className="p-6 bg-white border-b border-gray-100">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-            <div className="relative">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
-              <Input
-                placeholder="Search name or email..."
-                className="pl-10 bg-gray-50/50 focus:bg-white transition-colors"
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-              />
-            </div>
+        <div className="flex items-end gap-4">
+          <div className="flex-1 relative">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+            <Input
+              placeholder="Search by name or email..."
+              className="pl-10"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+            />
+          </div>
 
+          <div className="w-48">
+            <label className="text-sm font-medium text-gray-700 mb-1 block">Role</label>
             <Select value={roleFilter} onValueChange={setRoleFilter}>
-              <SelectTrigger className="bg-gray-50/50">
-                <div className="flex items-center gap-2">
-                  <Filter className="w-3.5 h-3.5 text-gray-400" />
-                  <SelectValue placeholder="All Roles" />
-                </div>
+              <SelectTrigger>
+                <SelectValue placeholder="All Roles" />
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="all">All Roles</SelectItem>
@@ -128,28 +126,30 @@ export function Users() {
                 <SelectItem value="Officer">Officer</SelectItem>
               </SelectContent>
             </Select>
+          </div>
 
+          <div className="w-48">
+            <label className="text-sm font-medium text-gray-700 mb-1 block">Department</label>
             <Select value={deptFilter} onValueChange={setDeptFilter}>
-              <SelectTrigger className="bg-gray-50/50">
-                <div className="flex items-center gap-2">
-                  <Filter className="w-3.5 h-3.5 text-gray-400" />
-                  <SelectValue placeholder="All Departments" />
-                </div>
+              <SelectTrigger>
+                <SelectValue placeholder="All Departments" />
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="all">All Departments</SelectItem>
                 <SelectItem value="Administration">Administration</SelectItem>
                 <SelectItem value="Finance">Finance</SelectItem>
                 <SelectItem value="HR">HR</SelectItem>
+                <SelectItem value="IT">IT</SelectItem>
+                <SelectItem value="Operations">Operations</SelectItem>
               </SelectContent>
             </Select>
+          </div>
 
+          <div className="w-48">
+            <label className="text-sm font-medium text-gray-700 mb-1 block">Status</label>
             <Select value={statusFilter} onValueChange={setStatusFilter}>
-              <SelectTrigger className="bg-gray-50/50">
-                <div className="flex items-center gap-2">
-                  <Filter className="w-3.5 h-3.5 text-gray-400" />
-                  <SelectValue placeholder="All Status" />
-                </div>
+              <SelectTrigger>
+                <SelectValue placeholder="All Status" />
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="all">All Status</SelectItem>
@@ -158,8 +158,19 @@ export function Users() {
               </SelectContent>
             </Select>
           </div>
-        </div>
 
+          <Button variant="outline" onClick={() => {
+            setSearchTerm('');
+            setRoleFilter('all');
+            setDeptFilter('all');
+            setStatusFilter('all');
+          }}>
+            Clear
+          </Button>
+        </div>
+      </Card>
+
+      <Card className="p-6 border-gray-200 shadow-sm overflow-hidden">
         {/* User Table */}
         <Table>
           <TableHeader>
@@ -185,12 +196,14 @@ export function Users() {
                   <TableCell className="font-medium text-gray-600">{user.department}</TableCell>
                   <TableCell><UserStatusBadge status={user.status} /></TableCell>
                   <TableCell className="text-right">
-                    <div className="flex justify-end gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                      <Button variant="ghost" size="icon" className="h-8 w-8 text-gray-500 hover:text-blue-600">
-                        <Pencil className="w-4 h-4" />
+                    <div className="flex justify-end gap-2">
+                      <Button variant="ghost" size="sm" className="text-blue-600 hover:bg-blue-50">
+                        <Pencil className="w-4 h-4 mr-1" />
+                        Edit
                       </Button>
-                      <Button variant="ghost" size="icon" className="h-8 w-8 text-gray-500 hover:text-red-600">
-                        <Trash2 className="w-4 h-4" />
+                      <Button variant="ghost" size="sm" className="text-red-600 hover:bg-red-50">
+                        <Trash2 className="w-4 h-4 mr-1" />
+                        Delete
                       </Button>
                     </div>
                   </TableCell>
