@@ -8,7 +8,10 @@ import { OutwardMails } from './pages/outward-mails/OutwardMails'
 import { Users } from './pages/users/Users'
 import { Departments } from './pages/departments/Departments'
 import { Tracking } from './pages/tracking/Tracking'
+<<<<<<< HEAD
+=======
 import { AIAssistant } from './components/AIAssistant'
+>>>>>>> sharyu2
 
 export default function App() {
   const [currentPage, setCurrentPage] = useState('dashboard')
@@ -43,6 +46,8 @@ export default function App() {
           {renderPage()}
         </main>
       </div>
+<<<<<<< HEAD
+=======
       {/* AI Assistant available on all pages */}
       <AIAssistant
         dashboardData={{
@@ -52,6 +57,7 @@ export default function App() {
           monthlyData: []
         }}
       />
+>>>>>>> sharyu2
     </div>
   )
 }
