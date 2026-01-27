@@ -4,7 +4,10 @@ import { Card } from '../../components/ui/card';
 import { Input } from '../../components/ui/input';
 import { Button } from '../../components/ui/button';
 import { Badge } from '../../components/ui/badge';
+<<<<<<< HEAD
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../../components/ui/tabs';
+=======
+>>>>>>> sharyu2
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../../components/ui/select';
 import {
   Table,
@@ -121,21 +124,27 @@ const getPriorityBadge = (priority: string) => {
 
 export function InwardMails() {
   const [customerName, setCustomerName] = useState('');
+<<<<<<< HEAD
   const [receivedBy, setReceivedBy] = useState('');
   const [handoverTo, setHandoverTo] = useState('');
   const [fromDate, setFromDate] = useState('');
   const [toDate, setToDate] = useState('');
   const [activeTab, setActiveTab] = useState('inward-list');
+=======
+>>>>>>> sharyu2
   const [selectedPriority, setSelectedPriority] = useState('all');
   const [selectedStatus, setSelectedStatus] = useState('all');
   const [selectedDepartment, setSelectedDepartment] = useState('all');
 
   const handleClear = () => {
     setCustomerName('');
+<<<<<<< HEAD
     setReceivedBy('');
     setHandoverTo('');
     setFromDate('');
     setToDate('');
+=======
+>>>>>>> sharyu2
     setSelectedPriority('all');
     setSelectedStatus('all');
     setSelectedDepartment('all');
@@ -144,24 +153,36 @@ export function InwardMails() {
   const filteredMails = inwardMails.filter((mail) => {
     const matchesCustomer = customerName === '' ||
       mail.sender.toLowerCase().includes(customerName.toLowerCase());
+<<<<<<< HEAD
     const matchesReceivedBy = receivedBy === '' ||
       mail.receivedBy.toLowerCase().includes(receivedBy.toLowerCase());
     const matchesHandoverTo = handoverTo === '' ||
       mail.handoverTo.toLowerCase().includes(handoverTo.toLowerCase());
+=======
+>>>>>>> sharyu2
     const matchesPriority = selectedPriority === 'all' || mail.priority === selectedPriority;
     const matchesStatus = selectedStatus === 'all' || mail.status === selectedStatus;
     const matchesDepartment = selectedDepartment === 'all' || mail.department === selectedDepartment;
 
+<<<<<<< HEAD
     return matchesCustomer && matchesReceivedBy && matchesHandoverTo &&
       matchesPriority && matchesStatus && matchesDepartment;
+=======
+    return matchesCustomer && matchesPriority && matchesStatus && matchesDepartment;
+>>>>>>> sharyu2
   });
 
   return (
     <div className="p-6 space-y-6">
       <div className="flex items-center justify-between">
         <div>
+<<<<<<< HEAD
           <h1 className="text-2xl font-semibold text-gray-800">Inward / Outward Listing</h1>
           <p className="text-gray-500 text-sm mt-1">Manage all incoming and outgoing correspondence</p>
+=======
+          <h1 className="text-2xl font-semibold text-gray-800">Inward Listing</h1>
+          <p className="text-gray-500 text-sm mt-1">Manage all incoming correspondence</p>
+>>>>>>> sharyu2
         </div>
         <Button className="bg-green-600 hover:bg-green-700">
           <Plus className="w-4 h-4 mr-2" />
@@ -169,6 +190,7 @@ export function InwardMails() {
         </Button>
       </div>
 
+<<<<<<< HEAD
       <Card className="p-6">
         <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
           <TabsList className="bg-gray-100">
@@ -286,6 +308,75 @@ export function InwardMails() {
               </div>
             </div>
 
+=======
+      {/* Filter Section */}
+      <Card className="p-6">
+        <div className="flex items-end gap-4">
+          <div className="flex-1 relative">
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
+            <Input
+              placeholder="Search by ID, Subject, or Tracking..."
+              value={customerName}
+              onChange={(e) => setCustomerName(e.target.value)}
+              className="pl-10"
+            />
+          </div>
+
+          <div className="w-48">
+            <label className="text-sm font-medium text-gray-700 mb-1 block">Priority</label>
+            <Select value={selectedPriority} onValueChange={setSelectedPriority}>
+              <SelectTrigger>
+                <SelectValue placeholder="Select Priority" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Priorities</SelectItem>
+                <SelectItem value="Important">Important</SelectItem>
+                <SelectItem value="High">High</SelectItem>
+                <SelectItem value="Medium">Medium</SelectItem>
+                <SelectItem value="Low">Low</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+
+          <div className="w-48">
+            <label className="text-sm font-medium text-gray-700 mb-1 block">Department</label>
+            <Select value={selectedDepartment} onValueChange={setSelectedDepartment}>
+              <SelectTrigger>
+                <SelectValue placeholder="Select Department" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Departments</SelectItem>
+                <SelectItem value="Finance">Finance</SelectItem>
+                <SelectItem value="Accounts">Accounts</SelectItem>
+                <SelectItem value="Legal">Legal</SelectItem>
+                <SelectItem value="IT">IT</SelectItem>
+                <SelectItem value="HR">HR</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+
+          <div className="w-48">
+            <label className="text-sm font-medium text-gray-700 mb-1 block">Status</label>
+            <Select value={selectedStatus} onValueChange={setSelectedStatus}>
+              <SelectTrigger>
+                <SelectValue placeholder="Select Status" />
+              </SelectTrigger>
+              <SelectContent>
+                  <SelectItem value="all">All Status</SelectItem>
+                  <SelectItem value="pending">Pending</SelectItem>
+                  <SelectItem value="approved">Approved</SelectItem>
+                  <SelectItem value="waiting">Waiting</SelectItem>
+                  <SelectItem value="in-progress">In Progress</SelectItem>
+                  <SelectItem value="rejected">Rejected</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+        </div>
+      </Card>
+
+      {/* Table Section */}
+      <Card className="p-6">
+>>>>>>> sharyu2
             {/* Table */}
             <div className="border rounded-lg overflow-hidden">
               <Table>
@@ -354,8 +445,11 @@ export function InwardMails() {
                 <Button variant="outline" size="sm">Next</Button>
               </div>
             </div>
+<<<<<<< HEAD
           </TabsContent>
         </Tabs>
+=======
+>>>>>>> sharyu2
       </Card>
     </div>
   );

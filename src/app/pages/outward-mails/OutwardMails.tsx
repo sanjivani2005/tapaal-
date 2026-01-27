@@ -136,9 +136,15 @@ export function OutwardMails() {
       </div>
 
       <Card className="p-6">
+<<<<<<< HEAD
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
           <div className="relative">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+=======
+        <div className="flex items-end gap-4">
+          <div className="flex-1 relative">
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
+>>>>>>> sharyu2
             <Input
               placeholder="Search by ID, Subject, or Tracking..."
               className="pl-10"
@@ -147,6 +153,7 @@ export function OutwardMails() {
             />
           </div>
 
+<<<<<<< HEAD
           <Select value={departmentFilter} onValueChange={setDepartmentFilter}>
             <SelectTrigger>
               <Filter className="w-4 h-4 mr-2" />
@@ -192,6 +199,64 @@ export function OutwardMails() {
           </Select>
         </div>
 
+=======
+          <div className="w-48">
+            <label className="text-sm font-medium text-gray-700 mb-1 block">Priority</label>
+            <Select value={priorityFilter} onValueChange={setPriorityFilter}>
+              <SelectTrigger>
+                <SelectValue placeholder="Select Priority" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Priorities</SelectItem>
+                <SelectItem value="Important">Important</SelectItem>
+                <SelectItem value="High">High</SelectItem>
+                <SelectItem value="Medium">Medium</SelectItem>
+                <SelectItem value="Low">Low</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+
+          <div className="w-48">
+            <label className="text-sm font-medium text-gray-700 mb-1 block">Department</label>
+            <Select value={departmentFilter} onValueChange={setDepartmentFilter}>
+              <SelectTrigger>
+                <SelectValue placeholder="Select Department" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Departments</SelectItem>
+                <SelectItem value="Procurement">Procurement</SelectItem>
+                <SelectItem value="HR">HR</SelectItem>
+                <SelectItem value="Finance">Finance</SelectItem>
+                <SelectItem value="Administration">Administration</SelectItem>
+                <SelectItem value="Legal">Legal</SelectItem>
+                <SelectItem value="Operations">Operations</SelectItem>
+                <SelectItem value="IT">IT</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+
+          <div className="w-48">
+            <label className="text-sm font-medium text-gray-700 mb-1 block">Status</label>
+            <Select value={statusFilter} onValueChange={setStatusFilter}>
+              <SelectTrigger>
+                <SelectValue placeholder="Select Status" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Status</SelectItem>
+                <SelectItem value="delivered">Delivered</SelectItem>
+                <SelectItem value="pending">Pending</SelectItem>
+                <SelectItem value="in-transit">In Transit</SelectItem>
+                <SelectItem value="failed">Failed</SelectItem>
+                <SelectItem value="draft">Draft</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+        </div>
+      </Card>
+
+      {/* Table Section */}
+      <Card className="p-6">
+>>>>>>> sharyu2
         <div className="border rounded-lg overflow-hidden">
           <Table>
             <TableHeader>
@@ -246,7 +311,10 @@ export function OutwardMails() {
             </TableBody>
           </Table>
         </div>
+<<<<<<< HEAD
 
+=======
+>>>>>>> sharyu2
         <div className="flex items-center justify-between mt-4">
           <p className="text-sm text-gray-500">
             Showing {filteredMails.length} of {outwardMails.length} entries
@@ -258,6 +326,10 @@ export function OutwardMails() {
             <Button variant="outline" size="sm">Next</Button>
           </div>
         </div>
+<<<<<<< HEAD
+=======
+        </div>
+>>>>>>> sharyu2
       </Card>
     </div>
   );

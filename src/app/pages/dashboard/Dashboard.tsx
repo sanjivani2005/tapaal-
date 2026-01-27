@@ -4,7 +4,10 @@ import { Mail, Send, Users, Clock, ArrowUpRight, ArrowDownRight, Database, Plus 
 // UI components
 import { Card, CardHeader, CardTitle, CardContent } from '../../components/ui/card';
 import { Badge } from '../../components/ui/badge';
+<<<<<<< HEAD
 import { AIAssistant } from '../../components/AIAssistant';
+=======
+>>>>>>> sharyu2
 import {
   BarChart,
   PieChart,
@@ -346,6 +349,7 @@ export function Dashboard() {
           </div>
         </CardContent>
       </Card>
+<<<<<<< HEAD
 
       {/* AI Assistant */}
       <AIAssistant
@@ -356,6 +360,8 @@ export function Dashboard() {
           monthlyData: realData?.monthlyData || []
         }}
       />
+=======
+>>>>>>> sharyu2
     </div>
   );
 }

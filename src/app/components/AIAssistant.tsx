@@ -16,7 +16,10 @@ import {
     HelpCircle
 } from 'lucide-react';
 import { systemDataService } from '../services/system-data';
+<<<<<<< HEAD
 import { dynamicApiService } from '../services/api-client';
+=======
+>>>>>>> sharyu2
 
 interface AIAssistantProps {
     dashboardData?: any;
@@ -41,6 +44,7 @@ export const AIAssistant: React.FC<AIAssistantProps> = ({
     }, [conversation]);
 
     const generateResponse = async (userMessage: string) => {
+<<<<<<< HEAD
         // Dynamic system data integration with fallback to static
         const lowerMessage = userMessage.toLowerCase();
 
@@ -52,6 +56,11 @@ export const AIAssistant: React.FC<AIAssistantProps> = ({
             console.warn('Dynamic API not available, using static data');
             systemData = systemDataService.getSystemOverview();
         }
+=======
+        // Complete system data integration
+        const lowerMessage = userMessage.toLowerCase();
+        const systemData = systemDataService.getSystemOverview();
+>>>>>>> sharyu2
 
         // Check for specific mail ID queries first
         if (lowerMessage.includes('inw-') || lowerMessage.includes('out-') || lowerMessage.includes('trk-')) {
@@ -62,6 +71,7 @@ export const AIAssistant: React.FC<AIAssistantProps> = ({
 
                 // Check if it's an inward mail
                 if (mailId.startsWith('INW-')) {
+<<<<<<< HEAD
                     let mailDetails;
                     try {
                         mailDetails = await dynamicApiService.getMailDetails(mailId, 'inward');
@@ -70,6 +80,9 @@ export const AIAssistant: React.FC<AIAssistantProps> = ({
                         mailDetails = systemDataService.getMailDetails(mailId, 'inward');
                     }
 
+=======
+                    const mailDetails = systemDataService.getMailDetails(mailId, 'inward');
+>>>>>>> sharyu2
                     if (mailDetails) {
                         return {
                             text: `📥 Inward Mail Details (${new Date().toLocaleTimeString()})
@@ -95,6 +108,7 @@ Need more actions? Ask "Track ${mailId}" or "Update status ${mailId}"`,
 
                 // Check if it's an outward mail
                 if (mailId.startsWith('OUT-')) {
+<<<<<<< HEAD
                     let mailDetails;
                     try {
                         mailDetails = await dynamicApiService.getMailDetails(mailId, 'outward');
@@ -103,6 +117,9 @@ Need more actions? Ask "Track ${mailId}" or "Update status ${mailId}"`,
                         mailDetails = systemDataService.getMailDetails(mailId, 'outward');
                     }
 
+=======
+                    const mailDetails = systemDataService.getMailDetails(mailId, 'outward');
+>>>>>>> sharyu2
                     if (mailDetails) {
                         return {
                             text: `📤 Outward Mail Details (${new Date().toLocaleTimeString()})
@@ -128,6 +145,7 @@ Need more actions? Ask "Track ${mailId}" or "Update status ${mailId}"`,
 
                 // Check if it's a tracking ID
                 if (mailId.startsWith('TRK-')) {
+<<<<<<< HEAD
                     let trackingDetails;
                     try {
                         trackingDetails = await dynamicApiService.getTrackingDetails(mailId);
@@ -136,6 +154,9 @@ Need more actions? Ask "Track ${mailId}" or "Update status ${mailId}"`,
                         trackingDetails = systemDataService.getTrackingDetails(mailId);
                     }
 
+=======
+                    const trackingDetails = systemDataService.getTrackingDetails(mailId);
+>>>>>>> sharyu2
                     if (trackingDetails) {
                         const timeline = trackingDetails.timeline.slice(-3).map((event, index) =>
                             `${index + 1}. 📋 ${event.status}
@@ -185,17 +206,26 @@ Please check the ID and try again.`,
         if (lowerMessage.includes('hello') || lowerMessage.includes('hi') || lowerMessage.includes('namaste')) {
             const currentTime = new Date().toLocaleTimeString();
             return {
+<<<<<<< HEAD
                 text: `👋 Hello! I'm your AI Assistant. Current time: ${currentTime}
+=======
+                text: `👋 Namaste! Main aapka AI Assistant hun. Current time: ${currentTime}
+>>>>>>> sharyu2
 
 System Status: ✅ All modules active
 Total Data: ${systemData.totalInwardMails + systemData.totalOutwardMails} mails, ${systemData.totalUsers} users, ${systemData.totalDepartments} departments
 
+<<<<<<< HEAD
 How can I help you? Try "Show statistics", "INW-2024-001", "Users list", etc!`,
+=======
+Kya main aapki help kar sakta hun? Try "Show statistics", "INW-2024-001", "Users list", etc!`,
+>>>>>>> sharyu2
                 action: 'greeting'
             };
         }
 
         if (lowerMessage.includes('inward') || lowerMessage.includes('incoming')) {
+<<<<<<< HEAD
             let inwardMails;
             try {
                 inwardMails = await dynamicApiService.getInwardMails();
@@ -204,6 +234,9 @@ How can I help you? Try "Show statistics", "INW-2024-001", "Users list", etc!`,
                 inwardMails = systemDataService.getInwardMails();
             }
 
+=======
+            const inwardMails = systemDataService.getInwardMails();
+>>>>>>> sharyu2
             const pendingCount = inwardMails.filter(m => m.status === 'pending').length;
             const completedCount = inwardMails.filter(m => m.status === 'completed').length;
 
@@ -239,6 +272,7 @@ Need more details? Ask "Show all inward mails" or "Inward mail status"`,
         }
 
         if (lowerMessage.includes('outward') || lowerMessage.includes('outgoing')) {
+<<<<<<< HEAD
             let outwardMails;
             try {
                 outwardMails = await dynamicApiService.getOutwardMails();
@@ -247,6 +281,9 @@ Need more details? Ask "Show all inward mails" or "Inward mail status"`,
                 outwardMails = systemDataService.getOutwardMails();
             }
 
+=======
+            const outwardMails = systemDataService.getOutwardMails();
+>>>>>>> sharyu2
             const deliveredCount = outwardMails.filter(m => m.status === 'delivered').length;
             const inTransitCount = outwardMails.filter(m => m.status === 'in-transit').length;
 
@@ -282,6 +319,7 @@ Need more details? Ask "Show all outward mails" or "Outward mail status"`,
         }
 
         if (lowerMessage.includes('user') || lowerMessage.includes('people') || lowerMessage.includes('employee')) {
+<<<<<<< HEAD
             let users;
             try {
                 users = await dynamicApiService.getUsers();
@@ -290,6 +328,9 @@ Need more details? Ask "Show all outward mails" or "Outward mail status"`,
                 users = systemDataService.getUsers();
             }
 
+=======
+            const users = systemDataService.getUsers();
+>>>>>>> sharyu2
             const activeUsers = users.filter(u => u.status === 'Active');
             const adminUsers = users.filter(u => u.role === 'Admin');
             const officerUsers = users.filter(u => u.role === 'Officer');
@@ -325,6 +366,7 @@ Need more details? Ask "Show all users" or "User by department"`,
         }
 
         if (lowerMessage.includes('department') || lowerMessage.includes('dept')) {
+<<<<<<< HEAD
             let departments;
             try {
                 departments = await dynamicApiService.getDepartments();
@@ -333,6 +375,9 @@ Need more details? Ask "Show all users" or "User by department"`,
                 departments = systemDataService.getDepartments();
             }
 
+=======
+            const departments = systemDataService.getDepartments();
+>>>>>>> sharyu2
             const activeDepts = departments.filter(d => d.status === 'Active');
 
             if (departments.length > 0) {
@@ -364,6 +409,7 @@ Need more details? Ask "Show all departments" or "Department statistics"`,
         }
 
         if (lowerMessage.includes('track') || lowerMessage.includes('tracking')) {
+<<<<<<< HEAD
             let trackingEvents;
             try {
                 trackingEvents = await dynamicApiService.getTrackingEvents();
@@ -372,6 +418,9 @@ Need more details? Ask "Show all departments" or "Department statistics"`,
                 trackingEvents = systemDataService.getTrackingEvents();
             }
 
+=======
+            const trackingEvents = systemDataService.getTrackingEvents();
+>>>>>>> sharyu2
             const activeTracking = trackingEvents.filter(t => t.currentStatus !== 'Delivered');
 
             if (trackingEvents.length > 0) {
@@ -405,6 +454,7 @@ Need more details? Ask "Show all tracking" or "Tracking by status"`,
         }
 
         if (lowerMessage.includes('stats') || lowerMessage.includes('statistics') || lowerMessage.includes('data')) {
+<<<<<<< HEAD
             let deptStats, userActivity;
             try {
                 [deptStats, userActivity] = await Promise.all([
@@ -416,6 +466,10 @@ Need more details? Ask "Show all tracking" or "Tracking by status"`,
                 deptStats = systemDataService.getDepartmentStats();
                 userActivity = systemDataService.getUserActivitySummary();
             }
+=======
+            const deptStats = systemDataService.getDepartmentStats();
+            const userActivity = systemDataService.getUserActivitySummary();
+>>>>>>> sharyu2
 
             return {
                 text: `📊 Complete System Statistics (${new Date().toLocaleTimeString()})
@@ -452,6 +506,7 @@ Last Updated: Just now!`,
             ).join('');
 
             if (searchTerms) {
+<<<<<<< HEAD
                 let searchResults;
                 try {
                     searchResults = await dynamicApiService.searchAll(searchTerms);
@@ -460,6 +515,9 @@ Last Updated: Just now!`,
                     searchResults = systemDataService.searchAll(searchTerms);
                 }
 
+=======
+                const searchResults = systemDataService.searchAll(searchTerms);
+>>>>>>> sharyu2
                 const totalResults = Object.keys(searchResults).reduce((sum, key) => sum + searchResults[key].length, 0);
 
                 return {
@@ -570,7 +628,11 @@ All systems operational!`,
 
         // Default response with system overview
         return {
+<<<<<<< HEAD
             text: `🤔 You said: "${userMessage}"
+=======
+            text: `🤔 Aap ye keh rahe hain: "${userMessage}"
+>>>>>>> sharyu2
 
 Current System Status (${new Date().toLocaleTimeString()}):
 📧 ${systemData.totalMails} mails processed
@@ -586,7 +648,11 @@ Available Commands:
 🔍 "Tracking" - Mail tracking
 🆘 "Help" - All commands
 
+<<<<<<< HEAD
 What specific information would you like? I can provide complete system data!`,
+=======
+Kya specific information chahte hain? Main complete system data de sakta hun!`,
+>>>>>>> sharyu2
             action: 'general'
         };
     };
@@ -618,7 +684,11 @@ What specific information would you like? I can provide complete system data!`,
         } catch (error) {
             const errorMessage = {
                 type: 'assistant',
+<<<<<<< HEAD
                 text: '🤖 Sorry, an error occurred. Please try again!',
+=======
+                text: '🤖 Sorry, koi error aa gaya. Please try again!',
+>>>>>>> sharyu2
                 timestamp: new Date().toISOString()
             };
             setConversation(prev => [...prev, errorMessage]);
@@ -660,7 +730,11 @@ What specific information would you like? I can provide complete system data!`,
                     <span className="absolute -top-1 -right-1 w-3 h-3 bg-green-500 rounded-full animate-pulse"></span>
                 </Button>
                 <div className="absolute bottom-full right-0 mb-2 bg-gray-800 text-white text-sm px-3 py-2 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
+<<<<<<< HEAD
                     AI Assistant - System Intelligence! 🧠
+=======
+                    AI Assistant - System ka dimaag! 🧠
+>>>>>>> sharyu2
                 </div>
             </div>
         );
@@ -730,7 +804,11 @@ What specific information would you like? I can provide complete system data!`,
                                 <Bot className="w-12 h-12 text-gray-400 mx-auto mb-4" />
                                 <h3 className="font-semibold text-gray-700 mb-2">AI Assistant Ready!</h3>
                                 <p className="text-sm text-gray-500 mb-4">
+<<<<<<< HEAD
                                     I'm tracking everything in your system. What would you like to know?
+=======
+                                    Main aapke system ki sab kuch track kar raha hun. Kya poochna chahte hain?
+>>>>>>> sharyu2
                                 </p>
                                 <div className="grid grid-cols-2 gap-2">
                                     {quickActions.map((action, index) => (
@@ -807,7 +885,11 @@ What specific information would you like? I can provide complete system data!`,
                                 value={message}
                                 onChange={(e) => setMessage(e.target.value)}
                                 onKeyPress={handleKeyPress}
+<<<<<<< HEAD
                                 placeholder="Ask AI anything..."
+=======
+                                placeholder="AI se poochiye kuch bhi..."
+>>>>>>> sharyu2
                                 className="flex-1"
                                 disabled={isTyping}
                             />
