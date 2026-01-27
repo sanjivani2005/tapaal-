@@ -13,6 +13,12 @@ import {
   TableHeader,
   TableRow,
 } from '../../components/ui/table';
+import { Mail } from '../../App';
+
+interface InwardMailsProps {
+  onViewMail?: (mail: Mail) => void;
+  onEditMail?: (mail: Mail) => void;
+}
 
 const inwardMails = [
   {
@@ -118,7 +124,7 @@ const getPriorityBadge = (priority: string) => {
   return variants[priority] || 'bg-gray-100 text-gray-700';
 };
 
-export function InwardMails() {
+export function InwardMails({ onViewMail, onEditMail }: InwardMailsProps) {
   const [customerName, setCustomerName] = useState('');
   const [selectedPriority, setSelectedPriority] = useState('all');
   const [selectedStatus, setSelectedStatus] = useState('all');
@@ -222,46 +228,46 @@ export function InwardMails() {
       {/* Table Section */}
       <Card className="p-6">
             {/* Table */}
-            <div className="border rounded-lg overflow-hidden">
+            <div className="border rounded-lg overflow-hidden overflow-x-auto">
               <Table>
                 <TableHeader>
                   <TableRow className="bg-gray-50">
-                    <TableHead className="font-semibold">Inward Id</TableHead>
-                    <TableHead className="font-semibold">Received By</TableHead>
-                    <TableHead className="font-semibold">Handover To</TableHead>
-                    <TableHead className="font-semibold">Sender</TableHead>
-                    <TableHead className="font-semibold">Date</TableHead>
-                    <TableHead className="font-semibold">Type</TableHead>
-                    <TableHead className="font-semibold">Delivery Mode</TableHead>
-                    <TableHead className="font-semibold">Details</TableHead>
-                    <TableHead className="font-semibold">Reference Details</TableHead>
-                    <TableHead className="font-semibold">Status</TableHead>
-                    <TableHead className="font-semibold text-right">Actions</TableHead>
+                    <TableHead className="font-semibold whitespace-nowrap">Inward Id</TableHead>
+                    <TableHead className="font-semibold whitespace-nowrap">Sent By</TableHead>
+                    <TableHead className="font-semibold whitespace-nowrap">Receiver</TableHead>
+                    <TableHead className="font-semibold whitespace-nowrap">Sender</TableHead>
+                    <TableHead className="font-semibold whitespace-nowrap">Date</TableHead>
+                    <TableHead className="font-semibold whitespace-nowrap">Type</TableHead>
+                    <TableHead className="font-semibold whitespace-nowrap">Delivery Mode</TableHead>
+                    <TableHead className="font-semibold whitespace-nowrap">Details</TableHead>
+                    <TableHead className="font-semibold whitespace-nowrap">Reference Details</TableHead>
+                    <TableHead className="font-semibold whitespace-nowrap">Status</TableHead>
+                    <TableHead className="font-semibold text-right whitespace-nowrap">Actions</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
                   {filteredMails.map((mail) => (
                     <TableRow key={mail.id}>
-                      <TableCell className="font-medium text-blue-600">{mail.id}</TableCell>
-                      <TableCell>{mail.receivedBy}</TableCell>
-                      <TableCell>{mail.handoverTo}</TableCell>
-                      <TableCell>{mail.sender}</TableCell>
-                      <TableCell className="text-sm">{mail.date}</TableCell>
-                      <TableCell>{mail.type}</TableCell>
-                      <TableCell>{mail.deliveryMode}</TableCell>
-                      <TableCell>{mail.details}</TableCell>
-                      <TableCell>{mail.referenceDetails}</TableCell>
-                      <TableCell>
+                      <TableCell className="font-medium text-blue-600 whitespace-nowrap">{mail.id}</TableCell>
+                      <TableCell className="whitespace-nowrap">{mail.sender}</TableCell>
+                      <TableCell className="whitespace-nowrap">{mail.receivedBy}</TableCell>
+                      <TableCell className="whitespace-nowrap">{mail.sender}</TableCell>
+                      <TableCell className="text-sm whitespace-nowrap">{mail.date}</TableCell>
+                      <TableCell className="whitespace-nowrap">{mail.type}</TableCell>
+                      <TableCell className="whitespace-nowrap">{mail.deliveryMode}</TableCell>
+                      <TableCell className="whitespace-nowrap">{mail.details}</TableCell>
+                      <TableCell className="whitespace-nowrap">{mail.referenceDetails}</TableCell>
+                      <TableCell className="whitespace-nowrap">
                         <Badge className={getStatusBadge(mail.status)}>
                           {mail.status}
                         </Badge>
                       </TableCell>
                       <TableCell className="text-right">
                         <div className="flex justify-end gap-2">
-                          <Button variant="ghost" size="sm">
+                          <Button variant="ghost" size="sm" onClick={() => onViewMail?.(mail)}>
                             <Eye className="w-4 h-4" />
                           </Button>
-                          <Button variant="ghost" size="sm" className="bg-blue-500 text-white hover:bg-blue-600">
+                          <Button variant="ghost" size="sm" className="bg-blue-500 text-white hover:bg-blue-600" onClick={() => onEditMail?.(mail)}>
                             <Pencil className="w-4 h-4 mr-1" />
                             Edit
                           </Button>
@@ -275,19 +281,6 @@ export function InwardMails() {
                   ))}
                 </TableBody>
               </Table>
-            </div>
-
-            <div className="flex items-center justify-between">
-              <p className="text-sm text-gray-500">
-                Showing {filteredMails.length} of {inwardMails.length} entries
-              </p>
-              <div className="flex gap-2">
-                <Button variant="outline" size="sm" disabled>Previous</Button>
-                <Button variant="outline" size="sm" className="bg-blue-600 text-white">1</Button>
-                <Button variant="outline" size="sm">2</Button>
-                <Button variant="outline" size="sm">3</Button>
-                <Button variant="outline" size="sm">Next</Button>
-              </div>
             </div>
       </Card>
     </div>

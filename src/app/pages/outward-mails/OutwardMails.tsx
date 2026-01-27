@@ -13,6 +13,12 @@ import {
   TableHeader,
   TableRow,
 } from '../../components/ui/table';
+import { Mail } from '../../App';
+
+interface OutwardMailsProps {
+  onViewMail?: (mail: Mail) => void;
+  onEditMail?: (mail: Mail) => void;
+}
 
 const outwardMails = [
   {
@@ -106,7 +112,7 @@ const getPriorityBadge = (priority: string) => {
   return variants[priority] || 'bg-gray-100 text-gray-700';
 };
 
-export function OutwardMails() {
+export function OutwardMails({ onViewMail, onEditMail }: OutwardMailsProps) {
   const [searchTerm, setSearchTerm] = useState('');
   const [departmentFilter, setDepartmentFilter] = useState('all');
   const [statusFilter, setStatusFilter] = useState('all');
@@ -203,46 +209,46 @@ export function OutwardMails() {
 
       {/* Table Section */}
       <Card className="p-6">
-        <div className="border rounded-lg overflow-hidden">
+        <div className="border rounded-lg overflow-hidden overflow-x-auto">
           <Table>
             <TableHeader>
               <TableRow className="bg-gray-50">
-                <TableHead className="font-semibold">Inward Id</TableHead>
-                <TableHead className="font-semibold">Received By</TableHead>
-                <TableHead className="font-semibold">Handover To</TableHead>
-                <TableHead className="font-semibold">Sender</TableHead>
-                <TableHead className="font-semibold">Date</TableHead>
-                <TableHead className="font-semibold">Type</TableHead>
-                <TableHead className="font-semibold">Delivery Mode</TableHead>
-                <TableHead className="font-semibold">Details</TableHead>
-                <TableHead className="font-semibold">Reference Details</TableHead>
-                <TableHead className="font-semibold">Status</TableHead>
-                <TableHead className="font-semibold text-right">Actions</TableHead>
+                <TableHead className="font-semibold whitespace-nowrap">Outward Id</TableHead>
+                <TableHead className="font-semibold whitespace-nowrap">Sent By</TableHead>
+                <TableHead className="font-semibold whitespace-nowrap">Receiver</TableHead>
+                <TableHead className="font-semibold whitespace-nowrap">Department</TableHead>
+                <TableHead className="font-semibold whitespace-nowrap">Date</TableHead>
+                <TableHead className="font-semibold whitespace-nowrap">Type</TableHead>
+                <TableHead className="font-semibold whitespace-nowrap">Delivery Mode</TableHead>
+                <TableHead className="font-semibold whitespace-nowrap">Subject</TableHead>
+                <TableHead className="font-semibold whitespace-nowrap">Tracking Id</TableHead>
+                <TableHead className="font-semibold whitespace-nowrap">Status</TableHead>
+                <TableHead className="font-semibold text-right whitespace-nowrap">Actions</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {filteredMails.map((mail) => (
                 <TableRow key={mail.id}>
-                  <TableCell className="font-medium text-blue-600">{mail.id}</TableCell>
-                  <TableCell>{mail.sentBy}</TableCell>
-                  <TableCell>{mail.receiver}</TableCell>
-                  <TableCell>{mail.department}</TableCell>
-                  <TableCell className="text-sm">{mail.date}</TableCell>
-                  <TableCell>Outward</TableCell>
-                  <TableCell>{mail.deliveryMode}</TableCell>
-                  <TableCell className="max-w-xs truncate" title={mail.subject}>{mail.subject}</TableCell>
-                  <TableCell>{mail.trackingId}</TableCell>
-                  <TableCell>
+                  <TableCell className="font-medium text-blue-600 whitespace-nowrap">{mail.id}</TableCell>
+                  <TableCell className="whitespace-nowrap">{mail.sentBy}</TableCell>
+                  <TableCell className="whitespace-nowrap">{mail.receiver}</TableCell>
+                  <TableCell className="whitespace-nowrap">{mail.department}</TableCell>
+                  <TableCell className="text-sm whitespace-nowrap">{mail.date}</TableCell>
+                  <TableCell className="whitespace-nowrap">Outward</TableCell>
+                  <TableCell className="whitespace-nowrap">{mail.deliveryMode}</TableCell>
+                  <TableCell className="truncate whitespace-nowrap" title={mail.subject}>{mail.subject}</TableCell>
+                  <TableCell className="whitespace-nowrap">{mail.trackingId}</TableCell>
+                  <TableCell className="whitespace-nowrap">
                     <Badge className={getStatusBadge(mail.status)}>
                       {mail.status}
                     </Badge>
                   </TableCell>
                   <TableCell className="text-right">
                     <div className="flex justify-end gap-2">
-                      <Button variant="ghost" size="sm">
+                      <Button variant="ghost" size="sm" onClick={() => onViewMail?.(mail)}>
                         <Eye className="w-4 h-4" />
                       </Button>
-                      <Button variant="ghost" size="sm" className="bg-blue-500 text-white hover:bg-blue-600">
+                      <Button variant="ghost" size="sm" className="bg-blue-500 text-white hover:bg-blue-600" onClick={() => onEditMail?.(mail)}>
                         <Pencil className="w-4 h-4 mr-1" />
                         Edit
                       </Button>
@@ -256,18 +262,6 @@ export function OutwardMails() {
               ))}
             </TableBody>
           </Table>
-        </div>
-        <div className="flex items-center justify-between mt-4">
-          <p className="text-sm text-gray-500">
-            Showing {filteredMails.length} of {outwardMails.length} entries
-          </p>
-          <div className="flex gap-2">
-            <Button variant="outline" size="sm" disabled>Previous</Button>
-            <Button variant="outline" size="sm" className="bg-blue-600 text-white">1</Button>
-            <Button variant="outline" size="sm">2</Button>
-            <Button variant="outline" size="sm">Next</Button>
-          </div>
-        </div>
         </div>
       </Card>
     </div>

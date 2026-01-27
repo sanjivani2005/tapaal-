@@ -177,56 +177,56 @@ export function Tracking() {
           </Button>
         </div>
 
-        <div className="border rounded-lg overflow-hidden">
+        <div className="border rounded-lg overflow-hidden overflow-x-auto">
           <Table>
             <TableHeader>
               <TableRow className="bg-gray-50">
-                <TableHead className="font-semibold">Tracking ID</TableHead>
-                <TableHead className="font-semibold">Mail ID</TableHead>
-                <TableHead className="font-semibold">Type</TableHead>
-                <TableHead className="font-semibold">Subject</TableHead>
-                <TableHead className="font-semibold">Sender/Receiver</TableHead>
-                <TableHead className="font-semibold">Department</TableHead>
-                <TableHead className="font-semibold">Assigned To</TableHead>
-                <TableHead className="font-semibold">Priority</TableHead>
-                <TableHead className="font-semibold">Current Status</TableHead>
-                <TableHead className="font-semibold">Created</TableHead>
-                <TableHead className="font-semibold">Last Updated</TableHead>
-                <TableHead className="font-semibold text-right">Actions</TableHead>
+                <TableHead className="font-semibold whitespace-nowrap">Tracking ID</TableHead>
+                <TableHead className="font-semibold whitespace-nowrap">Mail ID</TableHead>
+                <TableHead className="font-semibold whitespace-nowrap">Type</TableHead>
+                <TableHead className="font-semibold whitespace-nowrap">Subject</TableHead>
+                <TableHead className="font-semibold whitespace-nowrap">Sender/Receiver</TableHead>
+                <TableHead className="font-semibold whitespace-nowrap">Department</TableHead>
+                <TableHead className="font-semibold whitespace-nowrap">Assigned To</TableHead>
+                <TableHead className="font-semibold whitespace-nowrap">Priority</TableHead>
+                <TableHead className="font-semibold whitespace-nowrap">Current Status</TableHead>
+                <TableHead className="font-semibold whitespace-nowrap">Created</TableHead>
+                <TableHead className="font-semibold whitespace-nowrap">Last Updated</TableHead>
+                <TableHead className="font-semibold text-right whitespace-nowrap">Actions</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {filteredTracking.map((item) => (
                 <TableRow key={item.id}>
-                  <TableCell className="font-medium text-blue-600">{item.id}</TableCell>
-                  <TableCell className="font-medium">{item.mailId}</TableCell>
-                  <TableCell>
+                  <TableCell className="font-medium text-blue-600 whitespace-nowrap">{item.id}</TableCell>
+                  <TableCell className="font-medium whitespace-nowrap">{item.mailId}</TableCell>
+                  <TableCell className="whitespace-nowrap">
                     <span className={`px-2 py-1 rounded-full text-sm ${item.mailType === 'Inward' ? 'bg-blue-100 text-blue-700' : 'bg-green-100 text-green-700'
                       }`}>
                       {item.mailType}
                     </span>
                   </TableCell>
-                  <TableCell className="max-w-xs truncate" title={item.subject}>{item.subject}</TableCell>
-                  <TableCell>{item.sender}</TableCell>
-                  <TableCell>
-                    <span className="px-2 py-1 bg-gray-100 text-gray-700 rounded text-sm">
+                  <TableCell className="truncate whitespace-nowrap" title={item.subject}>{item.subject}</TableCell>
+                  <TableCell className="whitespace-nowrap">{item.sender}</TableCell>
+                  <TableCell className="whitespace-nowrap">
+                    <span className="px-2 py-1 bg-gray-100 text-gray-700 rounded text-sm whitespace-nowrap">
                       {item.department}
                     </span>
                   </TableCell>
-                  <TableCell>{item.assignedTo}</TableCell>
-                  <TableCell>
+                  <TableCell className="whitespace-nowrap">{item.assignedTo}</TableCell>
+                  <TableCell className="whitespace-nowrap">
                     <Badge className={getPriorityBadge(item.priority)}>
                       {item.priority}
                     </Badge>
                   </TableCell>
-                  <TableCell>
+                  <TableCell className="whitespace-nowrap">
                     <Badge className={getStatusBadge(item.currentStatus)}>
                       {item.currentStatus}
                     </Badge>
                   </TableCell>
-                  <TableCell className="text-sm">{item.createdAt}</TableCell>
-                  <TableCell className="text-sm">{item.lastUpdated}</TableCell>
-                  <TableCell className="text-right">
+                  <TableCell className="text-sm whitespace-nowrap">{item.createdAt}</TableCell>
+                  <TableCell className="text-sm whitespace-nowrap">{item.lastUpdated}</TableCell>
+                  <TableCell className="text-right whitespace-nowrap">
                     <div className="flex justify-end gap-2">
                       <Button
                         variant="ghost"

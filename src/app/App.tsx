@@ -8,21 +8,56 @@ import { OutwardMails } from './pages/outward-mails/OutwardMails'
 import { Users } from './pages/users/Users'
 import { Departments } from './pages/departments/Departments'
 import { Tracking } from './pages/tracking/Tracking'
+import { MailDetail } from './pages/mail-detail/MailDetail'
+import { EditMail } from './pages/mail-edit/EditMail'
 import { AIAssistant } from './components/AIAssistant'
+
+export interface Mail {
+  id: string;
+  trackingId?: string;
+  sentBy?: string;
+  receiver?: string;
+  subject?: string;
+  details?: string;
+  referenceDetails?: string;
+  status: string;
+  priority?: string;
+  department?: string;
+  date?: string;
+  createdAt?: string;
+  [key: string]: any;
+}
 
 export default function App() {
   const [currentPage, setCurrentPage] = useState('dashboard')
+  const [selectedMail, setSelectedMail] = useState<Mail | null>(null)
+  const [editingMail, setEditingMail] = useState<Mail | null>(null)
+
+  // Handle page navigation - reset detail/edit views when navigating
+  const handleNavigate = (page: string) => {
+    setSelectedMail(null)
+    setEditingMail(null)
+    setCurrentPage(page)
+  }
 
   const renderPage = () => {
+    if (editingMail) {
+      return <EditMail mail={editingMail} onBack={() => setEditingMail(null)} />
+    }
+
+    if (selectedMail) {
+      return <MailDetail mail={selectedMail} onBack={() => setSelectedMail(null)} />
+    }
+
     switch (currentPage) {
       case 'dashboard':
         return <Dashboard />
       case 'analytics':
         return <Analytics />
       case 'inward':
-        return <InwardMails />
+        return <InwardMails onViewMail={setSelectedMail} onEditMail={setEditingMail} />
       case 'outward':
-        return <OutwardMails />
+        return <OutwardMails onViewMail={setSelectedMail} onEditMail={setEditingMail} />
       case 'users':
         return <Users />
       case 'departments':
@@ -36,7 +71,7 @@ export default function App() {
 
   return (
     <div className="flex h-screen bg-gray-50 overflow-hidden">
-      <Sidebar currentPage={currentPage} onNavigate={setCurrentPage} />
+      <Sidebar currentPage={currentPage} onNavigate={handleNavigate} />
       <div className="flex-1 flex flex-col overflow-hidden">
         <Header />
         <main className="flex-1 overflow-y-auto">

@@ -236,14 +236,14 @@ export function Dashboard() {
       </div>
 
       {/* Stats Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         {realSummaryData.map((item) => (
-          <Card key={item.title} className="hover:shadow-md transition-all duration-300 border-gray-200/60">
-            <CardContent className="p-6">
-              <div className="flex items-start justify-between">
+          <Card key={item.title} className="shadow-sm border-gray-200/60">
+            <CardContent className="p-4">
+              <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-xs font-bold text-gray-400 uppercase tracking-widest">{item.title}</p>
-                  <h3 className="text-3xl font-bold text-gray-900 mt-2">{item.value}</h3>
+                  <p className="text-sm text-gray-600">{item.title}</p>
+                  <p className="text-2xl font-bold text-gray-900">{item.value}</p>
                   <div className="flex items-center gap-1 mt-2">
                     {item.isPositive ? (
                       <ArrowUpRight className="w-4 h-4 text-green-500" />
@@ -256,9 +256,7 @@ export function Dashboard() {
                     <span className="text-xs text-gray-400 font-medium ml-1">this month</span>
                   </div>
                 </div>
-                <div className={cn("p-3 rounded-lg", item.bgColor)}>
-                  <item.icon className={cn("w-6 h-6", item.color)} />
-                </div>
+                <item.icon className={cn("w-8 h-8", item.color)} />
               </div>
             </CardContent>
           </Card>

@@ -142,7 +142,7 @@ Need more actions? Ask "Full timeline ${mailId}"`,
                     text: `❌ Mail/Tracking ID "${mailId}" not found in the system.
 
 Available IDs:
-📥 Inward: INW-2024-001, INW-2024-002, INW-2024-003
+📥 Inward: INW-2024-001, INW-2024-002, INW-2024-003, INW-2024-004
 📤 Outward: OUT-2024-001, OUT-2024-002, OUT-2024-003
 🔍 Tracking: TRK-2401, TRK-2402
 
