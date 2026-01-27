@@ -282,7 +282,7 @@ export function InwardMails({ onViewMail, onEditMail }: InwardMailsProps) {
                 </TableBody>
               </Table>
             </div>
-      </Card>
-    </div>
-  );
-}
+          </Card>
+        </div>
+      );
+    }

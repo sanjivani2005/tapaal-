@@ -209,7 +209,7 @@ export function OutwardMails({ onViewMail, onEditMail }: OutwardMailsProps) {
 
       {/* Table Section */}
       <Card className="p-6">
-        <div className="border rounded-lg overflow-hidden overflow-x-auto">
+        <div className="border rounded-lg overflow-hidden">
           <Table>
             <TableHeader>
               <TableRow className="bg-gray-50">
