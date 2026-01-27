@@ -4,6 +4,9 @@ const cors = require('cors');
 // Import PrismaClient with require
 const { PrismaClient } = require('@prisma/client');
 
+// Import dynamic API routes
+const dynamicApiRoutes = require('./src/app/api/dynamic-api');
+
 const app = express();
 const prisma = new PrismaClient();
 const PORT = 3001;
@@ -15,6 +18,9 @@ app.use(express.json());
 app.get('/api/health', (req, res) => {
     res.json({ status: 'OK', message: 'API Server is running' });
 });
+
+// Use dynamic API routes
+app.use('/api/v1', dynamicApiRoutes);
 
 // Get dashboard data
 app.get('/api/dashboard', async (req, res) => {
