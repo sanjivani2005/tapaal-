@@ -160,13 +160,20 @@ Please check the ID and try again.`,
 System Status: ✅ All modules active
 Total Data: ${systemData.totalInwardMails + systemData.totalOutwardMails} mails, ${systemData.totalUsers} users, ${systemData.totalDepartments} departments
 
-Kya main aapki help kar sakta hun? Try "Show statistics", "INW-2024-001", "Users list", etc!`,
+How can I help you? Try "Show statistics", "INW-2024-001", "Users list", etc!`,
                 action: 'greeting'
             };
         }
 
         if (lowerMessage.includes('inward') || lowerMessage.includes('incoming')) {
-            const inwardMails = systemDataService.getInwardMails();
+            let inwardMails;
+            try {
+                inwardMails = await dynamicApiService.getInwardMails();
+            } catch (error) {
+                console.warn('Dynamic API failed for inward mails, using static data');
+                inwardMails = systemDataService.getInwardMails();
+            }
+
             const pendingCount = inwardMails.filter(m => m.status === 'pending').length;
             const completedCount = inwardMails.filter(m => m.status === 'completed').length;
 
@@ -505,7 +512,7 @@ Available Commands:
 🔍 "Tracking" - Mail tracking
 🆘 "Help" - All commands
 
-Kya specific information chahte hain? Main complete system data de sakta hun!`,
+What specific information would you like? I can provide complete system data!`,
             action: 'general'
         };
     };
@@ -537,7 +544,7 @@ Kya specific information chahte hain? Main complete system data de sakta hun!`,
         } catch (error) {
             const errorMessage = {
                 type: 'assistant',
-                text: '🤖 Sorry, koi error aa gaya. Please try again!',
+                text: '🤖 Sorry, an error occurred. Please try again!',
                 timestamp: new Date().toISOString()
             };
             setConversation(prev => [...prev, errorMessage]);
@@ -579,7 +586,7 @@ Kya specific information chahte hain? Main complete system data de sakta hun!`,
                     <span className="absolute -top-1 -right-1 w-3 h-3 bg-green-500 rounded-full animate-pulse"></span>
                 </Button>
                 <div className="absolute bottom-full right-0 mb-2 bg-gray-800 text-white text-sm px-3 py-2 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
-                    AI Assistant - System ka dimaag! 🧠
+                    AI Assistant - System Intelligence! 🧠
                 </div>
             </div>
         );
@@ -649,7 +656,7 @@ Kya specific information chahte hain? Main complete system data de sakta hun!`,
                                 <Bot className="w-12 h-12 text-gray-400 mx-auto mb-4" />
                                 <h3 className="font-semibold text-gray-700 mb-2">AI Assistant Ready!</h3>
                                 <p className="text-sm text-gray-500 mb-4">
-                                    Main aapke system ki sab kuch track kar raha hun. Kya poochna chahte hain?
+                                    I'm tracking everything in your system. What would you like to know?
                                 </p>
                                 <div className="grid grid-cols-2 gap-2">
                                     {quickActions.map((action, index) => (
@@ -726,7 +733,7 @@ Kya specific information chahte hain? Main complete system data de sakta hun!`,
                                 value={message}
                                 onChange={(e) => setMessage(e.target.value)}
                                 onKeyPress={handleKeyPress}
-                                placeholder="AI se poochiye kuch bhi..."
+                                placeholder="Ask AI anything..."
                                 className="flex-1"
                                 disabled={isTyping}
                             />

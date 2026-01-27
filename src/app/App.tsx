@@ -8,25 +8,7 @@ import { OutwardMails } from './pages/outward-mails/OutwardMails'
 import { Users } from './pages/users/Users'
 import { Departments } from './pages/departments/Departments'
 import { Tracking } from './pages/tracking/Tracking'
-import { MailDetail } from './pages/mail-detail/MailDetail'
-import { EditMail } from './pages/mail-edit/EditMail'
 import { AIAssistant } from './components/AIAssistant'
-
-export interface Mail {
-  id: string;
-  trackingId?: string;
-  sentBy?: string;
-  receiver?: string;
-  subject?: string;
-  details?: string;
-  referenceDetails?: string;
-  status: string;
-  priority?: string;
-  department?: string;
-  date?: string;
-  createdAt?: string;
-  [key: string]: any;
-}
 
 export default function App() {
   const [currentPage, setCurrentPage] = useState('dashboard')
