@@ -4,10 +4,7 @@ import { Card } from '../../components/ui/card';
 import { Input } from '../../components/ui/input';
 import { Button } from '../../components/ui/button';
 import { Badge } from '../../components/ui/badge';
-<<<<<<< HEAD
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../../components/ui/tabs';
-=======
->>>>>>> sharyu2
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../../components/ui/select';
 import {
   Table,
@@ -183,199 +180,199 @@ export function InwardMails() {
           <h1 className="text-2xl font-semibold text-gray-800">Inward Listing</h1>
           <p className="text-gray-500 text-sm mt-1">Manage all incoming correspondence</p>
 >>>>>>> sharyu2
-        </div>
-        <Button className="bg-green-600 hover:bg-green-700">
-          <Plus className="w-4 h-4 mr-2" />
-          Add
-        </Button>
-      </div>
+        </div >
+    <Button className="bg-green-600 hover:bg-green-700">
+      <Plus className="w-4 h-4 mr-2" />
+      Add
+    </Button>
+      </div >
 
 <<<<<<< HEAD
-      <Card className="p-6">
-        <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-          <TabsList className="bg-gray-100">
-            <TabsTrigger value="inward-list">Inward List</TabsTrigger>
-            <TabsTrigger value="waiting-inward">Waiting for Inward Acceptance</TabsTrigger>
-            <TabsTrigger value="pending-inward">Pending for Inward Acceptance</TabsTrigger>
-            <TabsTrigger value="outward-list">Outward List</TabsTrigger>
-            <TabsTrigger value="waiting-outward">Waiting for Outward Acceptance</TabsTrigger>
-            <TabsTrigger value="pending-outward">Pending for Outward Acceptance</TabsTrigger>
-          </TabsList>
+    <Card className="p-6">
+      <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
+        <TabsList className="bg-gray-100">
+          <TabsTrigger value="inward-list">Inward List</TabsTrigger>
+          <TabsTrigger value="waiting-inward">Waiting for Inward Acceptance</TabsTrigger>
+          <TabsTrigger value="pending-inward">Pending for Inward Acceptance</TabsTrigger>
+          <TabsTrigger value="outward-list">Outward List</TabsTrigger>
+          <TabsTrigger value="waiting-outward">Waiting for Outward Acceptance</TabsTrigger>
+          <TabsTrigger value="pending-outward">Pending for Outward Acceptance</TabsTrigger>
+        </TabsList>
 
-          <TabsContent value={activeTab} className="space-y-6">
-            {/* Filter Section */}
-            <div className="space-y-4">
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
-                <div>
-                  <label className="text-sm font-medium text-gray-700 mb-1 block">Customer Name</label>
-                  <Input
-                    placeholder="Type company name"
-                    value={customerName}
-                    onChange={(e) => setCustomerName(e.target.value)}
-                  />
-                </div>
-
-                <div>
-                  <label className="text-sm font-medium text-gray-700 mb-1 block">Received by</label>
-                  <Input
-                    placeholder="Type Job Type"
-                    value={receivedBy}
-                    onChange={(e) => setReceivedBy(e.target.value)}
-                  />
-                </div>
-
-                <div>
-                  <label className="text-sm font-medium text-gray-700 mb-1 block">Priority</label>
-                  <Select value={selectedPriority} onValueChange={setSelectedPriority}>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select Priority" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="all">All Priorities</SelectItem>
-                      <SelectItem value="Important">Important</SelectItem>
-                      <SelectItem value="High">High</SelectItem>
-                      <SelectItem value="Medium">Medium</SelectItem>
-                      <SelectItem value="Low">Low</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-
-                <div>
-                  <label className="text-sm font-medium text-gray-700 mb-1 block">Status</label>
-                  <Select value={selectedStatus} onValueChange={setSelectedStatus}>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select Status" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="all">All Status</SelectItem>
-                      <SelectItem value="pending">Pending</SelectItem>
-                      <SelectItem value="approved">Approved</SelectItem>
-                      <SelectItem value="waiting">Waiting</SelectItem>
-                      <SelectItem value="in-progress">In Progress</SelectItem>
-                      <SelectItem value="rejected">Rejected</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-
-                <div>
-                  <label className="text-sm font-medium text-gray-700 mb-1 block">Department</label>
-                  <Select value={selectedDepartment} onValueChange={setSelectedDepartment}>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select Department" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="all">All Departments</SelectItem>
-                      <SelectItem value="Finance">Finance</SelectItem>
-                      <SelectItem value="Accounts">Accounts</SelectItem>
-                      <SelectItem value="Legal">Legal</SelectItem>
-                      <SelectItem value="IT">IT</SelectItem>
-                      <SelectItem value="HR">HR</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
+        <TabsContent value={activeTab} className="space-y-6">
+          {/* Filter Section */}
+          <div className="space-y-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
+              <div>
+                <label className="text-sm font-medium text-gray-700 mb-1 block">Customer Name</label>
+                <Input
+                  placeholder="Type company name"
+                  value={customerName}
+                  onChange={(e) => setCustomerName(e.target.value)}
+                />
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                <div>
-                  <label className="text-sm font-medium text-gray-700 mb-1 block">From Date</label>
-                  <Input
-                    type="date"
-                    value={fromDate}
-                    onChange={(e) => setFromDate(e.target.value)}
-                    placeholder="17/05/2023"
-                  />
-                </div>
+              <div>
+                <label className="text-sm font-medium text-gray-700 mb-1 block">Received by</label>
+                <Input
+                  placeholder="Type Job Type"
+                  value={receivedBy}
+                  onChange={(e) => setReceivedBy(e.target.value)}
+                />
+              </div>
 
-                <div>
-                  <label className="text-sm font-medium text-gray-700 mb-1 block">To date</label>
-                  <Input
-                    type="date"
-                    value={toDate}
-                    onChange={(e) => setToDate(e.target.value)}
-                    placeholder="17/05/2023"
-                  />
-                </div>
+              <div>
+                <label className="text-sm font-medium text-gray-700 mb-1 block">Priority</label>
+                <Select value={selectedPriority} onValueChange={setSelectedPriority}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select Priority" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">All Priorities</SelectItem>
+                    <SelectItem value="Important">Important</SelectItem>
+                    <SelectItem value="High">High</SelectItem>
+                    <SelectItem value="Medium">Medium</SelectItem>
+                    <SelectItem value="Low">Low</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
 
-                <div className="flex items-end gap-2">
-                  <Button className="bg-green-600 hover:bg-green-700">
-                    <Search className="w-4 h-4 mr-2" />
-                    Search
-                  </Button>
-                  <Button variant="outline" onClick={handleClear}>
-                    Clear
-                  </Button>
-                </div>
+              <div>
+                <label className="text-sm font-medium text-gray-700 mb-1 block">Status</label>
+                <Select value={selectedStatus} onValueChange={setSelectedStatus}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select Status" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">All Status</SelectItem>
+                    <SelectItem value="pending">Pending</SelectItem>
+                    <SelectItem value="approved">Approved</SelectItem>
+                    <SelectItem value="waiting">Waiting</SelectItem>
+                    <SelectItem value="in-progress">In Progress</SelectItem>
+                    <SelectItem value="rejected">Rejected</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div>
+                <label className="text-sm font-medium text-gray-700 mb-1 block">Department</label>
+                <Select value={selectedDepartment} onValueChange={setSelectedDepartment}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select Department" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">All Departments</SelectItem>
+                    <SelectItem value="Finance">Finance</SelectItem>
+                    <SelectItem value="Accounts">Accounts</SelectItem>
+                    <SelectItem value="Legal">Legal</SelectItem>
+                    <SelectItem value="IT">IT</SelectItem>
+                    <SelectItem value="HR">HR</SelectItem>
+                  </SelectContent>
+                </Select>
               </div>
             </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              <div>
+                <label className="text-sm font-medium text-gray-700 mb-1 block">From Date</label>
+                <Input
+                  type="date"
+                  value={fromDate}
+                  onChange={(e) => setFromDate(e.target.value)}
+                  placeholder="17/05/2023"
+                />
+              </div>
+
+              <div>
+                <label className="text-sm font-medium text-gray-700 mb-1 block">To date</label>
+                <Input
+                  type="date"
+                  value={toDate}
+                  onChange={(e) => setToDate(e.target.value)}
+                  placeholder="17/05/2023"
+                />
+              </div>
+
+              <div className="flex items-end gap-2">
+                <Button className="bg-green-600 hover:bg-green-700">
+                  <Search className="w-4 h-4 mr-2" />
+                  Search
+                </Button>
+                <Button variant="outline" onClick={handleClear}>
+                  Clear
+                </Button>
+              </div>
+            </div>
+          </div>
 
 =======
       {/* Filter Section */}
-      <Card className="p-6">
-        <div className="flex items-end gap-4">
-          <div className="flex-1 relative">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
-            <Input
-              placeholder="Search by ID, Subject, or Tracking..."
-              value={customerName}
-              onChange={(e) => setCustomerName(e.target.value)}
-              className="pl-10"
-            />
-          </div>
+          <Card className="p-6">
+            <div className="flex items-end gap-4">
+              <div className="flex-1 relative">
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
+                <Input
+                  placeholder="Search by ID, Subject, or Tracking..."
+                  value={customerName}
+                  onChange={(e) => setCustomerName(e.target.value)}
+                  className="pl-10"
+                />
+              </div>
 
-          <div className="w-48">
-            <label className="text-sm font-medium text-gray-700 mb-1 block">Priority</label>
-            <Select value={selectedPriority} onValueChange={setSelectedPriority}>
-              <SelectTrigger>
-                <SelectValue placeholder="Select Priority" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All Priorities</SelectItem>
-                <SelectItem value="Important">Important</SelectItem>
-                <SelectItem value="High">High</SelectItem>
-                <SelectItem value="Medium">Medium</SelectItem>
-                <SelectItem value="Low">Low</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
+              <div className="w-48">
+                <label className="text-sm font-medium text-gray-700 mb-1 block">Priority</label>
+                <Select value={selectedPriority} onValueChange={setSelectedPriority}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select Priority" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">All Priorities</SelectItem>
+                    <SelectItem value="Important">Important</SelectItem>
+                    <SelectItem value="High">High</SelectItem>
+                    <SelectItem value="Medium">Medium</SelectItem>
+                    <SelectItem value="Low">Low</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
 
-          <div className="w-48">
-            <label className="text-sm font-medium text-gray-700 mb-1 block">Department</label>
-            <Select value={selectedDepartment} onValueChange={setSelectedDepartment}>
-              <SelectTrigger>
-                <SelectValue placeholder="Select Department" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All Departments</SelectItem>
-                <SelectItem value="Finance">Finance</SelectItem>
-                <SelectItem value="Accounts">Accounts</SelectItem>
-                <SelectItem value="Legal">Legal</SelectItem>
-                <SelectItem value="IT">IT</SelectItem>
-                <SelectItem value="HR">HR</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
+              <div className="w-48">
+                <label className="text-sm font-medium text-gray-700 mb-1 block">Department</label>
+                <Select value={selectedDepartment} onValueChange={setSelectedDepartment}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select Department" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">All Departments</SelectItem>
+                    <SelectItem value="Finance">Finance</SelectItem>
+                    <SelectItem value="Accounts">Accounts</SelectItem>
+                    <SelectItem value="Legal">Legal</SelectItem>
+                    <SelectItem value="IT">IT</SelectItem>
+                    <SelectItem value="HR">HR</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
 
-          <div className="w-48">
-            <label className="text-sm font-medium text-gray-700 mb-1 block">Status</label>
-            <Select value={selectedStatus} onValueChange={setSelectedStatus}>
-              <SelectTrigger>
-                <SelectValue placeholder="Select Status" />
-              </SelectTrigger>
-              <SelectContent>
-                  <SelectItem value="all">All Status</SelectItem>
-                  <SelectItem value="pending">Pending</SelectItem>
-                  <SelectItem value="approved">Approved</SelectItem>
-                  <SelectItem value="waiting">Waiting</SelectItem>
-                  <SelectItem value="in-progress">In Progress</SelectItem>
-                  <SelectItem value="rejected">Rejected</SelectItem>
-                </SelectContent>
-              </Select>
+              <div className="w-48">
+                <label className="text-sm font-medium text-gray-700 mb-1 block">Status</label>
+                <Select value={selectedStatus} onValueChange={setSelectedStatus}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select Status" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">All Status</SelectItem>
+                    <SelectItem value="pending">Pending</SelectItem>
+                    <SelectItem value="approved">Approved</SelectItem>
+                    <SelectItem value="waiting">Waiting</SelectItem>
+                    <SelectItem value="in-progress">In Progress</SelectItem>
+                    <SelectItem value="rejected">Rejected</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
             </div>
-        </div>
-      </Card>
+          </Card>
 
-      {/* Table Section */}
-      <Card className="p-6">
+          {/* Table Section */}
+          <Card className="p-6">
 >>>>>>> sharyu2
             {/* Table */}
             <div className="border rounded-lg overflow-hidden">
@@ -446,11 +443,11 @@ export function InwardMails() {
               </div>
             </div>
 <<<<<<< HEAD
-          </TabsContent>
-        </Tabs>
+          </TabsContent >
+        </Tabs >
 =======
 >>>>>>> sharyu2
-      </Card>
-    </div>
+      </Card >
+    </div >
   );
 }
