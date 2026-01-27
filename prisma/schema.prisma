@@ -1,0 +1,48 @@
+datasource db {
+  provider = "postgresql"
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model User {
+  id         String      @id @default(uuid())
+  name       String
+  email      String      @unique
+  role       String      @default("USER") // ADMIN, MANAGER, CLERK
+  deptId     String?
+  department Department? @relation(fields: [deptId], references: [id])
+}
+
+model Department {
+  id    String       @id @default(uuid())
+  name  String       @unique
+  code  String       @unique // e.g., REV, EDU
+  users User[]
+  mails InwardMail[]
+}
+
+model InwardMail {
+  id          String          @id @default(uuid())
+  subject     String
+  description String?
+  senderName  String
+  priority    String          @default("MEDIUM") // IMPORTANT, HIGH, MEDIUM, LOW
+  status      String          @default("PENDING")
+  isAnomaly   Boolean         @default(false)
+  deptId      String
+  department  Department      @relation(fields: [deptId], references: [id])
+  tracking    TrackingEvent[]
+  createdAt   DateTime        @default(now())
+}
+
+model TrackingEvent {
+  id        String     @id @default(uuid())
+  mailId    String
+  mail      InwardMail @relation(fields: [mailId], references: [id])
+  status    String
+  remarks   String?
+  updatedBy String
+  createdAt DateTime   @default(now())
+}
