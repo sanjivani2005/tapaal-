@@ -6,14 +6,14 @@ import { Button } from '../../components/ui/button';
 import { Badge } from '../../components/ui/badge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../../components/ui/select';
 import {
-    Table,
-    TableBody,
-    TableCell,
-    TableHead,
-    TableHeader,
-    TableRow,
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
 } from '../../components/ui/table';
-import { Mail } from '../../App';
+import { Mail } from '../../types';
 
 interface InwardMailsProps {
   onViewMail?: (mail: Mail) => void;
@@ -21,107 +21,107 @@ interface InwardMailsProps {
 }
 
 const inwardMails = [
-    {
-        id: 'INW-2024-001',
-        trackingId: 'TRK-1234',
-        receivedBy: 'Kumar M',
-        handoverTo: 'Thuzharajan M',
-        sender: 'BigEye Global Solutions - BGS',
-        date: '2024-01-15 10:30:00',
-        type: 'Inward',
-        deliveryMode: 'Courier',
-        details: 'Tax details for Q4 2023',
-        referenceDetails: 'TAX-Q4-2023-045',
-        status: 'pending',
-        priority: 'Important',
-        department: 'Finance',
-        assignedTo: 'John Doe',
-        dueDate: '2024-01-20',
-        attachments: 2,
-        createdAt: '2024-01-15 10:30:00',
-        updatedAt: '2024-01-15 14:20:00'
-    },
-    {
-        id: 'INW-2024-002',
-        trackingId: 'TRK-1235',
-        receivedBy: 'Sarah Williams',
-        handoverTo: 'John Doe',
-        sender: 'ABC Corporation Ltd',
-        date: '2024-01-16 09:15:00',
-        type: 'Inward',
-        deliveryMode: 'Hand Delivery',
-        details: 'Invoice documents for December',
-        referenceDetails: 'INV-2023-045',
-        status: 'approved',
-        priority: 'High',
-        department: 'Accounts',
-        assignedTo: 'Jane Smith',
-        dueDate: '2024-01-18',
-        attachments: 3,
-        createdAt: '2024-01-16 09:15:00',
-        updatedAt: '2024-01-16 16:45:00'
-    },
-    {
-        id: 'INW-2024-003',
-        trackingId: 'TRK-1236',
-        receivedBy: 'Mike Johnson',
-        handoverTo: 'Jane Smith',
-        sender: 'XYZ Enterprises Pvt Ltd',
-        date: '2024-01-17 14:20:00',
-        type: 'Inward',
-        deliveryMode: 'Post',
-        details: 'Contract papers for new project',
-        referenceDetails: 'CON-2024-089',
-        status: 'waiting',
-        priority: 'Important',
-        department: 'Legal',
-        assignedTo: 'Robert Brown',
-        dueDate: '2024-01-25',
-        attachments: 5,
-        createdAt: '2024-01-17 14:20:00',
-        updatedAt: '2024-01-17 14:20:00'
-    },
-    {
-        id: 'INW-2024-004',
-        trackingId: 'TRK-1237',
-        receivedBy: 'Emily Davis',
-        handoverTo: 'Robert Brown',
-        sender: 'Tech Solutions Inc',
-        date: '2024-01-18 11:45:00',
-        type: 'Inward',
-        deliveryMode: 'Courier',
-        details: 'Technical documentation',
-        referenceDetails: 'TECH-2024-12',
-        status: 'in-progress',
-        priority: 'Medium',
-        department: 'IT',
-        assignedTo: 'Lisa Anderson',
-        dueDate: '2024-01-22',
-        attachments: 1,
-        createdAt: '2024-01-18 11:45:00',
-        updatedAt: '2024-01-19 09:30:00'
-    },
+  {
+    id: 'INW-2024-001',
+    trackingId: 'TRK-1234',
+    receivedBy: 'Kumar M',
+    handoverTo: 'Thuzharajan M',
+    sender: 'BigEye Global Solutions - BGS',
+    date: '2024-01-15 10:30:00',
+    type: 'Inward',
+    deliveryMode: 'Courier',
+    details: 'Tax details for Q4 2023',
+    referenceDetails: 'TAX-Q4-2023-045',
+    status: 'pending',
+    priority: 'Important',
+    department: 'Finance',
+    assignedTo: 'John Doe',
+    dueDate: '2024-01-20',
+    attachments: 2,
+    createdAt: '2024-01-15 10:30:00',
+    updatedAt: '2024-01-15 14:20:00'
+  },
+  {
+    id: 'INW-2024-002',
+    trackingId: 'TRK-1235',
+    receivedBy: 'Sarah Williams',
+    handoverTo: 'John Doe',
+    sender: 'ABC Corporation Ltd',
+    date: '2024-01-16 09:15:00',
+    type: 'Inward',
+    deliveryMode: 'Hand Delivery',
+    details: 'Invoice documents for December',
+    referenceDetails: 'INV-2023-045',
+    status: 'approved',
+    priority: 'High',
+    department: 'Accounts',
+    assignedTo: 'Jane Smith',
+    dueDate: '2024-01-18',
+    attachments: 3,
+    createdAt: '2024-01-16 09:15:00',
+    updatedAt: '2024-01-16 16:45:00'
+  },
+  {
+    id: 'INW-2024-003',
+    trackingId: 'TRK-1236',
+    receivedBy: 'Mike Johnson',
+    handoverTo: 'Jane Smith',
+    sender: 'XYZ Enterprises Pvt Ltd',
+    date: '2024-01-17 14:20:00',
+    type: 'Inward',
+    deliveryMode: 'Post',
+    details: 'Contract papers for new project',
+    referenceDetails: 'CON-2024-089',
+    status: 'waiting',
+    priority: 'Important',
+    department: 'Legal',
+    assignedTo: 'Robert Brown',
+    dueDate: '2024-01-25',
+    attachments: 5,
+    createdAt: '2024-01-17 14:20:00',
+    updatedAt: '2024-01-17 14:20:00'
+  },
+  {
+    id: 'INW-2024-004',
+    trackingId: 'TRK-1237',
+    receivedBy: 'Emily Davis',
+    handoverTo: 'Robert Brown',
+    sender: 'Tech Solutions Inc',
+    date: '2024-01-18 11:45:00',
+    type: 'Inward',
+    deliveryMode: 'Courier',
+    details: 'Technical documentation',
+    referenceDetails: 'TECH-2024-12',
+    status: 'in-progress',
+    priority: 'Medium',
+    department: 'IT',
+    assignedTo: 'Lisa Anderson',
+    dueDate: '2024-01-22',
+    attachments: 1,
+    createdAt: '2024-01-18 11:45:00',
+    updatedAt: '2024-01-19 09:30:00'
+  },
 ];
 
 const getStatusBadge = (status: string) => {
-    const variants: Record<string, string> = {
-        'waiting': 'bg-yellow-100 text-yellow-700',
-        'approved': 'bg-green-100 text-green-700',
-        'pending': 'bg-orange-100 text-orange-700',
-        'rejected': 'bg-red-100 text-red-700',
-        'in-progress': 'bg-blue-100 text-blue-700',
-    };
-    return variants[status] || 'bg-gray-100 text-gray-700';
+  const variants: Record<string, string> = {
+    'waiting': 'bg-yellow-100 text-yellow-700',
+    'approved': 'bg-green-100 text-green-700',
+    'pending': 'bg-orange-100 text-orange-700',
+    'rejected': 'bg-red-100 text-red-700',
+    'in-progress': 'bg-blue-100 text-blue-700',
+  };
+  return variants[status] || 'bg-gray-100 text-gray-700';
 };
 
 const getPriorityBadge = (priority: string) => {
-    const variants: Record<string, string> = {
-        'Important': 'bg-red-600 text-white',
-        'High': 'bg-red-100 text-red-700',
-        'Medium': 'bg-yellow-100 text-yellow-700',
-        'Low': 'bg-green-100 text-green-700',
-    };
-    return variants[priority] || 'bg-gray-100 text-gray-700';
+  const variants: Record<string, string> = {
+    'Important': 'bg-red-600 text-white',
+    'High': 'bg-red-100 text-red-700',
+    'Medium': 'bg-yellow-100 text-yellow-700',
+    'Low': 'bg-green-100 text-green-700',
+  };
+  return variants[priority] || 'bg-gray-100 text-gray-700';
 };
 
 export function InwardMails({ onViewMail, onEditMail }: InwardMailsProps) {
@@ -213,76 +213,76 @@ export function InwardMails({ onViewMail, onEditMail }: InwardMailsProps) {
                 <SelectValue placeholder="Select Status" />
               </SelectTrigger>
               <SelectContent>
-                  <SelectItem value="all">All Status</SelectItem>
-                  <SelectItem value="pending">Pending</SelectItem>
-                  <SelectItem value="approved">Approved</SelectItem>
-                  <SelectItem value="waiting">Waiting</SelectItem>
-                  <SelectItem value="in-progress">In Progress</SelectItem>
-                  <SelectItem value="rejected">Rejected</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
+                <SelectItem value="all">All Status</SelectItem>
+                <SelectItem value="pending">Pending</SelectItem>
+                <SelectItem value="approved">Approved</SelectItem>
+                <SelectItem value="waiting">Waiting</SelectItem>
+                <SelectItem value="in-progress">In Progress</SelectItem>
+                <SelectItem value="rejected">Rejected</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
         </div>
       </Card>
 
       {/* Table Section */}
       <Card className="p-6">
-            {/* Table */}
-            <div className="border rounded-lg overflow-hidden overflow-x-auto">
-              <Table>
-                <TableHeader>
-                  <TableRow className="bg-gray-50">
-                    <TableHead className="font-semibold whitespace-nowrap">Inward Id</TableHead>
-                    <TableHead className="font-semibold whitespace-nowrap">Sent By</TableHead>
-                    <TableHead className="font-semibold whitespace-nowrap">Receiver</TableHead>
-                    <TableHead className="font-semibold whitespace-nowrap">Sender</TableHead>
-                    <TableHead className="font-semibold whitespace-nowrap">Date</TableHead>
-                    <TableHead className="font-semibold whitespace-nowrap">Type</TableHead>
-                    <TableHead className="font-semibold whitespace-nowrap">Delivery Mode</TableHead>
-                    <TableHead className="font-semibold whitespace-nowrap">Details</TableHead>
-                    <TableHead className="font-semibold whitespace-nowrap">Reference Details</TableHead>
-                    <TableHead className="font-semibold whitespace-nowrap">Status</TableHead>
-                    <TableHead className="font-semibold text-right whitespace-nowrap">Actions</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {filteredMails.map((mail) => (
-                    <TableRow key={mail.id}>
-                      <TableCell className="font-medium text-blue-600 whitespace-nowrap">{mail.id}</TableCell>
-                      <TableCell className="whitespace-nowrap">{mail.sender}</TableCell>
-                      <TableCell className="whitespace-nowrap">{mail.receivedBy}</TableCell>
-                      <TableCell className="whitespace-nowrap">{mail.sender}</TableCell>
-                      <TableCell className="text-sm whitespace-nowrap">{mail.date}</TableCell>
-                      <TableCell className="whitespace-nowrap">{mail.type}</TableCell>
-                      <TableCell className="whitespace-nowrap">{mail.deliveryMode}</TableCell>
-                      <TableCell className="whitespace-nowrap">{mail.details}</TableCell>
-                      <TableCell className="whitespace-nowrap">{mail.referenceDetails}</TableCell>
-                      <TableCell className="whitespace-nowrap">
-                        <Badge className={getStatusBadge(mail.status)}>
-                          {mail.status}
-                        </Badge>
-                      </TableCell>
-                      <TableCell className="text-right">
-                        <div className="flex justify-end gap-2">
-                          <Button variant="ghost" size="sm" onClick={() => onViewMail?.(mail)}>
-                            <Eye className="w-4 h-4" />
-                          </Button>
-                          <Button variant="ghost" size="sm" className="bg-blue-500 text-white hover:bg-blue-600" onClick={() => onEditMail?.(mail)}>
-                            <Pencil className="w-4 h-4 mr-1" />
-                            Edit
-                          </Button>
-                          <Button variant="ghost" size="sm" className="bg-red-500 text-white hover:bg-red-600">
-                            <Trash2 className="w-4 h-4 mr-1" />
-                            Delete
-                          </Button>
-                        </div>
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </div>
-          </Card>
+        {/* Table */}
+        <div className="border rounded-lg overflow-hidden overflow-x-auto">
+          <Table>
+            <TableHeader>
+              <TableRow className="bg-gray-50">
+                <TableHead className="font-semibold whitespace-nowrap">Inward Id</TableHead>
+                <TableHead className="font-semibold whitespace-nowrap">Sent By</TableHead>
+                <TableHead className="font-semibold whitespace-nowrap">Receiver</TableHead>
+                <TableHead className="font-semibold whitespace-nowrap">Sender</TableHead>
+                <TableHead className="font-semibold whitespace-nowrap">Date</TableHead>
+                <TableHead className="font-semibold whitespace-nowrap">Type</TableHead>
+                <TableHead className="font-semibold whitespace-nowrap">Delivery Mode</TableHead>
+                <TableHead className="font-semibold whitespace-nowrap">Details</TableHead>
+                <TableHead className="font-semibold whitespace-nowrap">Reference Details</TableHead>
+                <TableHead className="font-semibold whitespace-nowrap">Status</TableHead>
+                <TableHead className="font-semibold text-right whitespace-nowrap">Actions</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {filteredMails.map((mail) => (
+                <TableRow key={mail.id}>
+                  <TableCell className="font-medium text-blue-600 whitespace-nowrap">{mail.id}</TableCell>
+                  <TableCell className="whitespace-nowrap">{mail.sender}</TableCell>
+                  <TableCell className="whitespace-nowrap">{mail.receivedBy}</TableCell>
+                  <TableCell className="whitespace-nowrap">{mail.sender}</TableCell>
+                  <TableCell className="text-sm whitespace-nowrap">{mail.date}</TableCell>
+                  <TableCell className="whitespace-nowrap">{mail.type}</TableCell>
+                  <TableCell className="whitespace-nowrap">{mail.deliveryMode}</TableCell>
+                  <TableCell className="whitespace-nowrap">{mail.details}</TableCell>
+                  <TableCell className="whitespace-nowrap">{mail.referenceDetails}</TableCell>
+                  <TableCell className="whitespace-nowrap">
+                    <Badge className={getStatusBadge(mail.status)}>
+                      {mail.status}
+                    </Badge>
+                  </TableCell>
+                  <TableCell className="text-right">
+                    <div className="flex justify-end gap-2">
+                      <Button variant="ghost" size="sm" onClick={() => onViewMail?.(mail)}>
+                        <Eye className="w-4 h-4" />
+                      </Button>
+                      <Button variant="ghost" size="sm" className="bg-blue-500 text-white hover:bg-blue-600" onClick={() => onEditMail?.(mail)}>
+                        <Pencil className="w-4 h-4 mr-1" />
+                        Edit
+                      </Button>
+                      <Button variant="ghost" size="sm" className="bg-red-500 text-white hover:bg-red-600">
+                        <Trash2 className="w-4 h-4 mr-1" />
+                        Delete
+                      </Button>
+                    </div>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
         </div>
-      );
-    }
+      </Card>
+    </div>
+  );
+}

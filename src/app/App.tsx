@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { Mail } from './types'
 import { Sidebar } from './layout/Sidebar'
 import { Header } from './layout/Header'
 import { Dashboard } from './pages/dashboard/Dashboard'
@@ -9,6 +10,8 @@ import { Users } from './pages/users/Users'
 import { Departments } from './pages/departments/Departments'
 import { Tracking } from './pages/tracking/Tracking'
 import { AIAssistant } from './components/AIAssistant'
+import { EditMail } from './pages/mail-edit/EditMail'
+import { MailDetail } from './pages/mail-detail/MailDetail'
 
 export default function App() {
   const [currentPage, setCurrentPage] = useState('dashboard')
