@@ -18,6 +18,7 @@ import { Mail } from '../../types';
 interface InwardMailsProps {
   onViewMail?: (mail: Mail) => void;
   onEditMail?: (mail: Mail) => void;
+  onCreateMail?: () => void;
 }
 
 const inwardMails = [
@@ -124,7 +125,7 @@ const getPriorityBadge = (priority: string) => {
   return variants[priority] || 'bg-gray-100 text-gray-700';
 };
 
-export function InwardMails({ onViewMail, onEditMail }: InwardMailsProps) {
+export function InwardMails({ onViewMail, onEditMail, onCreateMail }: InwardMailsProps) {
   const [customerName, setCustomerName] = useState('');
   const [selectedPriority, setSelectedPriority] = useState('all');
   const [selectedStatus, setSelectedStatus] = useState('all');
@@ -154,7 +155,7 @@ export function InwardMails({ onViewMail, onEditMail }: InwardMailsProps) {
           <h1 className="text-2xl font-semibold text-gray-800">Inward Listing</h1>
           <p className="text-gray-500 text-sm mt-1">Manage all incoming correspondence</p>
         </div>
-        <Button className="bg-green-600 hover:bg-green-700">
+        <Button className="bg-green-600 hover:bg-green-700" onClick={onCreateMail}>
           <Plus className="w-4 h-4 mr-2" />
           Add
         </Button>

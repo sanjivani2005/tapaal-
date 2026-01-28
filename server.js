@@ -2,13 +2,19 @@ import express from 'express';
 import cors from 'cors';
 
 // Import PrismaClient with import
-import { PrismaClient } from '@prisma/client';
+// import { PrismaClient } from '@prisma/client';
 
 // Import dynamic API routes
-import dynamicApiRoutes from './src/app/api/dynamic-api.js';
+// import dynamicApiRoutes from './src/app/api/dynamic-api.js';
 
 const app = express();
-const prisma = new PrismaClient();
+// const prisma = new PrismaClient({ 
+//   datasources: {
+//     db: {
+//       url: "file:./dev.db"
+//     }
+//   }
+// });
 const PORT = 3001;
 
 app.use(cors());

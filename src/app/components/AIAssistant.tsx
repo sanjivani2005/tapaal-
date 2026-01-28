@@ -16,6 +16,7 @@ import {
     HelpCircle
 } from 'lucide-react';
 import { systemDataService } from '../services/system-data';
+import { dynamicDataService } from '../services/dynamic-data';
 
 interface AIAssistantProps {
     dashboardData?: any;
@@ -168,7 +169,7 @@ How can I help you? Try "Show statistics", "INW-2024-001", "Users list", etc!`,
         if (lowerMessage.includes('inward') || lowerMessage.includes('incoming')) {
             let inwardMails;
             try {
-                inwardMails = await dynamicApiService.getInwardMails();
+                inwardMails = await dynamicDataService.getInwardMails();
             } catch (error) {
                 console.warn('Dynamic API failed for inward mails, using static data');
                 inwardMails = systemDataService.getInwardMails();
