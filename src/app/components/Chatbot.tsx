@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { MessageCircle, X, Send, Bot, Minimize2, Maximize2 } from 'lucide-react';
+import { MessageCircle, X, Send, Bot, Minimize2, Maximize2, RefreshCw } from 'lucide-react';
 
 interface Message {
     id: string;
@@ -75,6 +75,19 @@ export function Chatbot() {
         }
     };
 
+    const refreshChat = () => {
+        setMessages([
+            {
+                id: Date.now().toString(),
+                text: "Hello! I'm your Tapaal assistant. How can I help you today?",
+                sender: 'bot',
+                timestamp: new Date()
+            }
+        ]);
+        setInputValue('');
+        setIsTyping(false);
+    };
+
     if (!isOpen) {
         return (
             <button
@@ -100,6 +113,13 @@ export function Chatbot() {
                         <span className="font-medium">Tapaal Assistant</span>
                     </div>
                     <div className="flex items-center gap-2">
+                        <button
+                            onClick={refreshChat}
+                            className="p-2 hover:bg-white/20 rounded-full transition-all duration-200 hover:scale-110 border border-white/30"
+                            title="Refresh chat"
+                        >
+                            <RefreshCw className="w-4 h-4 text-white" />
+                        </button>
                         <button onClick={() => setIsMinimized(!isMinimized)} className="p-1 hover:bg-blue-700 rounded">
                             {isMinimized ? <Maximize2 className="w-4 h-4" /> : <Minimize2 className="w-4 h-4" />}
                         </button>
@@ -116,8 +136,8 @@ export function Chatbot() {
                             {messages.map((message) => (
                                 <div key={message.id} className={`flex ${message.sender === 'user' ? 'justify-end' : 'justify-start'}`}>
                                     <div className={`max-w-[80%] p-3 rounded-2xl text-sm shadow-sm ${message.sender === 'user'
-                                            ? 'bg-blue-600 text-white rounded-tr-none'
-                                            : 'bg-white text-gray-800 border border-gray-200 rounded-tl-none'
+                                        ? 'bg-blue-600 text-white rounded-tr-none'
+                                        : 'bg-white text-gray-800 border border-gray-200 rounded-tl-none'
                                         }`}>
                                         <p>{message.text}</p>
                                         <p className={`text-[10px] mt-1 opacity-70 ${message.sender === 'user' ? 'text-right' : 'text-left'}`}>

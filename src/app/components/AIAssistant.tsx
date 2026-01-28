@@ -13,7 +13,8 @@ import {
     BarChart3,
     Users,
     Mail,
-    HelpCircle
+    HelpCircle,
+    RefreshCw
 } from 'lucide-react';
 import { systemDataService } from '../services/system-data';
 import { dynamicDataService } from '../services/dynamic-data';
@@ -561,6 +562,12 @@ What specific information would you like? I can provide complete system data!`,
         }
     };
 
+    const refreshChat = () => {
+        setConversation([]);
+        setMessage('');
+        setIsTyping(false);
+    };
+
     const quickActions = [
         { icon: BarChart3, label: 'Statistics', message: 'Show statistics' },
         { icon: Mail, label: 'Track Mail', message: 'Track mail status' },
@@ -609,6 +616,15 @@ What specific information would you like? I can provide complete system data!`,
                         </div>
                     </div>
                     <div className="flex items-center gap-2">
+                        <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={refreshChat}
+                            className="text-white hover:bg-white/20"
+                            title="Refresh chat"
+                        >
+                            <RefreshCw className="w-4 h-4" />
+                        </Button>
                         <Button
                             variant="ghost"
                             size="sm"

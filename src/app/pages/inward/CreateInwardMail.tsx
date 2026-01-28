@@ -1,6 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Input, Textarea, Button, Card, CardContent, CardHeader, CardTitle, Select, SelectContent, SelectItem, SelectTrigger, SelectValue, Label } from '../../components/ui';
-import { UploadCloud, Search, ArrowLeft } from 'lucide-react';
+import { UploadCloud, Search, ArrowLeft, Brain, AlertTriangle } from 'lucide-react';
+import { aiService, DuplicateResult, PriorityResult, DescriptionSuggestion } from '../../services/ai-service';
+import { AIDuplicateAlert } from '../../components/ai/AIDuplicateAlert';
+import { AIPrioritySuggestion } from '../../components/ai/AIPrioritySuggestion';
+import { AIDescriptionSuggestions } from '../../components/ai/AIDescriptionSuggestions';
+import { dataService } from '../../services/data-service';
 
 interface CreateInwardMailProps {
     onBack?: () => void;
@@ -14,6 +19,48 @@ export function CreateInwardMail({ onBack }: CreateInwardMailProps) {
     const [department, setDepartment] = useState('');
     const [priority, setPriority] = useState('Normal');
     const [attachedFiles, setAttachedFiles] = useState<File[]>([]);
+
+    // AI States
+    const [duplicateResult, setDuplicateResult] = useState<DuplicateResult | null>(null);
+    const [priorityResult, setPriorityResult] = useState<PriorityResult | null>(null);
+    const [descriptionSuggestions, setDescriptionSuggestions] = useState<DescriptionSuggestion[]>([]);
+    const [showDuplicateAlert, setShowDuplicateAlert] = useState(true);
+    const [showPrioritySuggestion, setShowPrioritySuggestion] = useState(true);
+    const [showDescriptionSuggestions, setShowDescriptionSuggestions] = useState(true);
+    const [isLoading, setIsLoading] = useState(false);
+    const [departments, setDepartments] = useState([]);
+
+    // Load departments on mount
+    useEffect(() => {
+        loadDepartments();
+    }, []);
+
+    const loadDepartments = async () => {
+        try {
+            const response = await dataService.getDepartments();
+            setDepartments(response.data || []);
+        } catch (error) {
+            console.error('Failed to load departments:', error);
+        }
+    };
+
+    // Mock existing mails for duplicate detection
+    const existingMails = [
+        {
+            subject: 'Meeting Schedule for Next Week',
+            description: 'This is regarding the meeting scheduled for next week',
+            sender: 'John Doe',
+            department: 'Administration',
+            priority: 'High'
+        },
+        {
+            subject: 'Emergency Court Case Notice',
+            description: 'Urgent court case requiring immediate attention',
+            sender: 'Legal Department',
+            department: 'Legal',
+            priority: 'Critical'
+        }
+    ];
 
     const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         if (event.target.files) {
@@ -32,19 +79,94 @@ export function CreateInwardMail({ onBack }: CreateInwardMailProps) {
         }
     };
 
-    const handleSubmit = (event: React.FormEvent) => {
-        event.preventDefault();
-        console.log({
-            senderName,
-            senderAddress,
+    // AI Effects
+    useEffect(() => {
+        // Check for duplicates when subject or sender changes
+        if (subject || senderName) {
+            checkForDuplicates();
+        }
+    }, [subject, senderName]);
+
+    useEffect(() => {
+        // Assign priority when subject or description changes
+        if (subject || description) {
+            assignAIPriority();
+        }
+    }, [subject, description]);
+
+    useEffect(() => {
+        // Get description suggestions when subject changes
+        if (subject) {
+            getDescriptionSuggestions();
+        }
+    }, [subject]);
+
+    const checkForDuplicates = async () => {
+        const newMail = {
             subject,
             description,
+            sender: senderName,
             department,
-            priority,
-            attachedFiles,
-        });
-        // Here you would typically send this data to a backend API
-        alert('Inward Mail Saved! Check console for details.');
+            priority
+        };
+
+        const result = await aiService.detectDuplicate(newMail, existingMails);
+        setDuplicateResult(result);
+    };
+
+    const assignAIPriority = async () => {
+        const content = `${subject} ${description}`;
+        const result = await aiService.assignPriority(content);
+        setPriorityResult(result);
+    };
+
+    const getDescriptionSuggestions = async () => {
+        const suggestions = await aiService.getDescriptionSuggestions(subject);
+        setDescriptionSuggestions(suggestions);
+    };
+
+    const handleApplyPriority = (suggestedPriority: string) => {
+        setPriority(suggestedPriority);
+        setShowPrioritySuggestion(false);
+    };
+
+    const handleSelectDescription = (suggestion: string) => {
+        setDescription(suggestion);
+        setShowDescriptionSuggestions(false);
+    };
+
+    const handleSubmit = async (event: React.FormEvent) => {
+        event.preventDefault();
+        setIsLoading(true);
+
+        try {
+            // Find department ID
+            const selectedDepartment = departments.find((dept: any) => dept.name === department);
+
+            const mailData = {
+                type: 'inward',
+                sender: senderName,
+                senderName,
+                senderAddress,
+                subject,
+                description,
+                priority,
+                deptId: selectedDepartment?.id,
+                status: 'PENDING'
+            };
+
+            const response = await dataService.createMail(mailData);
+
+            if (response.data) {
+                alert('Inward Mail Saved Successfully!');
+                if (onBack) onBack();
+            }
+        } catch (error) {
+            console.error('Error saving mail:', error);
+            alert('Failed to save mail. Please try again.');
+        } finally {
+            setIsLoading(false);
+        }
     };
 
     return (
@@ -63,6 +185,30 @@ export function CreateInwardMail({ onBack }: CreateInwardMailProps) {
             <Card className="shadow-sm border-gray-200/60">
                 <CardContent className="p-6">
                     <form onSubmit={handleSubmit} className="space-y-6">
+                        {/* AI Alerts and Suggestions */}
+                        {showDuplicateAlert && duplicateResult && duplicateResult.isDuplicate && (
+                            <AIDuplicateAlert
+                                duplicateResult={duplicateResult}
+                                onDismiss={() => setShowDuplicateAlert(false)}
+                            />
+                        )}
+
+                        {showPrioritySuggestion && priorityResult && (
+                            <AIPrioritySuggestion
+                                priorityResult={priorityResult}
+                                onApplyPriority={handleApplyPriority}
+                                onDismiss={() => setShowPrioritySuggestion(false)}
+                            />
+                        )}
+
+                        {showDescriptionSuggestions && descriptionSuggestions.length > 0 && !description && (
+                            <AIDescriptionSuggestions
+                                suggestions={descriptionSuggestions}
+                                onSelectSuggestion={handleSelectDescription}
+                                onDismiss={() => setShowDescriptionSuggestions(false)}
+                            />
+                        )}
+
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div className="space-y-2">
                                 <Label htmlFor="senderName">Sender Name</Label>
@@ -108,16 +254,18 @@ export function CreateInwardMail({ onBack }: CreateInwardMailProps) {
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div className="space-y-2">
                                 <Label htmlFor="department">Department</Label>
-                                <div className="relative">
-                                    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
-                                    <Input
-                                        id="department"
-                                        value={department}
-                                        onChange={(e) => setDepartment(e.target.value)}
-                                        placeholder="Search department..."
-                                        className="pl-10"
-                                    />
-                                </div>
+                                <Select value={department} onValueChange={setDepartment}>
+                                    <SelectTrigger>
+                                        <SelectValue placeholder="Select department" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        {departments.map((dept: any) => (
+                                            <SelectItem key={dept.id} value={dept.name}>
+                                                {dept.name}
+                                            </SelectItem>
+                                        ))}
+                                    </SelectContent>
+                                </Select>
                             </div>
                             <div className="space-y-2">
                                 <Label htmlFor="priority">Priority</Label>
@@ -174,8 +322,8 @@ export function CreateInwardMail({ onBack }: CreateInwardMailProps) {
                         </div>
 
                         <div className="flex justify-end">
-                            <Button type="submit" className="bg-blue-600 hover:bg-blue-700">
-                                Save Inward Mail
+                            <Button type="submit" className="bg-blue-600 hover:bg-blue-700" disabled={isLoading}>
+                                {isLoading ? 'Saving...' : 'Save Inward Mail'}
                             </Button>
                         </div>
                     </form>
