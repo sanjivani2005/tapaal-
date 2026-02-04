@@ -113,6 +113,7 @@ const getPriorityBadge = (priority: string) => {
     return variants[priority] || 'bg-gray-100 text-gray-700';
 };
 
+export function OutwardMails() {
 export function OutwardMails({ onViewMail, onEditMail }: OutwardMailsProps) {
     const [searchTerm, setSearchTerm] = useState('');
     const [departmentFilter, setDepartmentFilter] = useState('all');
@@ -131,6 +132,155 @@ export function OutwardMails({ onViewMail, onEditMail }: OutwardMailsProps) {
     });
 
     return (
+        <div className="p-6 space-y-6">
+            <div className="flex items-center justify-between">
+                <div>
+                    <h1 className="text-2xl font-semibold text-gray-800">Outward Mails</h1>
+                    <p className="text-gray-500 text-sm mt-1">Manage all outgoing correspondence</p>
+                </div>
+                <Button className="bg-blue-600 hover:bg-blue-700">
+                    <Plus className="w-4 h-4 mr-2" />
+                    New Outward
+                </Button>
+            </div>
+
+            <Card className="p-6">
+                <div className="flex items-end gap-4">
+                    <div className="flex-1 relative">
+                        <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
+                        <Input
+                            placeholder="Search by ID, Subject, or Tracking..."
+                            className="pl-10"
+                            value={searchTerm}
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => setSearchTerm(e.target.value)}
+                        />
+                    </div>
+
+                    <div className="w-48">
+                        <label className="text-sm font-medium text-gray-700 mb-1 block">Priority</label>
+                        <Select value={priorityFilter} onValueChange={setPriorityFilter}>
+                            <SelectTrigger>
+                                <SelectValue placeholder="Select Priority" />
+                            </SelectTrigger>
+                            <SelectContent>
+                                <SelectItem value="all">All Priorities</SelectItem>
+                                <SelectItem value="Important">Important</SelectItem>
+                                <SelectItem value="High">High</SelectItem>
+                                <SelectItem value="Medium">Medium</SelectItem>
+                                <SelectItem value="Low">Low</SelectItem>
+                            </SelectContent>
+                        </Select>
+                    </div>
+
+                    <div className="w-48">
+                        <label className="text-sm font-medium text-gray-700 mb-1 block">Department</label>
+                        <Select value={departmentFilter} onValueChange={setDepartmentFilter}>
+                            <SelectTrigger>
+                                <SelectValue placeholder="Select Department" />
+                            </SelectTrigger>
+                            <SelectContent>
+                                <SelectItem value="all">All Departments</SelectItem>
+                                <SelectItem value="Procurement">Procurement</SelectItem>
+                                <SelectItem value="HR">HR</SelectItem>
+                                <SelectItem value="Finance">Finance</SelectItem>
+                                <SelectItem value="Administration">Administration</SelectItem>
+                                <SelectItem value="Legal">Legal</SelectItem>
+                                <SelectItem value="Operations">Operations</SelectItem>
+                                <SelectItem value="IT">IT</SelectItem>
+                            </SelectContent>
+                        </Select>
+                    </div>
+
+                    <div className="w-48">
+                        <label className="text-sm font-medium text-gray-700 mb-1 block">Status</label>
+                        <Select value={statusFilter} onValueChange={setStatusFilter}>
+                            <SelectTrigger>
+                                <SelectValue placeholder="Select Status" />
+                            </SelectTrigger>
+                            <SelectContent>
+                                <SelectItem value="all">All Status</SelectItem>
+                                <SelectItem value="delivered">Delivered</SelectItem>
+                                <SelectItem value="pending">Pending</SelectItem>
+                                <SelectItem value="in-transit">In Transit</SelectItem>
+                                <SelectItem value="failed">Failed</SelectItem>
+                                <SelectItem value="draft">Draft</SelectItem>
+                            </SelectContent>
+                        </Select>
+                    </div>
+                </div>
+            </Card>
+
+            {/* Table Section */}
+            <Card className="p-6">
+                <div className="border rounded-lg overflow-hidden">
+                    <Table>
+                        <TableHeader>
+                            <TableRow className="bg-gray-50">
+                                <TableHead className="font-semibold">Inward Id</TableHead>
+                                <TableHead className="font-semibold">Received By</TableHead>
+                                <TableHead className="font-semibold">Handover To</TableHead>
+                                <TableHead className="font-semibold">Sender</TableHead>
+                                <TableHead className="font-semibold">Date</TableHead>
+                                <TableHead className="font-semibold">Type</TableHead>
+                                <TableHead className="font-semibold">Delivery Mode</TableHead>
+                                <TableHead className="font-semibold">Details</TableHead>
+                                <TableHead className="font-semibold">Reference Details</TableHead>
+                                <TableHead className="font-semibold">Status</TableHead>
+                                <TableHead className="font-semibold text-right">Actions</TableHead>
+                            </TableRow>
+                        </TableHeader>
+                        <TableBody>
+                            {filteredMails.map((mail) => (
+                                <TableRow key={mail.id}>
+                                    <TableCell className="font-medium text-blue-600">{mail.id}</TableCell>
+                                    <TableCell>{mail.sentBy}</TableCell>
+                                    <TableCell>{mail.receiver}</TableCell>
+                                    <TableCell>{mail.department}</TableCell>
+                                    <TableCell className="text-sm">{mail.date}</TableCell>
+                                    <TableCell>Outward</TableCell>
+                                    <TableCell>{mail.deliveryMode}</TableCell>
+                                    <TableCell className="max-w-xs truncate" title={mail.subject}>{mail.subject}</TableCell>
+                                    <TableCell>{mail.trackingId}</TableCell>
+                                    <TableCell>
+                                        <Badge className={getStatusBadge(mail.status)}>
+                                            {mail.status}
+                                        </Badge>
+                                    </TableCell>
+                                    <TableCell className="text-right">
+                                        <div className="flex justify-end gap-2">
+                                            <Button variant="ghost" size="sm">
+                                                <Eye className="w-4 h-4" />
+                                            </Button>
+                                            <Button variant="ghost" size="sm" className="bg-blue-500 text-white hover:bg-blue-600">
+                                                <Pencil className="w-4 h-4 mr-1" />
+                                                Edit
+                                            </Button>
+                                            <Button variant="ghost" size="sm" className="bg-red-500 text-white hover:bg-red-600">
+                                                <Trash2 className="w-4 h-4 mr-1" />
+                                                Delete
+                                            </Button>
+                                        </div>
+                                    </TableCell>
+                                </TableRow>
+                            ))}
+                        </TableBody>
+                    </Table>
+                </div>
+                <div className="flex items-center justify-between mt-4">
+                    <p className="text-sm text-gray-500">
+                        Showing {filteredMails.length} of {outwardMails.length} entries
+                    </p>
+                    <div className="flex gap-2">
+                        <Button variant="outline" size="sm" disabled>Previous</Button>
+                        <Button variant="outline" size="sm" className="bg-blue-600 text-white">1</Button>
+                        <Button variant="outline" size="sm">2</Button>
+                        <Button variant="outline" size="sm">Next</Button>
+                    </div>
+                </div>
+            </Card>
+        </div>
+    );
+}
         <div>
             {showCreateForm ? (
                 <CreateOutwardMail onBack={() => setShowCreateForm(false)} />
