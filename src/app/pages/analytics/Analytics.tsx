@@ -76,14 +76,14 @@ export default function Analytics() {
             </div>
 
             {/* Top Metrics Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                 {performanceMetrics.map((metric) => (
-                    <Card key={metric.title} className="hover:shadow-md transition-shadow border-gray-200">
-                        <CardContent className="p-6">
-                            <div className="flex items-start justify-between">
-                                <div>
-                                    <p className="text-xs font-bold text-gray-400 uppercase tracking-widest">{metric.title}</p>
-                                    <h3 className="text-3xl font-bold text-gray-900 mt-2">{metric.value}</h3>
+                    <Card key={metric.title} className="shadow-sm border-gray-200/60">
+                        <CardContent className="p-4 pt-8">
+                            <div className="flex items-center justify-between">
+                                <div className="mt-4">
+                                    <p className="text-base font-medium text-gray-600">{metric.title}</p>
+                                    <p className="text-base font-bold text-gray-900">{metric.value}</p>
                                     <div className="flex items-center gap-1 mt-2">
                                         {metric.isPositive ? <TrendingUp className="w-4 h-4 text-green-500" /> : <TrendingDown className="w-4 h-4 text-red-500" />}
                                         <span className={cn("text-sm font-bold", metric.isPositive ? "text-green-600" : "text-red-600")}>
@@ -91,9 +91,7 @@ export default function Analytics() {
                                         </span>
                                     </div>
                                 </div>
-                                <div className={cn("p-3 rounded-2xl", metric.bgColor)}>
-                                    <metric.icon className={cn("w-6 h-6", metric.color)} />
-                                </div>
+                                <metric.icon className={cn("w-8 h-8", metric.color)} />
                             </div>
                         </CardContent>
                     </Card>
