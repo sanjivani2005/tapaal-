@@ -14,6 +14,7 @@ import {
   TableRow,
 } from '../../components/ui/table';
 import { dataService } from '../../services/data-service';
+import { CreateInwardMail } from '../inward/CreateInwardMail';
 
 interface InwardMailsProps {
   onViewMail?: (mail: any) => void;
@@ -22,233 +23,256 @@ interface InwardMailsProps {
 }
 
 export function InwardMails({ onViewMail, onEditMail, onCreateMail }: InwardMailsProps) {
-  const [mails, setMails] = useState([]);
-  const [loading, setLoading] = useState(true);
+  // Mock data for demonstration - matching outward mail structure
+  const [mails, setMails] = useState([
+    {
+      id: 'INW-2024-001',
+      trackingId: 'TRK-1250',
+      subject: 'Legal Document Submission',
+      sender: 'Supreme Court',
+      department: 'Legal',
+      sentBy: 'John Doe',
+      date: '2024-01-15 14:30:00',
+      deliveryMode: 'Courier',
+      status: 'received',
+      priority: 'Important',
+      dueDate: '2024-01-20',
+      attachments: 3,
+      cost: 250.00,
+      createdAt: '2024-01-15 10:00:00',
+      updatedAt: '2024-01-15 16:45:00'
+    },
+    {
+      id: 'INW-2024-002',
+      trackingId: 'TRK-1251',
+      subject: 'Contract Agreement',
+      sender: 'ABC Corporation Ltd',
+      department: 'Finance',
+      sentBy: 'Jane Smith',
+      date: '2024-01-16 09:15:00',
+      deliveryMode: 'Hand Delivery',
+      status: 'pending',
+      priority: 'High',
+      dueDate: '2024-01-18',
+      attachments: 2,
+      cost: 0.00,
+      createdAt: '2024-01-16 08:30:00',
+      updatedAt: '2024-01-16 09:15:00'
+    },
+    {
+      id: 'INW-2024-003',
+      trackingId: 'TRK-1252',
+      subject: 'Tax Notice',
+      sender: 'Tax Department',
+      department: 'Accounts',
+      sentBy: 'Mike Johnson',
+      date: '2024-01-17 11:20:00',
+      deliveryMode: 'Post',
+      status: 'processing',
+      priority: 'Important',
+      dueDate: '2024-01-22',
+      attachments: 4,
+      cost: 150.00,
+      createdAt: '2024-01-17 10:00:00',
+      updatedAt: '2024-01-17 11:20:00'
+    },
+    {
+      id: 'INW-2024-004',
+      trackingId: 'TRK-1253',
+      subject: 'Meeting Minutes',
+      sender: 'Board of Directors',
+      department: 'Administration',
+      sentBy: 'Emily Davis',
+      date: '2024-01-18 15:45:00',
+      deliveryMode: 'Email',
+      status: 'received',
+      priority: 'Medium',
+      dueDate: '2024-01-19',
+      attachments: 1,
+      cost: 0.00,
+      createdAt: '2024-01-18 14:00:00',
+      updatedAt: '2024-01-18 16:00:00'
+    },
+  ]);
   const [searchTerm, setSearchTerm] = useState('');
-  const [statusFilter, setStatusFilter] = useState('');
-  const [departmentFilter, setDepartmentFilter] = useState('');
-  const [priorityFilter, setPriorityFilter] = useState('');
+  const [departmentFilter, setDepartmentFilter] = useState('all');
+  const [statusFilter, setStatusFilter] = useState('all');
+  const [priorityFilter, setPriorityFilter] = useState('all');
+  const [showCreateForm, setShowCreateForm] = useState(false);
 
-  // Fetch mails from API
-  useEffect(() => {
-    fetchMails();
-  }, []);
-
-  const fetchMails = async () => {
-    try {
-      setLoading(true);
-      const response = await dataService.getMails({ type: 'inward' });
-      setMails(response.data || []);
-    } catch (error) {
-      console.error('Error fetching mails:', error);
-      // Fallback to empty array if API fails
-      setMails([]);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  // Filter mails based on search and filters
-  const filteredMails = mails.filter(mail => {
-    const matchesSearch = !searchTerm ||
-      mail.subject?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      mail.sender?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      mail.description?.toLowerCase().includes(searchTerm.toLowerCase());
-
-    const matchesStatus = !statusFilter || mail.status === statusFilter;
-    const matchesDepartment = !departmentFilter || mail.department?.name === departmentFilter;
-    const matchesPriority = !priorityFilter || mail.priority === priorityFilter;
-
-    return matchesSearch && matchesStatus && matchesDepartment && matchesPriority;
+  const filteredMails = mails.filter((mail) => {
+    const matchesSearch = mail.id.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        mail.subject.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        mail.trackingId.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesDepartment = departmentFilter === 'all' || mail.department === departmentFilter;
+    const matchesStatus = statusFilter === 'all' || mail.status === statusFilter;
+    const matchesPriority = priorityFilter === 'all' || mail.priority === priorityFilter;
+    return matchesSearch && matchesDepartment && matchesStatus && matchesPriority;
   });
 
-  const getStatusColor = (status: string) => {
-    switch (status?.toLowerCase()) {
-      case 'pending': return 'bg-yellow-100 text-yellow-800';
-      case 'assigned': return 'bg-blue-100 text-blue-800';
-      case 'in_progress': return 'bg-purple-100 text-purple-800';
-      case 'completed': return 'bg-green-100 text-green-800';
-      case 'closed': return 'bg-gray-100 text-gray-800';
-      case 'resolved': return 'bg-green-100 text-green-800';
-      case 'registered': return 'bg-orange-100 text-orange-800';
-      default: return 'bg-gray-100 text-gray-800';
-    }
-  };
+  const getStatusBadge = (status: string) => {
+    const variants: Record<string, string> = {
+        'received': 'bg-green-100 text-green-700',
+        'pending': 'bg-orange-100 text-orange-700',
+        'processing': 'bg-blue-100 text-blue-700',
+        'failed': 'bg-red-100 text-red-700',
+        'draft': 'bg-gray-100 text-gray-700',
+    };
+    return variants[status] || 'bg-gray-100 text-gray-700';
+};
 
-  const getPriorityColor = (priority: string) => {
-    switch (priority?.toLowerCase()) {
-      case 'critical': return 'bg-red-100 text-red-800';
-      case 'high': return 'bg-orange-100 text-orange-800';
-      case 'medium': return 'bg-blue-100 text-blue-800';
-      case 'low': return 'bg-gray-100 text-gray-800';
-      case 'normal': return 'bg-gray-100 text-gray-800';
-      case 'important': return 'bg-orange-100 text-orange-800';
-      default: return 'bg-gray-100 text-gray-800';
-    }
-  };
-
-  if (loading) {
-    return (
-      <div className="p-6">
-        <div className="flex items-center justify-center h-64">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
-        </div>
-      </div>
-    );
-  }
+const getPriorityBadge = (priority: string) => {
+    const variants: Record<string, string> = {
+        'Important': 'bg-red-600 text-white',
+        'High': 'bg-red-100 text-red-700',
+        'Medium': 'bg-yellow-100 text-yellow-700',
+        'Low': 'bg-green-100 text-green-700',
+    };
+    return variants[priority] || 'bg-gray-100 text-gray-700';
+};
 
   return (
-    <div className="p-6 space-y-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-bold text-gray-900">Inward Mails</h1>
-          <p className="text-gray-500">Manage all incoming correspondence</p>
-        </div>
-        <Button onClick={onCreateMail} className="bg-blue-600 hover:bg-blue-700">
-          <Plus className="w-4 h-4 mr-2" />
-          New Inward Mail
-        </Button>
-      </div>
-
-      <Card>
-        <CardContent className="p-6">
-          {/* Filters */}
-          <div className="flex flex-col sm:flex-row gap-4 mb-6">
-            <div className="flex-1">
-              <div className="relative">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
-                <Input
-                  placeholder="Search mails..."
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  className="pl-10"
-                />
-              </div>
+    <div>
+      {showCreateForm ? (
+        <CreateInwardMail onBack={() => setShowCreateForm(false)} />
+      ) : (
+        <div className="p-6 space-y-6">
+          <div className="flex items-center justify-between">
+            <div>
+              <h1 className="text-2xl font-semibold text-gray-800">Inward Mails</h1>
+              <p className="text-gray-500 text-sm mt-1">Manage all incoming correspondence</p>
             </div>
-            <Select value={statusFilter} onValueChange={setStatusFilter}>
-              <SelectTrigger className="w-40">
-                <SelectValue placeholder="All Status" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="">All Status</SelectItem>
-                <SelectItem value="pending">Pending</SelectItem>
-                <SelectItem value="assigned">Assigned</SelectItem>
-                <SelectItem value="in_progress">In Progress</SelectItem>
-                <SelectItem value="completed">Completed</SelectItem>
-                <SelectItem value="closed">Closed</SelectItem>
-                <SelectItem value="resolved">Resolved</SelectItem>
-                <SelectItem value="registered">Registered</SelectItem>
-              </SelectContent>
-            </Select>
-            <Select value={departmentFilter} onValueChange={setDepartmentFilter}>
-              <SelectTrigger className="w-40">
-                <SelectValue placeholder="All Departments" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="">All Departments</SelectItem>
-                <SelectItem value="Education">Education</SelectItem>
-                <SelectItem value="General Administration">General Administration</SelectItem>
-                <SelectItem value="Revenue">Revenue</SelectItem>
-                <SelectItem value="Health">Health</SelectItem>
-                <SelectItem value="Finance">Finance</SelectItem>
-                <SelectItem value="Legal">Legal</SelectItem>
-                <SelectItem value="Accounts">Accounts</SelectItem>
-              </SelectContent>
-            </Select>
-            <Select value={priorityFilter} onValueChange={setPriorityFilter}>
-              <SelectTrigger className="w-40">
-                <SelectValue placeholder="All Priority" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="">All Priority</SelectItem>
-                <SelectItem value="critical">Critical</SelectItem>
-                <SelectItem value="high">High</SelectItem>
-                <SelectItem value="medium">Medium</SelectItem>
-                <SelectItem value="low">Low</SelectItem>
-                <SelectItem value="normal">Normal</SelectItem>
-                <SelectItem value="important">Important</SelectItem>
-              </SelectContent>
-            </Select>
+            <Button className="bg-blue-600 hover:bg-blue-700" onClick={() => setShowCreateForm(true)}>
+              <Plus className="w-4 h-4 mr-2" />
+              New Inward
+            </Button>
           </div>
 
-          {/* Table */}
-          <div className="rounded-md border">
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Tracking ID</TableHead>
-                  <TableHead>Subject</TableHead>
-                  <TableHead>Sender</TableHead>
-                  <TableHead>Department</TableHead>
-                  <TableHead>Status</TableHead>
-                  <TableHead>Priority</TableHead>
-                  <TableHead>Date</TableHead>
-                  <TableHead>Actions</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {filteredMails.length === 0 ? (
-                  <TableRow>
-                    <TableCell colSpan={8} className="text-center py-8">
-                      <div className="flex flex-col items-center">
-                        <AlertCircle className="w-12 h-12 text-gray-400 mb-4" />
-                        <p className="text-gray-500">No inward mails found</p>
-                        <p className="text-sm text-gray-400 mt-1">
-                          {mails.length === 0 ? 'Start by adding your first inward mail' : 'Try adjusting your filters'}
-                        </p>
-                      </div>
-                    </TableCell>
+          <Card className="p-6">
+            <div className="flex items-end gap-4">
+              <div className="flex-1 relative">
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
+                <Input
+                  placeholder="Search by ID, Subject, or Tracking..."
+                  className="pl-10"
+                  value={searchTerm}
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => setSearchTerm(e.target.value)}
+                />
+              </div>
+
+              <div className="w-48">
+                <label className="text-sm font-medium text-gray-700 mb-1 block">Priority</label>
+                <Select value={priorityFilter} onValueChange={setPriorityFilter}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select Priority" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">All Priorities</SelectItem>
+                    <SelectItem value="Important">Important</SelectItem>
+                    <SelectItem value="High">High</SelectItem>
+                    <SelectItem value="Medium">Medium</SelectItem>
+                    <SelectItem value="Low">Low</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div className="w-48">
+                <label className="text-sm font-medium text-gray-700 mb-1 block">Department</label>
+                <Select value={departmentFilter} onValueChange={setDepartmentFilter}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select Department" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">All Departments</SelectItem>
+                    <SelectItem value="Legal">Legal</SelectItem>
+                    <SelectItem value="Finance">Finance</SelectItem>
+                    <SelectItem value="Accounts">Accounts</SelectItem>
+                    <SelectItem value="Administration">Administration</SelectItem>
+                    <SelectItem value="HR">HR</SelectItem>
+                    <SelectItem value="Operations">Operations</SelectItem>
+                    <SelectItem value="IT">IT</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div className="w-48">
+                <label className="text-sm font-medium text-gray-700 mb-1 block">Status</label>
+                <Select value={statusFilter} onValueChange={setStatusFilter}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select Status" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">All Status</SelectItem>
+                    <SelectItem value="received">Received</SelectItem>
+                    <SelectItem value="pending">Pending</SelectItem>
+                    <SelectItem value="processing">Processing</SelectItem>
+                    <SelectItem value="failed">Failed</SelectItem>
+                    <SelectItem value="draft">Draft</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+          </Card>
+
+          {/* Table Section */}
+          <Card className="p-6">
+            <div className="border rounded-lg overflow-hidden">
+              <Table>
+                <TableHeader>
+                  <TableRow className="bg-gray-50">
+                    <TableHead className="font-semibold whitespace-nowrap">Inward Id</TableHead>
+                    <TableHead className="font-semibold whitespace-nowrap">Sent By</TableHead>
+                    <TableHead className="font-semibold whitespace-nowrap">Sender</TableHead>
+                    <TableHead className="font-semibold whitespace-nowrap">Department</TableHead>
+                    <TableHead className="font-semibold whitespace-nowrap">Date</TableHead>
+                    <TableHead className="font-semibold whitespace-nowrap">Type</TableHead>
+                    <TableHead className="font-semibold whitespace-nowrap">Delivery Mode</TableHead>
+                    <TableHead className="font-semibold whitespace-nowrap">Subject</TableHead>
+                    <TableHead className="font-semibold whitespace-nowrap">Tracking Id</TableHead>
+                    <TableHead className="font-semibold whitespace-nowrap">Status</TableHead>
+                    <TableHead className="font-semibold text-right whitespace-nowrap">Actions</TableHead>
                   </TableRow>
-                ) : (
-                  filteredMails.map((mail) => (
+                </TableHeader>
+                <TableBody>
+                  {filteredMails.map((mail) => (
                     <TableRow key={mail.id}>
-                      <TableCell className="font-medium">{mail.mailId}</TableCell>
-                      <TableCell>
-                        <div className="max-w-xs truncate" title={mail.subject}>
-                          {mail.subject}
-                        </div>
-                      </TableCell>
-                      <TableCell>{mail.sender}</TableCell>
-                      <TableCell>{mail.department?.name || 'N/A'}</TableCell>
-                      <TableCell>
-                        <Badge className={getStatusColor(mail.status)}>
+                      <TableCell className="font-medium text-blue-600 whitespace-nowrap">{mail.id}</TableCell>
+                      <TableCell className="whitespace-nowrap">{mail.sentBy}</TableCell>
+                      <TableCell className="whitespace-nowrap">{mail.sender}</TableCell>
+                      <TableCell className="whitespace-nowrap">{mail.department}</TableCell>
+                      <TableCell className="text-sm whitespace-nowrap">{mail.date}</TableCell>
+                      <TableCell className="whitespace-nowrap">Inward</TableCell>
+                      <TableCell className="whitespace-nowrap">{mail.deliveryMode}</TableCell>
+                      <TableCell className="truncate whitespace-nowrap" title={mail.subject}>{mail.subject}</TableCell>
+                      <TableCell className="whitespace-nowrap">{mail.trackingId}</TableCell>
+                      <TableCell className="whitespace-nowrap">
+                        <Badge className={getStatusBadge(mail.status)}>
                           {mail.status}
                         </Badge>
                       </TableCell>
-                      <TableCell>
-                        <Badge className={getPriorityColor(mail.priority)}>
-                          {mail.priority}
-                        </Badge>
-                      </TableCell>
-                      <TableCell>
-                        {new Date(mail.createdAt || mail.date).toLocaleDateString()}
-                      </TableCell>
-                      <TableCell>
-                        <div className="flex space-x-2">
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={() => onViewMail?.(mail)}
-                          >
+                      <TableCell className="text-right">
+                        <div className="flex justify-end gap-2">
+                          <Button variant="ghost" size="sm" onClick={() => onViewMail?.(mail)}>
                             <Eye className="w-4 h-4" />
                           </Button>
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={() => onEditMail?.(mail)}
-                          >
-                            <Pencil className="w-4 h-4" />
+                          <Button variant="ghost" size="sm" className="bg-blue-500 text-white hover:bg-blue-600" onClick={() => onEditMail?.(mail)}>
+                            <Pencil className="w-4 h-4 mr-1" />
+                            Edit
+                          </Button>
+                          <Button variant="ghost" size="sm" className="bg-red-500 text-white hover:bg-red-600">
+                            <Trash2 className="w-4 h-4 mr-1" />
+                            Delete
                           </Button>
                         </div>
                       </TableCell>
                     </TableRow>
-                  ))
-                )}
-              </TableBody>
-            </Table>
-          </div>
-        </CardContent>
-      </Card>
+                  ))}
+                </TableBody>
+              </Table>
+            </div>
+          </Card>
+        </div>
+      )}
     </div>
   );
 }
