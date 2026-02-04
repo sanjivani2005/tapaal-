@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Search, Plus, Pencil, Trash2, Eye } from 'lucide-react';
+import { Search, Filter, Plus, Pencil, Trash2, Eye, Download, Clock, AlertCircle } from 'lucide-react';
 import { Card } from '../../components/ui/card';
 import { Input } from '../../components/ui/input';
 import { Button } from '../../components/ui/button';
@@ -241,13 +241,15 @@ export function InwardMails() {
           </Table>
         </div>
 
-        <div className="flex items-center justify-between mt-4">
+        <div className="flex items-center justify-between">
           <p className="text-sm text-gray-500">
             Showing {filteredMails.length} of {inwardMails.length} entries
           </p>
           <div className="flex gap-2">
             <Button variant="outline" size="sm" disabled>Previous</Button>
             <Button variant="outline" size="sm" className="bg-blue-600 text-white">1</Button>
+            <Button variant="outline" size="sm">2</Button>
+            <Button variant="outline" size="sm">3</Button>
             <Button variant="outline" size="sm">Next</Button>
           </div>
         </div>
