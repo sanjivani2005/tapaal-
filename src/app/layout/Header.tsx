@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Bell, ChevronDown, User, LogOut, Settings } from 'lucide-react';
 
-export function Header() {
+export function Header({ onNavigate }: { onNavigate?: (page: string) => void }) {
     const [showUserMenu, setShowUserMenu] = useState(false);
     const [showNotifications, setShowNotifications] = useState(false);
 
@@ -99,11 +99,17 @@ export function Header() {
                                     </div>
                                 </div>
                                 <div className="py-2">
-                                    <button className="w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center gap-3">
+                                    <button 
+                                        className="w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center gap-3"
+                                        onClick={() => onNavigate && onNavigate('profile')}
+                                    >
                                         <User className="w-4 h-4" />
                                         Profile
                                     </button>
-                                    <button className="w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center gap-3">
+                                    <button 
+                                        className="w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center gap-3"
+                                        onClick={() => onNavigate && onNavigate('settings')}
+                                    >
                                         <Settings className="w-4 h-4" />
                                         Settings
                                     </button>

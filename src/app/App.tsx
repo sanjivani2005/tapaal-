@@ -13,6 +13,8 @@ import { AIAssistant } from './components/AIAssistant'
 import { EditMail } from './pages/mail-edit/EditMail'
 import { MailDetail } from './pages/mail-detail/MailDetail'
 import { CreateInwardMail } from './pages/inward/CreateInwardMail'
+import { Profile } from './pages/profile/Profile'
+import { Settings } from './pages/settings/Settings'
 
 export default function App() {
   const [currentPage, setCurrentPage] = useState('dashboard')
@@ -60,6 +62,10 @@ export default function App() {
         return <Departments />
       case 'tracking':
         return <Tracking />
+      case 'profile':
+        return <Profile />
+      case 'settings':
+        return <Settings />
       default:
         return <Dashboard />
     }
@@ -69,7 +75,7 @@ export default function App() {
     <div className="flex h-screen bg-gray-50 overflow-hidden">
       <Sidebar currentPage={currentPage} onNavigate={handleNavigate} />
       <div className="flex-1 flex flex-col overflow-hidden">
-        <Header />
+        <Header onNavigate={handleNavigate} />
         <main className="flex-1 overflow-y-auto">
           {renderPage()}
         </main>

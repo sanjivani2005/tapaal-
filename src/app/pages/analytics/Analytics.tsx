@@ -79,11 +79,11 @@ export default function Analytics() {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                 {performanceMetrics.map((metric) => (
                     <Card key={metric.title} className="shadow-sm border-gray-200/60">
-                        <CardContent className="p-4">
+                        <CardContent className="p-4 pt-8">
                             <div className="flex items-center justify-between">
-                                <div>
-                                    <p className="text-sm text-gray-600">{metric.title}</p>
-                                    <p className="text-2xl font-bold text-gray-900">{metric.value}</p>
+                                <div className="mt-4">
+                                    <p className="text-base font-medium text-gray-600">{metric.title}</p>
+                                    <p className="text-base font-bold text-gray-900">{metric.value}</p>
                                     <div className="flex items-center gap-1 mt-2">
                                         {metric.isPositive ? <TrendingUp className="w-4 h-4 text-green-500" /> : <TrendingDown className="w-4 h-4 text-red-500" />}
                                         <span className={cn("text-sm font-bold", metric.isPositive ? "text-green-600" : "text-red-600")}>

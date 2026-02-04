@@ -247,18 +247,6 @@ export function Tracking() {
           </Table>
         </div>
 
-        <div className="flex items-center justify-between mt-4">
-          <p className="text-sm text-gray-500">
-            Showing {filteredTracking.length} of {trackingHistory.length} entries
-          </p>
-          <div className="flex gap-2">
-            <Button variant="outline" size="sm" disabled>Previous</Button>
-            <Button variant="outline" size="sm" className="bg-blue-600 text-white">1</Button>
-            <Button variant="outline" size="sm">2</Button>
-            <Button variant="outline" size="sm">Next</Button>
-          </div>
-        </div>
-
         {/* Timeline Modal */}
         {selectedTracking && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
