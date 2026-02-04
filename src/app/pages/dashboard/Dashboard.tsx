@@ -164,15 +164,6 @@ export function Dashboard() {
           <p className="text-gray-500 mt-1 font-medium">Real-time status of Tapaal mail flow.</p>
         </div>
         <div className="flex items-center gap-3">
-          <button
-            onClick={handleAddSampleData}
-            disabled={isLoading}
-            className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-          >
-            <Database className="w-4 h-4" />
-            <Plus className="w-4 h-4" />
-            {isLoading ? 'Adding Data...' : 'Add Sample Data'}
-          </button>
           <span className="flex items-center gap-2 text-xs font-bold text-gray-400 uppercase tracking-widest">
             <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
             Live Feed
