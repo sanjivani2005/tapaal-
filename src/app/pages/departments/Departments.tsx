@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Search, Plus, Pencil, Trash2 } from 'lucide-react';
 import { Card } from '../../components/ui/card';
 import { Input } from '../../components/ui/input';
@@ -16,6 +17,7 @@ import { EditDepartment } from './EditDepartment';
 import { dataService } from '../../services/data-service';
 
 export function Departments() {
+  const { t } = useTranslation();
   const [searchTerm, setSearchTerm] = useState('');
   const [showCreateForm, setShowCreateForm] = useState(false);
   const [showEditForm, setShowEditForm] = useState(false);
@@ -32,7 +34,7 @@ export function Departments() {
       setLoading(true);
       const response = await dataService.getDepartments();
       const apiData = response.data || [];
-      
+
       // If API returns data, use it. Otherwise, use mock data
       if (apiData.length > 0) {
         setDepartments(apiData);
@@ -215,12 +217,12 @@ export function Departments() {
         <div className="p-6 space-y-6">
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-2xl font-semibold text-gray-800">Departments</h1>
-              <p className="text-gray-500 text-sm mt-1">Manage organizational departments</p>
+              <h1 className="text-2xl font-semibold text-gray-800">{t('departments.title')}</h1>
+              <p className="text-gray-500 text-sm mt-1">{t('departments.subtitle')}</p>
             </div>
             <Button className="bg-blue-600 hover:bg-blue-700" onClick={() => setShowCreateForm(true)}>
               <Plus className="w-4 h-4 mr-2" />
-              New Department
+              {t('common.new')} {t('departments.newDepartment')}
             </Button>
           </div>
 
@@ -229,7 +231,7 @@ export function Departments() {
               <div className="relative max-w-md">
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
                 <Input
-                  placeholder="Search departments..."
+                  placeholder={t('departments.searchPlaceholder')}
                   className="pl-10"
                   value={searchTerm}
                   onChange={(e: React.ChangeEvent<HTMLInputElement>) => setSearchTerm(e.target.value)}
@@ -249,7 +251,7 @@ export function Departments() {
                 <div className="flex items-center justify-center py-12">
                   <div className="text-center">
                     <p className="text-gray-500 mb-4">
-                      {searchTerm ? 'No departments found matching your search.' : 'No departments found.'}
+                      {searchTerm ? t('departments.noDepartmentsFound') : t('departments.noDepartments')}
                     </p>
                     {!searchTerm && (
                       <Button
@@ -257,7 +259,7 @@ export function Departments() {
                         onClick={() => setShowCreateForm(true)}
                       >
                         <Plus className="w-4 h-4 mr-2" />
-                        Create First Department
+                        {t('departments.createFirstDepartment')}
                       </Button>
                     )}
                   </div>
@@ -266,11 +268,11 @@ export function Departments() {
                 <Table>
                   <TableHeader>
                     <TableRow className="bg-gray-50">
-                      <TableHead className="font-semibold">Department ID</TableHead>
-                      <TableHead className="font-semibold">Department Name</TableHead>
-                      <TableHead className="font-semibold">Code</TableHead>
-                      <TableHead className="font-semibold">Head</TableHead>
-                      <TableHead className="font-semibold text-right">Actions</TableHead>
+                      <TableHead className="font-semibold">{t('departments.departmentId')}</TableHead>
+                      <TableHead className="font-semibold">{t('departments.departmentName')}</TableHead>
+                      <TableHead className="font-semibold">{t('departments.code')}</TableHead>
+                      <TableHead className="font-semibold">{t('departments.head')}</TableHead>
+                      <TableHead className="font-semibold text-right">{t('common.actions')}</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>

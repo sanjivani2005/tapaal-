@@ -1,14 +1,17 @@
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Bell, ChevronDown, User, LogOut, Settings } from 'lucide-react';
+import { LanguageSwitcher } from '../components/LanguageSwitcher';
 
 export function Header({ onNavigate }: { onNavigate?: (page: string) => void }) {
+    const { t } = useTranslation();
     const [showUserMenu, setShowUserMenu] = useState(false);
     const [showNotifications, setShowNotifications] = useState(false);
 
     const notifications = [
-        { id: 1, text: 'New inward mail assigned to you', time: '5 mins ago', read: false },
-        { id: 2, text: 'Mail status updated to In Progress', time: '15 mins ago', read: false },
-        { id: 3, text: 'Department meeting scheduled', time: '1 hour ago', read: true },
+        { id: 1, text: t('header.newInwardMail'), time: '5 mins ago', read: false },
+        { id: 2, text: t('header.mailStatusUpdated'), time: '15 mins ago', read: false },
+        { id: 3, text: t('header.departmentMeeting'), time: '1 hour ago', read: true },
     ];
 
     const unreadCount = notifications.filter(n => !n.read).length;
@@ -16,8 +19,11 @@ export function Header({ onNavigate }: { onNavigate?: (page: string) => void }) 
     return (
         <header className="bg-white border-b border-gray-200 px-6 py-4 shadow-sm">
             <div className="flex items-center justify-between">
-                <h2 className="text-lg font-semibold text-gray-800">Dashboard</h2>
+                <h2 className="text-lg font-semibold text-gray-800">{t('navigation.dashboard')}</h2>
                 <div className="flex items-center gap-4">
+                    {/* Language Switcher */}
+                    <LanguageSwitcher />
+
                     {/* Notifications */}
                     <div className="relative">
                         <button
@@ -36,8 +42,8 @@ export function Header({ onNavigate }: { onNavigate?: (page: string) => void }) 
                         {showNotifications && (
                             <div className="absolute right-0 mt-2 w-80 bg-white rounded-lg shadow-lg border border-gray-200 z-50">
                                 <div className="p-4 border-b border-gray-200">
-                                    <h3 className="font-semibold text-gray-800">Notifications</h3>
-                                    <p className="text-sm text-gray-500">You have {unreadCount} unread notifications</p>
+                                    <h3 className="font-semibold text-gray-800">{t('header.notifications')}</h3>
+                                    <p className="text-sm text-gray-500">{t('header.unreadNotifications', { count: unreadCount })}</p>
                                 </div>
                                 <div className="max-h-96 overflow-y-auto">
                                     {notifications.map((notification) => (
@@ -62,7 +68,7 @@ export function Header({ onNavigate }: { onNavigate?: (page: string) => void }) 
                                 </div>
                                 <div className="p-3 border-t border-gray-200">
                                     <button className="text-sm text-blue-600 hover:text-blue-700 font-medium w-full text-center">
-                                        Mark all as read
+                                        {t('header.markAllAsRead')}
                                     </button>
                                 </div>
                             </div>
@@ -93,30 +99,30 @@ export function Header({ onNavigate }: { onNavigate?: (page: string) => void }) 
                                             SA
                                         </div>
                                         <div>
-                                            <p className="font-medium text-gray-800">System Admin</p>
+                                            <p className="font-medium text-gray-800">{t('header.systemAdmin')}</p>
                                             <p className="text-sm text-gray-500">admin@tapaal.com</p>
                                         </div>
                                     </div>
                                 </div>
                                 <div className="py-2">
-                                    <button 
+                                    <button
                                         className="w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center gap-3"
                                         onClick={() => onNavigate && onNavigate('profile')}
                                     >
                                         <User className="w-4 h-4" />
-                                        Profile
+                                        {t('common.profile')}
                                     </button>
-                                    <button 
+                                    <button
                                         className="w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center gap-3"
                                         onClick={() => onNavigate && onNavigate('settings')}
                                     >
                                         <Settings className="w-4 h-4" />
-                                        Settings
+                                        {t('navigation.settings')}
                                     </button>
                                     <div className="border-t border-gray-200 my-2"></div>
                                     <button className="w-full px-4 py-2 text-sm text-red-600 hover:bg-red-50 flex items-center gap-3">
                                         <LogOut className="w-4 h-4" />
-                                        Logout
+                                        {t('common.logout')}
                                     </button>
                                 </div>
                             </div>

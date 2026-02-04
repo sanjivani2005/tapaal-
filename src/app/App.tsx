@@ -13,6 +13,7 @@ import { AIAssistant } from './components/AIAssistant'
 import { EditMail } from './pages/mail-edit/EditMail'
 import { MailDetail } from './pages/mail-detail/MailDetail'
 import { CreateInwardMail } from './pages/inward/CreateInwardMail'
+import { CreateOutwardMail } from './pages/outward/CreateOutwardMail'
 import { Profile } from './pages/profile/Profile'
 import { Settings } from './pages/settings/Settings'
 
@@ -21,17 +22,23 @@ export default function App() {
   const [selectedMail, setSelectedMail] = useState<Mail | null>(null)
   const [editingMail, setEditingMail] = useState<Mail | null>(null)
   const [creatingInwardMail, setCreatingInwardMail] = useState(false)
+  const [creatingOutwardMail, setCreatingOutwardMail] = useState(false)
 
   // Handle page navigation - reset detail/edit views when navigating
   const handleNavigate = (page: string) => {
     setSelectedMail(null)
     setEditingMail(null)
     setCreatingInwardMail(false)
+    setCreatingOutwardMail(false)
     setCurrentPage(page)
   }
 
   const handleCreateInwardMail = () => {
     setCreatingInwardMail(true)
+  }
+
+  const handleCreateOutwardMail = () => {
+    setCreatingOutwardMail(true)
   }
 
   const renderPage = () => {
@@ -47,6 +54,10 @@ export default function App() {
       return <CreateInwardMail onBack={() => setCreatingInwardMail(false)} />
     }
 
+    if (creatingOutwardMail) {
+      return <CreateOutwardMail onBack={() => setCreatingOutwardMail(false)} />
+    }
+
     switch (currentPage) {
       case 'dashboard':
         return <Dashboard />
@@ -55,7 +66,7 @@ export default function App() {
       case 'inward':
         return <InwardMails onViewMail={setSelectedMail} onEditMail={setEditingMail} onCreateMail={handleCreateInwardMail} />
       case 'outward':
-        return <OutwardMails onViewMail={setSelectedMail} onEditMail={setEditingMail} />
+        return <OutwardMails onViewMail={setSelectedMail} onEditMail={setEditingMail} onCreateMail={handleCreateOutwardMail} />
       case 'users':
         return <Users />
       case 'departments':

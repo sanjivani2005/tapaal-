@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 import { Search, Filter, Plus, Pencil, Trash2 } from 'lucide-react';
 
 // Primitive UI Imports
@@ -67,6 +68,7 @@ const UserStatusBadge = ({ status }: { status: User['status'] }) => (
 // --- Main Component ---
 
 export function Users() {
+  const { t } = useTranslation();
   const [searchTerm, setSearchTerm] = React.useState('');
   const [roleFilter, setRoleFilter] = React.useState('all');
   const [deptFilter, setDeptFilter] = React.useState('all');
@@ -96,12 +98,12 @@ export function Users() {
           {/* Page Header */}
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div>
-              <h1 className="text-3xl font-bold text-gray-900 tracking-tight">User Management</h1>
-              <p className="text-gray-500 font-medium">Configure administrative access and department roles.</p>
+              <h1 className="text-3xl font-bold text-gray-900 tracking-tight">{t('users.title')}</h1>
+              <p className="text-gray-500 font-medium">{t('users.subtitle')}</p>
             </div>
             <Button className="bg-blue-600 hover:bg-blue-700 shadow-sm" onClick={() => setShowCreateForm(true)}>
               <Plus className="w-4 h-4 mr-2" />
-              Add New User
+              {t('users.addNewUser')}
             </Button>
           </div>
 
@@ -111,7 +113,7 @@ export function Users() {
               <div className="flex-1 relative">
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
                 <Input
-                  placeholder="Search by name or email..."
+                  placeholder={t('users.searchPlaceholder')}
                   className="pl-10"
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
@@ -119,48 +121,48 @@ export function Users() {
               </div>
 
               <div className="w-48">
-                <label className="text-sm font-medium text-gray-700 mb-1 block">Role</label>
+                <label className="text-sm font-medium text-gray-700 mb-1 block">{t('users.role')}</label>
                 <Select value={roleFilter} onValueChange={setRoleFilter}>
                   <SelectTrigger>
-                    <SelectValue placeholder="All Roles" />
+                    <SelectValue placeholder={t('users.allRoles')} />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="all">All Roles</SelectItem>
-                    <SelectItem value="Admin">Admin</SelectItem>
-                    <SelectItem value="HOD">HOD</SelectItem>
-                    <SelectItem value="Clerk">Clerk</SelectItem>
-                    <SelectItem value="Officer">Officer</SelectItem>
+                    <SelectItem value="all">{t('users.allRoles')}</SelectItem>
+                    <SelectItem value="Admin">{t('users.admin')}</SelectItem>
+                    <SelectItem value="HOD">{t('users.hod')}</SelectItem>
+                    <SelectItem value="Clerk">{t('users.clerk')}</SelectItem>
+                    <SelectItem value="Officer">{t('users.officer')}</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
 
               <div className="w-48">
-                <label className="text-sm font-medium text-gray-700 mb-1 block">Department</label>
+                <label className="text-sm font-medium text-gray-700 mb-1 block">{t('users.department')}</label>
                 <Select value={deptFilter} onValueChange={setDeptFilter}>
                   <SelectTrigger>
-                    <SelectValue placeholder="All Departments" />
+                    <SelectValue placeholder={t('users.allDepartments')} />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="all">All Departments</SelectItem>
-                    <SelectItem value="Administration">Administration</SelectItem>
-                    <SelectItem value="Finance">Finance</SelectItem>
-                    <SelectItem value="HR">HR</SelectItem>
-                    <SelectItem value="IT">IT</SelectItem>
-                    <SelectItem value="Operations">Operations</SelectItem>
+                    <SelectItem value="all">{t('users.allDepartments')}</SelectItem>
+                    <SelectItem value="Administration">{t('users.administration')}</SelectItem>
+                    <SelectItem value="Finance">{t('users.finance')}</SelectItem>
+                    <SelectItem value="HR">{t('users.hr')}</SelectItem>
+                    <SelectItem value="IT">{t('users.it')}</SelectItem>
+                    <SelectItem value="Operations">{t('users.operations')}</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
 
               <div className="w-48">
-                <label className="text-sm font-medium text-gray-700 mb-1 block">Status</label>
+                <label className="text-sm font-medium text-gray-700 mb-1 block">{t('users.status')}</label>
                 <Select value={statusFilter} onValueChange={setStatusFilter}>
                   <SelectTrigger>
-                    <SelectValue placeholder="All Status" />
+                    <SelectValue placeholder={t('users.allStatus')} />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="all">All Status</SelectItem>
-                    <SelectItem value="Active">Active</SelectItem>
-                    <SelectItem value="Inactive">Inactive</SelectItem>
+                    <SelectItem value="all">{t('users.allStatus')}</SelectItem>
+                    <SelectItem value="Active">{t('users.active')}</SelectItem>
+                    <SelectItem value="Inactive">{t('users.inactive')}</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -171,7 +173,7 @@ export function Users() {
                 setDeptFilter('all');
                 setStatusFilter('all');
               }}>
-                Clear
+                {t('common.clear')}
               </Button>
             </div>
           </Card>
@@ -181,11 +183,11 @@ export function Users() {
             <Table>
               <TableHeader>
                 <TableRow className="hover:bg-transparent bg-gray-50/50">
-                  <TableHead className="font-bold text-gray-600">User Details</TableHead>
-                  <TableHead className="font-bold text-gray-600">Role</TableHead>
-                  <TableHead className="font-bold text-gray-600">Department</TableHead>
-                  <TableHead className="font-bold text-gray-600">Status</TableHead>
-                  <TableHead className="font-bold text-gray-600 text-right">Actions</TableHead>
+                  <TableHead className="font-bold text-gray-600">{t('users.userDetails')}</TableHead>
+                  <TableHead className="font-bold text-gray-600">{t('users.role')}</TableHead>
+                  <TableHead className="font-bold text-gray-600">{t('users.department')}</TableHead>
+                  <TableHead className="font-bold text-gray-600">{t('users.status')}</TableHead>
+                  <TableHead className="font-bold text-gray-600 text-right">{t('common.actions')}</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -205,11 +207,11 @@ export function Users() {
                         <div className="flex justify-end gap-2">
                           <Button variant="ghost" size="sm" className="text-blue-600 hover:bg-blue-50">
                             <Pencil className="w-4 h-4 mr-1" />
-                            Edit
+                            {t('common.edit')}
                           </Button>
                           <Button variant="ghost" size="sm" className="text-red-600 hover:bg-red-50">
                             <Trash2 className="w-4 h-4 mr-1" />
-                            Delete
+                            {t('common.delete')}
                           </Button>
                         </div>
                       </TableCell>
@@ -218,7 +220,7 @@ export function Users() {
                 ) : (
                   <TableRow>
                     <TableCell colSpan={5} className="h-32 text-center text-gray-400">
-                      No users found matching your filters.
+                      {t('users.noUsersFound')}
                     </TableCell>
                   </TableRow>
                 )}

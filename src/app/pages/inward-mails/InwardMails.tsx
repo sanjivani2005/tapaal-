@@ -1,5 +1,6 @@
 import { useState } from 'react';
-import { Search, Filter, Plus, Pencil, Trash2, Eye, Download, Clock, AlertCircle } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
+import { Search, Plus, Pencil, Trash2, Eye, AlertCircle } from 'lucide-react';
 import { Card } from '../../components/ui/card';
 import { Input } from '../../components/ui/input';
 import { Button } from '../../components/ui/button';
@@ -88,7 +89,14 @@ const getStatusBadge = (status: string) => {
   return variants[status] || 'bg-gray-100 text-gray-700';
 };
 
-export function InwardMails() {
+interface InwardMailsProps {
+  onViewMail?: (mail: any) => void;
+  onEditMail?: (mail: any) => void;
+  onCreateMail?: () => void;
+}
+
+export function InwardMails({ onViewMail, onEditMail, onCreateMail }: InwardMailsProps) {
+  const { t } = useTranslation();
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedPriority, setSelectedPriority] = useState('all');
   const [selectedStatus, setSelectedStatus] = useState('all');
@@ -109,12 +117,12 @@ export function InwardMails() {
     <div className="p-6 space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-semibold text-gray-800">Inward Listing</h1>
-          <p className="text-gray-500 text-sm mt-1">Manage all incoming correspondence</p>
+          <h1 className="text-2xl font-semibold text-gray-800">{t('inwardMails.title')}</h1>
+          <p className="text-gray-500 text-sm mt-1">{t('inwardMails.subtitle')}</p>
         </div>
-        <Button className="bg-green-600 hover:bg-green-700">
+        <Button className="bg-green-600 hover:bg-green-700" onClick={onCreateMail}>
           <Plus className="w-4 h-4 mr-2" />
-          Add Inward
+          {t('common.add')} {t('inwardMails.addInward')}
         </Button>
       </div>
 
@@ -122,11 +130,11 @@ export function InwardMails() {
       <Card className="p-6">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
           <div className="md:col-span-1 relative">
-            <label className="text-sm font-medium text-gray-700 mb-1 block">Search</label>
+            <label className="text-sm font-medium text-gray-700 mb-1 block">{t('common.search')}</label>
             <div className="relative">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
               <Input
-                placeholder="Search ID or Sender..."
+                placeholder={t('inwardMails.searchPlaceholder')}
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className="pl-10"
@@ -135,13 +143,13 @@ export function InwardMails() {
           </div>
 
           <div className="">
-            <label className="text-sm font-medium text-gray-700 mb-1 block">Priority</label>
+            <label className="text-sm font-medium text-gray-700 mb-1 block">{t('common.priority')}</label>
             <Select value={selectedPriority} onValueChange={setSelectedPriority}>
               <SelectTrigger>
-                <SelectValue placeholder="Priority" />
+                <SelectValue placeholder={t('filters.selectPriority')} />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all">All Priorities</SelectItem>
+                <SelectItem value="all">{t('filters.allPriorities')}</SelectItem>
                 <SelectItem value="Important">Important</SelectItem>
                 <SelectItem value="High">High</SelectItem>
                 <SelectItem value="Medium">Medium</SelectItem>
@@ -151,13 +159,13 @@ export function InwardMails() {
           </div>
 
           <div className="">
-            <label className="text-sm font-medium text-gray-700 mb-1 block">Department</label>
+            <label className="text-sm font-medium text-gray-700 mb-1 block">{t('common.department')}</label>
             <Select value={selectedDepartment} onValueChange={setSelectedDepartment}>
               <SelectTrigger>
-                <SelectValue placeholder="Department" />
+                <SelectValue placeholder={t('filters.selectDepartment')} />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all">All Departments</SelectItem>
+                <SelectItem value="all">{t('filters.allDepartments')}</SelectItem>
                 <SelectItem value="Finance">Finance</SelectItem>
                 <SelectItem value="Accounts">Accounts</SelectItem>
                 <SelectItem value="Legal">Legal</SelectItem>
@@ -167,13 +175,13 @@ export function InwardMails() {
           </div>
 
           <div className="">
-            <label className="text-sm font-medium text-gray-700 mb-1 block">Status</label>
+            <label className="text-sm font-medium text-gray-700 mb-1 block">{t('common.status')}</label>
             <Select value={selectedStatus} onValueChange={setSelectedStatus}>
               <SelectTrigger>
-                <SelectValue placeholder="Status" />
+                <SelectValue placeholder={t('filters.selectStatus')} />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all">All Status</SelectItem>
+                <SelectItem value="all">{t('filters.allStatus')}</SelectItem>
                 <SelectItem value="pending">Pending</SelectItem>
                 <SelectItem value="approved">Approved</SelectItem>
                 <SelectItem value="waiting">Waiting</SelectItem>
@@ -190,14 +198,14 @@ export function InwardMails() {
           <Table>
             <TableHeader>
               <TableRow className="bg-gray-50">
-                <TableHead className="w-[120px]">Inward Id</TableHead>
-                <TableHead>Received By</TableHead>
-                <TableHead>Sender</TableHead>
-                <TableHead>Date</TableHead>
-                <TableHead>Mode</TableHead>
-                <TableHead className="max-w-[200px]">Details</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead className="text-right">Actions</TableHead>
+                <TableHead className="w-[120px]">{t('inwardMails.inwardId')}</TableHead>
+                <TableHead>{t('inwardMails.receivedBy')}</TableHead>
+                <TableHead>{t('inwardMails.sender')}</TableHead>
+                <TableHead>{t('common.date')}</TableHead>
+                <TableHead>{t('inwardMails.mode')}</TableHead>
+                <TableHead className="max-w-[200px]">{t('inwardMails.details')}</TableHead>
+                <TableHead>{t('common.status')}</TableHead>
+                <TableHead className="text-right">{t('common.actions')}</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -243,14 +251,14 @@ export function InwardMails() {
 
         <div className="flex items-center justify-between">
           <p className="text-sm text-gray-500">
-            Showing {filteredMails.length} of {inwardMails.length} entries
+            {t('common.showing')} {filteredMails.length} {t('common.of')} {inwardMails.length} {t('common.entries')}
           </p>
           <div className="flex gap-2">
-            <Button variant="outline" size="sm" disabled>Previous</Button>
+            <Button variant="outline" size="sm" disabled>{t('common.previous')}</Button>
             <Button variant="outline" size="sm" className="bg-blue-600 text-white">1</Button>
             <Button variant="outline" size="sm">2</Button>
             <Button variant="outline" size="sm">3</Button>
-            <Button variant="outline" size="sm">Next</Button>
+            <Button variant="outline" size="sm">{t('common.next')}</Button>
           </div>
         </div>
       </Card>

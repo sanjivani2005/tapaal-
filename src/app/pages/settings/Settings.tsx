@@ -1,15 +1,16 @@
 import React, { useState } from 'react';
-import { 
-  Settings as SettingsIcon, 
-  Database, 
-  Mail, 
-  Shield, 
-  Bell, 
-  Globe, 
-  Palette, 
-  Users, 
-  Clock, 
-  Download, 
+import { useTranslation } from 'react-i18next';
+import {
+  Settings as SettingsIcon,
+  Database,
+  Mail,
+  Shield,
+  Bell,
+  Globe,
+  Palette,
+  Users,
+  Clock,
+  Download,
   Upload,
   Save,
   RefreshCw,
@@ -23,9 +24,10 @@ import { Input } from '../../components/ui/input';
 import { Badge } from '../../components/ui/badge';
 
 export function Settings() {
+  const { t } = useTranslation();
   const [activeTab, setActiveTab] = useState('general');
   const [saving, setSaving] = useState(false);
-  
+
   const [settings, setSettings] = useState({
     general: {
       siteName: 'Tapaal Management System',
@@ -116,20 +118,20 @@ export function Settings() {
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Globe className="w-5 h-5" />
-            Basic Settings
+            {t('settings.basicSettings')}
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Site Name</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">{t('settings.siteName')}</label>
               <Input
                 value={tempSettings.general.siteName}
                 onChange={(e) => handleInputChange('general', 'siteName', e.target.value)}
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Admin Email</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">{t('settings.adminEmail')}</label>
               <Input
                 type="email"
                 value={tempSettings.general.adminEmail}
@@ -137,7 +139,7 @@ export function Settings() {
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Timezone</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">{t('settings.timezone')}</label>
               <select
                 value={tempSettings.general.timezone}
                 onChange={(e) => handleInputChange('general', 'timezone', e.target.value)}
@@ -592,15 +594,13 @@ export function Settings() {
                     {key === 'weeklyReports' && 'Send weekly summary reports'}
                   </p>
                 </div>
-                <button 
-                  className={`relative inline-flex h-6 w-11 items-center rounded-full ${
-                    value ? 'bg-blue-600' : 'bg-gray-200'
-                  }`}
+                <button
+                  className={`relative inline-flex h-6 w-11 items-center rounded-full ${value ? 'bg-blue-600' : 'bg-gray-200'
+                    }`}
                   onClick={() => handleInputChange('notifications', key, !value)}
                 >
-                  <span className={`inline-block h-4 w-4 transform rounded-full bg-white transition ${
-                    value ? 'translate-x-6' : 'translate-x-1'
-                  }`}></span>
+                  <span className={`inline-block h-4 w-4 transform rounded-full bg-white transition ${value ? 'translate-x-6' : 'translate-x-1'
+                    }`}></span>
                 </button>
               </label>
             ))}
@@ -611,24 +611,24 @@ export function Settings() {
   );
 
   const tabs = [
-    { id: 'general', label: 'General', icon: SettingsIcon },
-    { id: 'email', label: 'Email', icon: Mail },
-    { id: 'security', label: 'Security', icon: Shield },
-    { id: 'system', label: 'System', icon: Database },
-    { id: 'notifications', label: 'Notifications', icon: Bell }
+    { id: 'general', label: t('settings.general'), icon: SettingsIcon },
+    { id: 'email', label: t('settings.email'), icon: Mail },
+    { id: 'security', label: t('settings.security'), icon: Shield },
+    { id: 'system', label: t('settings.system'), icon: Database },
+    { id: 'notifications', label: t('settings.notifications'), icon: Bell }
   ];
 
   return (
     <div className="p-6 space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Settings</h1>
-          <p className="text-gray-500">Configure system settings and preferences</p>
+          <h1 className="text-2xl font-bold text-gray-900">{t('settings.title')}</h1>
+          <p className="text-gray-500">{t('settings.subtitle')}</p>
         </div>
         <div className="flex gap-3">
           <Button variant="outline" onClick={handleReset}>
             <RefreshCw className="w-4 h-4 mr-2" />
-            Reset
+            {t('common.reset')}
           </Button>
           <Button onClick={handleSave} disabled={saving}>
             {saving ? (
@@ -636,7 +636,7 @@ export function Settings() {
             ) : (
               <Save className="w-4 h-4 mr-2" />
             )}
-            {saving ? 'Saving...' : 'Save Changes'}
+            {saving ? t('settings.saving') : t('settings.saveChanges')}
           </Button>
         </div>
       </div>
@@ -653,11 +653,10 @@ export function Settings() {
                     <button
                       key={tab.id}
                       onClick={() => handleTabChange(tab.id)}
-                      className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
-                        activeTab === tab.id
-                          ? 'bg-blue-50 text-blue-700 border-r-2 border-blue-700'
-                          : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
-                      }`}
+                      className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${activeTab === tab.id
+                        ? 'bg-blue-50 text-blue-700 border-r-2 border-blue-700'
+                        : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
+                        }`}
                     >
                       <Icon className="w-4 h-4" />
                       {tab.label}

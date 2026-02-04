@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
@@ -26,6 +27,7 @@ interface AIAssistantProps {
 export const AIAssistant: React.FC<AIAssistantProps> = ({
     dashboardData
 }) => {
+    const { t, i18n } = useTranslation();
     const [isOpen, setIsOpen] = useState(false);
     const [isMinimized, setIsMinimized] = useState(false);
     const [message, setMessage] = useState('');
@@ -45,6 +47,7 @@ export const AIAssistant: React.FC<AIAssistantProps> = ({
         // Complete system data integration
         const lowerMessage = userMessage.toLowerCase();
         const systemData = systemDataService.getSystemOverview();
+        const currentLang = i18n.language;
 
         // Check for specific mail ID queries first
         if (lowerMessage.includes('inw-') || lowerMessage.includes('out-') || lowerMessage.includes('trk-')) {
@@ -156,13 +159,29 @@ Please check the ID and try again.`,
 
         if (lowerMessage.includes('hello') || lowerMessage.includes('hi') || lowerMessage.includes('namaste')) {
             const currentTime = new Date().toLocaleTimeString();
-            return {
-                text: `👋 Namaste! Main aapka AI Assistant hun. Current time: ${currentTime}
+            const greetingText = currentLang === 'hi' ?
+                `👋 नमस्ते! मैं आपका AI Assistant हूं। Current time: ${currentTime}
 
 System Status: ✅ All modules active
 Total Data: ${systemData.totalInwardMails + systemData.totalOutwardMails} mails, ${systemData.totalUsers} users, ${systemData.totalDepartments} departments
 
-How can I help you? Try "Show statistics", "INW-2024-001", "Users list", etc!`,
+मैं आपकी क्या मदद कर सकता हूं? Try "Show statistics", "INW-2024-001", "Users list", etc!` :
+                currentLang === 'mr' ?
+                    `👋 नमस्कार! मी तुमचा AI Assistant आहे. Current time: ${currentTime}
+
+System Status: ✅ All modules active
+Total Data: ${systemData.totalInwardMails + systemData.totalOutwardMails} mails, ${systemData.totalUsers} users, ${systemData.totalDepartments} departments
+
+मी तुमची काय मदद करू शकतो? Try "Show statistics", "INW-2024-001", "Users list", etc!` :
+                    `👋 Hello! I'm your AI Assistant. Current time: ${currentTime}
+
+System Status: ✅ All modules active
+Total Data: ${systemData.totalInwardMails + systemData.totalOutwardMails} mails, ${systemData.totalUsers} users, ${systemData.totalDepartments} departments
+
+How can I help you? Try "Show statistics", "INW-2024-001", "Users list", etc!`;
+
+            return {
+                text: greetingText,
                 action: 'greeting'
             };
         }
@@ -204,7 +223,9 @@ Need more details? Ask "Show all inward mails" or "Inward mail status"`,
                 };
             } else {
                 return {
-                    text: "📥 No inward mails found in the system.",
+                    text: currentLang === 'hi' ? "📥 सिस्टम में कोई इनवर्ड मेल नहीं मिले।" :
+                        currentLang === 'mr' ? "📥 प्रणालीत कोणतेही अंतर्गत पत्रे आढळली नाहीत." :
+                            "📥 No inward mails found in the system.",
                     action: 'no_inward_mails'
                 };
             }
@@ -569,10 +590,10 @@ What specific information would you like? I can provide complete system data!`,
     };
 
     const quickActions = [
-        { icon: BarChart3, label: 'Statistics', message: 'Show statistics' },
-        { icon: Mail, label: 'Track Mail', message: 'Track mail status' },
-        { icon: Users, label: 'Users', message: 'Show user info' },
-        { icon: HelpCircle, label: 'Help', message: 'Help me' }
+        { icon: BarChart3, label: t('aiAssistant.statistics'), message: 'Show statistics' },
+        { icon: Mail, label: t('aiAssistant.trackMail'), message: 'Track mail status' },
+        { icon: Users, label: t('aiAssistant.users'), message: 'Show user info' },
+        { icon: HelpCircle, label: t('aiAssistant.help'), message: 'Help me' }
     ];
 
     const formatMessage = (text: string) => {
@@ -653,15 +674,15 @@ What specific information would you like? I can provide complete system data!`,
                             <div className="flex items-center gap-4">
                                 <span className="bg-green-100 text-green-700 px-2 py-1 rounded-full text-xs font-medium">
                                     <Activity className="w-3 h-3 inline mr-1" />
-                                    Active
+                                    {t('aiAssistant.active')}
                                 </span>
                                 <span className="text-gray-500">
-                                    {conversation.length} messages
+                                    {t('aiAssistant.conversationLength')} {conversation.length} messages
                                 </span>
                             </div>
                             <div className="flex items-center gap-1">
                                 <Brain className="w-3 h-3 text-purple-600" />
-                                <span className="text-gray-600">AI Powered</span>
+                                <span className="text-gray-600">{t('aiAssistant.aiPowered')}</span>
                             </div>
                         </div>
                     </div>
@@ -671,9 +692,9 @@ What specific information would you like? I can provide complete system data!`,
                         {conversation.length === 0 ? (
                             <div className="text-center py-8">
                                 <Bot className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-                                <h3 className="font-semibold text-gray-700 mb-2">AI Assistant Ready!</h3>
+                                <h3 className="font-semibold text-gray-700 mb-2">{t('aiAssistant.ready')}</h3>
                                 <p className="text-sm text-gray-500 mb-4">
-                                    I'm tracking everything in your system. What would you like to know?
+                                    {t('aiAssistant.systemTracking')}
                                 </p>
                                 <div className="grid grid-cols-2 gap-2">
                                     {quickActions.map((action, index) => (
@@ -713,7 +734,7 @@ What specific information would you like? I can provide complete system data!`,
                                                     </div>
                                                     {msg.action && (
                                                         <div className="mt-2 text-xs opacity-75">
-                                                            Action: {msg.action}
+                                                            {t('aiAssistant.action')} {msg.action}
                                                         </div>
                                                     )}
                                                 </div>
@@ -750,7 +771,7 @@ What specific information would you like? I can provide complete system data!`,
                                 value={message}
                                 onChange={(e) => setMessage(e.target.value)}
                                 onKeyPress={handleKeyPress}
-                                placeholder="Ask AI anything..."
+                                placeholder={t('aiAssistant.placeholder')}
                                 className="flex-1"
                                 disabled={isTyping}
                             />

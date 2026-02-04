@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 import { Mail, Send, Users, Clock, ArrowUpRight, ArrowDownRight, Database, Plus } from 'lucide-react';
 
 // UI components
@@ -21,32 +22,7 @@ import { fetchDashboardData, addSampleData } from '../../services/mock-api';
 
 // --- DATA DEFINITIONS ---
 
-// Static fallback data - will be replaced with real database data
-const fallbackSummaryData = [
-  { title: 'Total Inward Mails', value: '0', icon: Mail, color: 'text-blue-600', bgColor: 'bg-blue-50', change: '+0%', isPositive: true },
-  { title: 'Total Outward Mails', value: '0', icon: Send, color: 'text-green-600', bgColor: 'bg-green-50', change: '+0%', isPositive: true },
-  { title: 'Pending Actions', value: '0', icon: Clock, color: 'text-orange-600', bgColor: 'bg-orange-50', change: '+0%', isPositive: false },
-  { title: 'Active Users', value: '0', icon: Users, color: 'text-purple-600', bgColor: 'bg-purple-50', change: '+0', isPositive: true },
-];
-
-const inwardOutwardData = [
-  { name: 'Jan', inward: 120, outward: 80 },
-  { name: 'Feb', inward: 150, outward: 95 },
-  { name: 'Mar', inward: 130, outward: 110 },
-  { name: 'Apr', inward: 180, outward: 125 },
-  { name: 'May', inward: 165, outward: 140 },
-  { name: 'Jun', inward: 195, outward: 155 },
-];
-
-const statusData = [
-  { name: 'Registered', value: 120, color: '#3b82f6' },
-  { name: 'Assigned', value: 85, color: '#f59e0b' },
-  { name: 'In Progress', value: 145, color: '#8b5cf6' },
-  { name: 'Closed', value: 200, color: '#10b981' },
-];
-
 // --- HELPER COMPONENTS ---
-
 const StatusBadge = ({ status }: { status: string }) => {
   const styles: Record<string, string> = {
     'Registered': 'bg-blue-100 text-blue-700 border-blue-200',
@@ -58,8 +34,8 @@ const StatusBadge = ({ status }: { status: string }) => {
 };
 
 // --- MAIN DASHBOARD ---
-
 export function Dashboard() {
+  const { t } = useTranslation();
   const [isLoading, setIsLoading] = React.useState(false);
   const [message, setMessage] = React.useState('');
   const [dbStats, setDbStats] = React.useState({
@@ -69,6 +45,30 @@ export function Dashboard() {
     totalTrackingEvents: 0,
   });
   const [realData, setRealData] = React.useState(null);
+
+  // Static fallback data - will be replaced with real database data
+  const fallbackSummaryData = [
+    { title: t('dashboard.totalInwardMails'), value: '0', icon: Mail, color: 'text-blue-600', bgColor: 'bg-blue-50', change: '+0%', isPositive: true },
+    { title: t('dashboard.totalOutwardMails'), value: '0', icon: Send, color: 'text-green-600', bgColor: 'bg-green-50', change: '+0%', isPositive: true },
+    { title: t('dashboard.pendingActions'), value: '0', icon: Clock, color: 'text-orange-600', bgColor: 'bg-orange-50', change: '+0%', isPositive: false },
+    { title: t('dashboard.activeUsers'), value: '0', icon: Users, color: 'text-purple-600', bgColor: 'bg-purple-50', change: '+0', isPositive: true },
+  ];
+
+  const inwardOutwardData = [
+    { name: 'Jan', inward: 120, outward: 80 },
+    { name: 'Feb', inward: 150, outward: 95 },
+    { name: 'Mar', inward: 130, outward: 110 },
+    { name: 'Apr', inward: 180, outward: 125 },
+    { name: 'May', inward: 165, outward: 140 },
+    { name: 'Jun', inward: 195, outward: 155 },
+  ];
+
+  const statusData = [
+    { name: 'Registered', value: 120, color: '#3b82f6' },
+    { name: 'Assigned', value: 85, color: '#f59e0b' },
+    { name: 'In Progress', value: 145, color: '#8b5cf6' },
+    { name: 'Closed', value: 200, color: '#10b981' },
+  ];
 
   const handleAddSampleData = async () => {
     setIsLoading(true);
@@ -118,7 +118,7 @@ export function Dashboard() {
   // Real-time summary data from database
   const realSummaryData = realData ? [
     {
-      title: 'Total Inward Mails',
+      title: t('dashboard.totalInwardMails'),
       value: realData.stats.totalInwardMails.toString(),
       icon: Mail,
       color: 'text-blue-600',
@@ -127,7 +127,7 @@ export function Dashboard() {
       isPositive: true
     },
     {
-      title: 'Total Outward Mails',
+      title: t('dashboard.totalOutwardMails'),
       value: realData.stats.totalOutwardMails.toString(),
       icon: Send,
       color: 'text-green-600',
@@ -136,7 +136,7 @@ export function Dashboard() {
       isPositive: true
     },
     {
-      title: 'Pending Actions',
+      title: t('dashboard.pendingActions'),
       value: realData.stats.pendingMails.toString(),
       icon: Clock,
       color: 'text-orange-600',
@@ -145,7 +145,7 @@ export function Dashboard() {
       isPositive: false
     },
     {
-      title: 'Active Users',
+      title: t('dashboard.activeUsers'),
       value: realData.stats.totalUsers.toString(),
       icon: Users,
       color: 'text-purple-600',
@@ -160,13 +160,13 @@ export function Dashboard() {
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900 tracking-tight">System Overview</h1>
-          <p className="text-gray-500 mt-1 font-medium">Real-time status of Tapaal mail flow.</p>
+          <h1 className="text-3xl font-bold text-gray-900 tracking-tight">{t('dashboard.title')}</h1>
+          <p className="text-gray-500 mt-1 font-medium">{t('dashboard.subtitle')}</p>
         </div>
         <div className="flex items-center gap-3">
           <span className="flex items-center gap-2 text-xs font-bold text-gray-400 uppercase tracking-widest">
             <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
-            Live Feed
+            {t('dashboard.liveFeed')}
           </span>
         </div>
       </div>
@@ -184,7 +184,7 @@ export function Dashboard() {
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-gray-600">Total Users</p>
+                <p className="text-sm text-gray-600">{t('dashboard.totalUsers')}</p>
                 <p className="text-2xl font-bold text-gray-900">{dbStats.totalUsers}</p>
               </div>
               <Users className="w-8 h-8 text-purple-600" />
@@ -195,7 +195,7 @@ export function Dashboard() {
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-gray-600">Departments</p>
+                <p className="text-sm text-gray-600">{t('dashboard.departments')}</p>
                 <p className="text-2xl font-bold text-gray-900">{dbStats.totalDepartments}</p>
               </div>
               <Database className="w-8 h-8 text-blue-600" />
@@ -206,7 +206,7 @@ export function Dashboard() {
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-gray-600">Total Mails</p>
+                <p className="text-sm text-gray-600">{t('dashboard.totalMails')}</p>
                 <p className="text-2xl font-bold text-gray-900">{dbStats.totalMails}</p>
               </div>
               <Mail className="w-8 h-8 text-green-600" />
@@ -217,7 +217,7 @@ export function Dashboard() {
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-gray-600">Tracking Events</p>
+                <p className="text-sm text-gray-600">{t('dashboard.trackingEvents')}</p>
                 <p className="text-2xl font-bold text-gray-900">{dbStats.totalTrackingEvents}</p>
               </div>
               <Clock className="w-8 h-8 text-orange-600" />
@@ -244,7 +244,7 @@ export function Dashboard() {
                     <span className={cn("text-sm font-bold", item.isPositive ? "text-green-600" : "text-red-600")}>
                       {item.change}
                     </span>
-                    <span className="text-xs text-gray-400 font-medium ml-1">this month</span>
+                    <span className="text-xs text-gray-400 font-medium ml-1">{t('dashboard.thisMonth')}</span>
                   </div>
                 </div>
                 <item.icon className={cn("w-8 h-8", item.color)} />
@@ -258,7 +258,7 @@ export function Dashboard() {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <Card className="lg:col-span-2 shadow-sm border-gray-200/60">
           <CardHeader>
-            <CardTitle>Mail Volume Trends</CardTitle>
+            <CardTitle>{t('dashboard.mailVolumeTrends')}</CardTitle>
           </CardHeader>
           <CardContent>
             <ResponsiveContainer height={320}>
@@ -269,7 +269,7 @@ export function Dashboard() {
 
         <Card className="shadow-sm border-gray-200/60">
           <CardHeader>
-            <CardTitle>Processing Status</CardTitle>
+            <CardTitle>{t('dashboard.statusDistribution')}</CardTitle>
           </CardHeader>
           <CardContent className="flex justify-center">
             <ResponsiveContainer height={320}>
@@ -282,9 +282,9 @@ export function Dashboard() {
       {/* Activity Feed */}
       <Card className="shadow-sm border-gray-200/60">
         <CardHeader className="flex flex-row items-center justify-between border-b border-gray-50 pb-4">
-          <CardTitle className="text-lg">Global Activity Feed</CardTitle>
+          <CardTitle className="text-lg">{t('dashboard.recentActivity')}</CardTitle>
           <button className="text-xs font-bold text-blue-600 hover:text-blue-700 uppercase tracking-wider">
-            Full Audit Log
+            {t('dashboard.fullAuditLog')}
           </button>
         </CardHeader>
         <CardContent className="pt-2">

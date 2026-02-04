@@ -25,7 +25,7 @@ i18n
   .init({
     resources,
     fallbackLng: 'en',
-    debug: true, // Enable debug mode to see what's happening
+    debug: false, // Disable debug mode to prevent showing translation keys
 
     interpolation: {
       escapeValue: false // React already escapes values

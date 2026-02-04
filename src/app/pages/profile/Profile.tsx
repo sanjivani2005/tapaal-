@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { User, Mail, Phone, MapPin, Calendar, Shield, Edit3, Save, X, Camera, Key, Bell, Globe } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '../../components/ui/card';
 import { Button } from '../../components/ui/button';
@@ -6,9 +7,10 @@ import { Input } from '../../components/ui/input';
 import { Badge } from '../../components/ui/badge';
 
 export function Profile() {
+  const { t } = useTranslation();
   const [isEditing, setIsEditing] = useState(false);
   const [activeTab, setActiveTab] = useState('personal');
-  
+
   const [profileData, setProfileData] = useState({
     personal: {
       firstName: 'System',
@@ -69,25 +71,25 @@ export function Profile() {
     <div className="p-6 space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Profile</h1>
-          <p className="text-gray-500">Manage your account settings and preferences</p>
+          <h1 className="text-2xl font-bold text-gray-900">{t('profile.title')}</h1>
+          <p className="text-gray-500">{t('profile.subtitle')}</p>
         </div>
         <div className="flex gap-3">
           {isEditing ? (
             <>
               <Button variant="outline" onClick={handleCancel}>
                 <X className="w-4 h-4 mr-2" />
-                Cancel
+                {t('common.cancel')}
               </Button>
               <Button onClick={handleSave}>
                 <Save className="w-4 h-4 mr-2" />
-                Save Changes
+                {t('profile.saveChanges')}
               </Button>
             </>
           ) : (
             <Button onClick={handleEdit}>
               <Edit3 className="w-4 h-4 mr-2" />
-              Edit Profile
+              {t('profile.editProfile')}
             </Button>
           )}
         </div>
@@ -112,7 +114,7 @@ export function Profile() {
                 </h2>
                 <p className="text-gray-500">{profileData.personal.role}</p>
                 <Badge className="mt-2 bg-green-100 text-green-700">Active</Badge>
-                
+
                 <div className="w-full mt-6 space-y-3">
                   <div className="flex items-center gap-3 text-sm text-gray-600">
                     <Mail className="w-4 h-4" />
@@ -128,7 +130,7 @@ export function Profile() {
                   </div>
                   <div className="flex items-center gap-3 text-sm text-gray-600">
                     <Calendar className="w-4 h-4" />
-                    <span>Joined {profileData.personal.joinDate}</span>
+                    <span>{t('profile.joined')} {profileData.personal.joinDate}</span>
                   </div>
                 </div>
               </div>
@@ -143,33 +145,30 @@ export function Profile() {
             <nav className="flex space-x-8">
               <button
                 onClick={() => setActiveTab('personal')}
-                className={`py-2 px-1 border-b-2 font-medium text-sm ${
-                  activeTab === 'personal'
-                    ? 'border-blue-500 text-blue-600'
-                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-                }`}
+                className={`py-2 px-1 border-b-2 font-medium text-sm ${activeTab === 'personal'
+                  ? 'border-blue-500 text-blue-600'
+                  : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                  }`}
               >
-                Personal Information
+                {t('profile.personalInformation')}
               </button>
               <button
                 onClick={() => setActiveTab('security')}
-                className={`py-2 px-1 border-b-2 font-medium text-sm ${
-                  activeTab === 'security'
-                    ? 'border-blue-500 text-blue-600'
-                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-                }`}
+                className={`py-2 px-1 border-b-2 font-medium text-sm ${activeTab === 'security'
+                  ? 'border-blue-500 text-blue-600'
+                  : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                  }`}
               >
-                Security
+                {t('profile.security')}
               </button>
               <button
                 onClick={() => setActiveTab('notifications')}
-                className={`py-2 px-1 border-b-2 font-medium text-sm ${
-                  activeTab === 'notifications'
-                    ? 'border-blue-500 text-blue-600'
-                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-                }`}
+                className={`py-2 px-1 border-b-2 font-medium text-sm ${activeTab === 'notifications'
+                  ? 'border-blue-500 text-blue-600'
+                  : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                  }`}
               >
-                Notifications
+                {t('profile.notifications')}
               </button>
             </nav>
           </div>
@@ -180,13 +179,13 @@ export function Profile() {
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <User className="w-5 h-5" />
-                  Personal Information
+                  {t('profile.personalInformation')}
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">First Name</label>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">{t('profile.firstName')}</label>
                     <Input
                       value={isEditing ? tempData.firstName : profileData.personal.firstName}
                       onChange={(e) => handleInputChange('firstName', e.target.value)}
@@ -195,7 +194,7 @@ export function Profile() {
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Last Name</label>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">{t('profile.lastName')}</label>
                     <Input
                       value={isEditing ? tempData.lastName : profileData.personal.lastName}
                       onChange={(e) => handleInputChange('lastName', e.target.value)}
@@ -204,7 +203,7 @@ export function Profile() {
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">{t('common.email')}</label>
                     <Input
                       value={isEditing ? tempData.email : profileData.personal.email}
                       onChange={(e) => handleInputChange('email', e.target.value)}
@@ -213,7 +212,7 @@ export function Profile() {
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Phone</label>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">{t('profile.phone')}</label>
                     <Input
                       value={isEditing ? tempData.phone : profileData.personal.phone}
                       onChange={(e) => handleInputChange('phone', e.target.value)}
@@ -222,7 +221,7 @@ export function Profile() {
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Department</label>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">{t('common.department')}</label>
                     <Input
                       value={profileData.personal.department}
                       disabled
@@ -230,7 +229,7 @@ export function Profile() {
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Employee ID</label>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">{t('profile.employeeId')}</label>
                     <Input
                       value={profileData.personal.employeeId}
                       disabled
@@ -239,7 +238,7 @@ export function Profile() {
                   </div>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Location</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">{t('profile.location')}</label>
                   <Input
                     value={isEditing ? tempData.location : profileData.personal.location}
                     onChange={(e) => handleInputChange('location', e.target.value)}
@@ -257,23 +256,23 @@ export function Profile() {
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
                     <Key className="w-5 h-5" />
-                    Change Password
+                    {t('profile.changePassword')}
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Current Password</label>
-                    <Input type="password" placeholder="Enter current password" />
+                    <label className="block text-sm font-medium text-gray-700 mb-1">{t('profile.currentPassword')}</label>
+                    <Input type="password" placeholder={t('profile.enterCurrentPassword')} />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">New Password</label>
-                    <Input type="password" placeholder="Enter new password" />
+                    <label className="block text-sm font-medium text-gray-700 mb-1">{t('profile.newPassword')}</label>
+                    <Input type="password" placeholder={t('profile.enterNewPassword')} />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Confirm New Password</label>
-                    <Input type="password" placeholder="Confirm new password" />
+                    <label className="block text-sm font-medium text-gray-700 mb-1">{t('profile.confirmNewPassword')}</label>
+                    <Input type="password" placeholder={t('profile.confirmNewPassword')} />
                   </div>
-                  <Button>Update Password</Button>
+                  <Button>{t('profile.updatePassword')}</Button>
                 </CardContent>
               </Card>
 
@@ -281,14 +280,14 @@ export function Profile() {
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
                     <Shield className="w-5 h-5" />
-                    Security Settings
+                    {t('profile.security')} Settings
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4">
                   <div className="flex items-center justify-between">
                     <div>
-                      <p className="font-medium text-gray-900">Two-Factor Authentication</p>
-                      <p className="text-sm text-gray-500">Add an extra layer of security to your account</p>
+                      <p className="font-medium text-gray-900">{t('profile.twoFactorAuth')}</p>
+                      <p className="text-sm text-gray-500">{t('profile.twoFactorDescription')}</p>
                     </div>
                     <button className="relative inline-flex h-6 w-11 items-center rounded-full bg-blue-600">
                       <span className="inline-block h-4 w-4 transform rounded-full bg-white transition translate-x-6"></span>
@@ -296,10 +295,10 @@ export function Profile() {
                   </div>
                   <div className="pt-4 border-t border-gray-200">
                     <p className="text-sm text-gray-600">
-                      <strong>Last Login:</strong> {profileData.security.lastLogin}
+                      <strong>{t('profile.lastLogin')}:</strong> {profileData.security.lastLogin}
                     </p>
                     <p className="text-sm text-gray-600">
-                      <strong>Failed Login Attempts:</strong> {profileData.security.loginAttempts}
+                      <strong>{t('profile.failedLoginAttempts')}:</strong> {profileData.security.loginAttempts}
                     </p>
                   </div>
                 </CardContent>
@@ -331,14 +330,12 @@ export function Profile() {
                           {key === 'weeklyReports' && 'Get weekly summary reports of your activities'}
                         </p>
                       </div>
-                      <button 
-                        className={`relative inline-flex h-6 w-11 items-center rounded-full ${
-                          value ? 'bg-blue-600' : 'bg-gray-200'
-                        }`}
+                      <button
+                        className={`relative inline-flex h-6 w-11 items-center rounded-full ${value ? 'bg-blue-600' : 'bg-gray-200'
+                          }`}
                       >
-                        <span className={`inline-block h-4 w-4 transform rounded-full bg-white transition ${
-                          value ? 'translate-x-6' : 'translate-x-1'
-                        }`}></span>
+                        <span className={`inline-block h-4 w-4 transform rounded-full bg-white transition ${value ? 'translate-x-6' : 'translate-x-1'
+                          }`}></span>
                       </button>
                     </div>
                   ))}

@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Search, Eye, Clock, User, MapPin, Filter, Download, RefreshCw } from 'lucide-react';
 import { Card } from '../../components/ui/card';
 import { Input } from '../../components/ui/input';
@@ -112,6 +113,7 @@ const getPriorityBadge = (priority: string) => {
 };
 
 export function Tracking() {
+  const { t } = useTranslation();
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
   const [typeFilter, setTypeFilter] = useState('all');
@@ -130,8 +132,8 @@ export function Tracking() {
   return (
     <div className="p-6 space-y-6">
       <div>
-        <h1 className="text-2xl font-semibold text-gray-800">Tracking Dashboard</h1>
-        <p className="text-gray-500 text-sm mt-1">Track all mail activities and updates</p>
+        <h1 className="text-2xl font-semibold text-gray-800">{t('tracking.title')}</h1>
+        <p className="text-gray-500 text-sm mt-1">{t('tracking.subtitle')}</p>
       </div>
 
       <Card className="p-6">
@@ -139,7 +141,7 @@ export function Tracking() {
           <div className="relative">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
             <Input
-              placeholder="Search by Tracking ID, Mail ID, or Subject..."
+              placeholder={t('tracking.searchPlaceholder')}
               className="pl-10"
               value={searchTerm}
               onChange={(e: React.ChangeEvent<HTMLInputElement>) => setSearchTerm(e.target.value)}
@@ -151,14 +153,14 @@ export function Tracking() {
             onChange={(e) => setStatusFilter(e.target.value)}
             className="px-3 py-2 border border-gray-300 rounded-md bg-white"
           >
-            <option value="all">All Status</option>
-            <option value="Registered">Registered</option>
-            <option value="Assigned">Assigned</option>
-            <option value="In Progress">In Progress</option>
-            <option value="Closed">Closed</option>
-            <option value="Delivered">Delivered</option>
-            <option value="Pending">Pending</option>
-            <option value="Draft">Draft</option>
+            <option value="all">{t('tracking.allStatus')}</option>
+            <option value="Registered">{t('tracking.registered')}</option>
+            <option value="Assigned">{t('tracking.assigned')}</option>
+            <option value="In Progress">{t('tracking.inProgress')}</option>
+            <option value="Closed">{t('tracking.closed')}</option>
+            <option value="Delivered">{t('tracking.delivered')}</option>
+            <option value="Pending">{t('tracking.pending')}</option>
+            <option value="Draft">{t('tracking.draft')}</option>
           </select>
 
           <select
@@ -166,14 +168,14 @@ export function Tracking() {
             onChange={(e) => setTypeFilter(e.target.value)}
             className="px-3 py-2 border border-gray-300 rounded-md bg-white"
           >
-            <option value="all">All Types</option>
-            <option value="Inward">Inward</option>
-            <option value="Outward">Outward</option>
+            <option value="all">{t('tracking.allTypes')}</option>
+            <option value="Inward">{t('tracking.inward')}</option>
+            <option value="Outward">{t('tracking.outward')}</option>
           </select>
 
           <Button variant="outline">
             <RefreshCw className="w-4 h-4 mr-2" />
-            Refresh
+            {t('common.refresh')}
           </Button>
         </div>
 
@@ -181,18 +183,18 @@ export function Tracking() {
           <Table>
             <TableHeader>
               <TableRow className="bg-gray-50">
-                <TableHead className="font-semibold whitespace-nowrap">Tracking ID</TableHead>
-                <TableHead className="font-semibold whitespace-nowrap">Mail ID</TableHead>
-                <TableHead className="font-semibold whitespace-nowrap">Type</TableHead>
-                <TableHead className="font-semibold whitespace-nowrap">Subject</TableHead>
-                <TableHead className="font-semibold whitespace-nowrap">Sender/Receiver</TableHead>
-                <TableHead className="font-semibold whitespace-nowrap">Department</TableHead>
-                <TableHead className="font-semibold whitespace-nowrap">Assigned To</TableHead>
-                <TableHead className="font-semibold whitespace-nowrap">Priority</TableHead>
-                <TableHead className="font-semibold whitespace-nowrap">Current Status</TableHead>
-                <TableHead className="font-semibold whitespace-nowrap">Created</TableHead>
-                <TableHead className="font-semibold whitespace-nowrap">Last Updated</TableHead>
-                <TableHead className="font-semibold text-right whitespace-nowrap">Actions</TableHead>
+                <TableHead className="font-semibold whitespace-nowrap">{t('tracking.trackingId')}</TableHead>
+                <TableHead className="font-semibold whitespace-nowrap">{t('tracking.mailId')}</TableHead>
+                <TableHead className="font-semibold whitespace-nowrap">{t('tracking.type')}</TableHead>
+                <TableHead className="font-semibold whitespace-nowrap">{t('tracking.subject')}</TableHead>
+                <TableHead className="font-semibold whitespace-nowrap">{t('tracking.senderReceiver')}</TableHead>
+                <TableHead className="font-semibold whitespace-nowrap">{t('tracking.department')}</TableHead>
+                <TableHead className="font-semibold whitespace-nowrap">{t('tracking.assignedTo')}</TableHead>
+                <TableHead className="font-semibold whitespace-nowrap">{t('common.priority')}</TableHead>
+                <TableHead className="font-semibold whitespace-nowrap">{t('tracking.currentStatus')}</TableHead>
+                <TableHead className="font-semibold whitespace-nowrap">{t('tracking.created')}</TableHead>
+                <TableHead className="font-semibold whitespace-nowrap">{t('tracking.lastUpdated')}</TableHead>
+                <TableHead className="font-semibold text-right whitespace-nowrap">{t('common.actions')}</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -234,7 +236,7 @@ export function Tracking() {
                         onClick={() => setSelectedTracking(item)}
                       >
                         <Eye className="w-4 h-4 mr-1" />
-                        View Timeline
+                        {t('tracking.viewTimeline')}
                       </Button>
                       <Button variant="ghost" size="sm">
                         <Download className="w-4 h-4" />

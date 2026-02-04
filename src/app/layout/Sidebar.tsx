@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { LayoutDashboard, Mail, Users, BarChart3, Map, Building2, Bell, ChevronLeft, ChevronRight } from 'lucide-react';
 
 interface SidebarProps {
@@ -7,17 +8,17 @@ interface SidebarProps {
 }
 
 export function Sidebar({ currentPage, onNavigate }: SidebarProps) {
+    const { t } = useTranslation();
     const [isCollapsed, setIsCollapsed] = useState(false);
-    
-    const menuItems = [
-        { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
-        { id: 'analytics', label: 'Analytics', icon: BarChart3 },
-        { id: 'inward', label: 'Inward Mails', icon: Mail },
-        { id: 'outward', label: 'Outward Mails', icon: Mail },
 
-        { id: 'departments', label: 'Departments', icon: Building2 },
-        { id: 'users', label: 'Users', icon: Users },
-        { id: 'tracking', label: 'Tracking', icon: Map },
+    const menuItems = [
+        { id: 'dashboard', label: t('navigation.dashboard'), icon: LayoutDashboard },
+        { id: 'analytics', label: t('navigation.analytics'), icon: BarChart3 },
+        { id: 'inward', label: t('navigation.inwardMails'), icon: Mail },
+        { id: 'outward', label: t('navigation.outwardMails'), icon: Mail },
+        { id: 'departments', label: t('navigation.departments'), icon: Building2 },
+        { id: 'users', label: t('navigation.users'), icon: Users },
+        { id: 'tracking', label: t('navigation.tracking'), icon: Map },
     ];
 
     const toggleSidebar = () => {
@@ -44,7 +45,7 @@ export function Sidebar({ currentPage, onNavigate }: SidebarProps) {
                     {isCollapsed ? 'T' : 'Tapaal'}
                 </h1>
             </div>
-            
+
             {/* Navigation */}
             <nav className="flex-1 p-4 space-y-2">
                 {menuItems.map((item) => {
@@ -54,11 +55,10 @@ export function Sidebar({ currentPage, onNavigate }: SidebarProps) {
                         <button
                             key={item.id}
                             onClick={() => onNavigate(item.id)}
-                            className={`w-full flex items-center gap-3 px-4 py-2 rounded-lg transition-colors group ${
-                                isActive
-                                    ? 'bg-slate-700 text-white'
-                                    : 'text-slate-300 hover:bg-slate-800'
-                            }`}
+                            className={`w-full flex items-center gap-3 px-4 py-2 rounded-lg transition-colors group ${isActive
+                                ? 'bg-slate-700 text-white'
+                                : 'text-slate-300 hover:bg-slate-800'
+                                }`}
                             title={isCollapsed ? item.label : ''}
                         >
                             <Icon className="w-5 h-5 flex-shrink-0" />
