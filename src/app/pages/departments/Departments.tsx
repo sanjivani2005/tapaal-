@@ -33,151 +33,18 @@ export function Departments() {
     try {
       setLoading(true);
       const response = await dataService.getDepartments();
-      const apiData = response.data || [];
 
-      // If API returns data, use it. Otherwise, use mock data
-      if (apiData.length > 0) {
-        setDepartments(apiData);
+      if (response.success && response.data) {
+        setDepartments(response.data);
       } else {
-        // Mock data for demonstration
-        const mockDepartments = [
-          {
-            id: 'DEPT-001',
-            name: 'General Administration',
-            code: 'ADM',
-            head: 'Rajesh Kumar',
-            description: 'Handles administrative tasks and office management',
-            email: 'admin@company.com',
-            phone: '+1-234-567-8901',
-            established: '2020-01-15'
-          },
-          {
-            id: 'DEPT-002',
-            name: 'Revenue',
-            code: 'REV',
-            head: 'Priya Sharma',
-            description: 'Manages revenue collection and tax operations',
-            email: 'revenue@company.com',
-            phone: '+1-234-567-8902',
-            established: '2020-01-20'
-          },
-          {
-            id: 'DEPT-003',
-            name: 'Health',
-            code: 'HLT',
-            head: 'Dr. Amit Singh',
-            description: 'Handles health services and medical facilities',
-            email: 'health@company.com',
-            phone: '+1-234-567-8903',
-            established: '2020-01-25'
-          },
-          {
-            id: 'DEPT-004',
-            name: 'Education',
-            code: 'EDU',
-            head: 'Sunita Devi',
-            description: 'Manages educational institutions and programs',
-            email: 'education@company.com',
-            phone: '+1-234-567-8904',
-            established: '2020-02-01'
-          },
-          {
-            id: 'DEPT-005',
-            name: 'Public Works',
-            code: 'PUB',
-            head: 'Mahesh Patel',
-            description: 'Handles public infrastructure and construction projects',
-            email: 'publicworks@company.com',
-            phone: '+1-234-567-8905',
-            established: '2020-02-05'
-          },
-          {
-            id: 'DEPT-006',
-            name: 'Panchayat',
-            code: 'PAN',
-            head: 'Anita Yadav',
-            description: 'Manages rural development and panchayat affairs',
-            email: 'panchayat@company.com',
-            phone: '+1-234-567-8906',
-            established: '2020-02-10'
-          },
-          {
-            id: 'DEPT-007',
-            name: 'Construction',
-            code: 'CON',
-            head: 'Vikram Reddy',
-            description: 'Handles construction and building projects',
-            email: 'construction@company.com',
-            phone: '+1-234-567-8907',
-            established: '2020-02-15'
-          },
-          {
-            id: 'DEPT-008',
-            name: 'Pension',
-            code: 'PEN',
-            head: 'Meera Joshi',
-            description: 'Manages pension schemes and retirement benefits',
-            email: 'pension@company.com',
-            phone: '+1-234-567-8908',
-            established: '2020-02-20'
-          }
-        ];
-        setDepartments(mockDepartments);
+        console.warn('No departments data received, using fallback data');
+        // Use minimal fallback data
+        setDepartments([]);
       }
     } catch (error) {
       console.error('Error fetching departments:', error);
-      // Fallback to mock data if API fails
-      const mockDepartments = [
-        {
-          id: 'DEPT-001',
-          name: 'General Administration',
-          code: 'ADM',
-          head: 'Rajesh Kumar'
-        },
-        {
-          id: 'DEPT-002',
-          name: 'Revenue',
-          code: 'REV',
-          head: 'Priya Sharma'
-        },
-        {
-          id: 'DEPT-003',
-          name: 'Health',
-          code: 'HLT',
-          head: 'Dr. Amit Singh'
-        },
-        {
-          id: 'DEPT-004',
-          name: 'Education',
-          code: 'EDU',
-          head: 'Sunita Devi'
-        },
-        {
-          id: 'DEPT-005',
-          name: 'Public Works',
-          code: 'PUB',
-          head: 'Mahesh Patel'
-        },
-        {
-          id: 'DEPT-006',
-          name: 'Panchayat',
-          code: 'PAN',
-          head: 'Anita Yadav'
-        },
-        {
-          id: 'DEPT-007',
-          name: 'Construction',
-          code: 'CON',
-          head: 'Vikram Reddy'
-        },
-        {
-          id: 'DEPT-008',
-          name: 'Pension',
-          code: 'PEN',
-          head: 'Meera Joshi'
-        }
-      ];
-      setDepartments(mockDepartments);
+      // Set empty array on error to avoid breaking the UI
+      setDepartments([]);
     } finally {
       setLoading(false);
     }
@@ -277,21 +144,21 @@ export function Departments() {
                   </TableHeader>
                   <TableBody>
                     {filteredDepartments.map((dept) => (
-                      <TableRow key={dept.id || dept.code}>
-                        <TableCell className="font-medium text-blue-600">{dept.id || dept.code}</TableCell>
+                      <TableRow key={dept._id} className="hover:bg-gray-50">
+                        <TableCell className="font-medium text-blue-600">{dept._id}</TableCell>
                         <TableCell className="font-medium">{dept.name}</TableCell>
                         <TableCell>
                           <span className="px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-sm font-medium">
                             {dept.code}
                           </span>
                         </TableCell>
-                        <TableCell>{dept.head}</TableCell>
+                        <TableCell>{dept.headOfDepartment}</TableCell>
                         <TableCell className="text-right">
                           <div className="flex justify-end gap-2">
                             <Button
                               variant="ghost"
                               size="sm"
-                              onClick={() => handleEditDepartment(dept.id || dept.code)}
+                              onClick={() => handleEditDepartment(dept._id)}
                             >
                               <Pencil className="w-4 h-4" />
                             </Button>

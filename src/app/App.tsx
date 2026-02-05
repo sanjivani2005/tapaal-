@@ -13,7 +13,7 @@ import { AIAssistant } from './components/AIAssistant'
 import { EditMail } from './pages/mail-edit/EditMail'
 import { MailDetail } from './pages/mail-detail/MailDetail'
 import { CreateInwardMail } from './pages/inward/CreateInwardMail'
-import { CreateOutwardMail } from './pages/outward/CreateOutwardMail'
+import { CreateOutwardMail } from './pages/outward-mails/CreateOutwardMail'
 import { Profile } from './pages/profile/Profile'
 import { Settings } from './pages/settings/Settings'
 

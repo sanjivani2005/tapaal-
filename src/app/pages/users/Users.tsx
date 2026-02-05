@@ -18,6 +18,10 @@ import {
 } from '../../components/ui/table';
 import { cn } from '../../components/ui/utils';
 import { CreateUser } from './CreateUser';
+import { userService } from '../../../services/user-service.js';
+
+// Type assertion for the imported service
+const service = userService as any;
 
 // --- Types & Constants ---
 
@@ -74,25 +78,49 @@ export function Users() {
   const [deptFilter, setDeptFilter] = React.useState('all');
   const [statusFilter, setStatusFilter] = React.useState('all');
   const [showCreateForm, setShowCreateForm] = React.useState(false);
+  const [users, setUsers] = React.useState([]);
+  const [loading, setLoading] = React.useState(true);
+
+  // Fetch users from API
+  const fetchUsers = async () => {
+    try {
+      setLoading(true);
+      const response = await service.getUsers();
+      if (response.success && response.data) {
+        setUsers(response.data);
+      }
+    } catch (error) {
+      console.error('Error fetching users:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  React.useEffect(() => {
+    fetchUsers();
+  }, []);
 
   // Performance Optimization: Only filter when search or filters change
   const filteredUsers = React.useMemo(() => {
-    return USERS_DATA.filter((user) => {
+    return users.filter((user: any) => {
       const matchesSearch =
-        user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        user.email.toLowerCase().includes(searchTerm.toLowerCase());
+        user.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        user.email?.toLowerCase().includes(searchTerm.toLowerCase());
       const matchesRole = roleFilter === 'all' || user.role === roleFilter;
       const matchesDept = deptFilter === 'all' || user.department === deptFilter;
       const matchesStatus = statusFilter === 'all' || user.status === statusFilter;
 
       return matchesSearch && matchesRole && matchesDept && matchesStatus;
     });
-  }, [searchTerm, roleFilter, deptFilter, statusFilter]);
+  }, [users, searchTerm, roleFilter, deptFilter, statusFilter]);
 
   return (
     <div>
       {showCreateForm ? (
-        <CreateUser onBack={() => setShowCreateForm(false)} />
+        <CreateUser onBack={() => {
+          setShowCreateForm(false);
+          fetchUsers(); // Refresh users list after creating new user
+        }} />
       ) : (
         <div className="p-8 space-y-8 bg-gray-50/30 min-h-screen">
           {/* Page Header */}

@@ -3,6 +3,10 @@ import { Input, Button, Card, CardContent, CardHeader, CardTitle, Label, Select,
 import { ArrowLeft, User, Mail, Phone, Building, Shield, Key, Eye, EyeOff, Brain, AlertTriangle, Users } from 'lucide-react';
 import { aiService } from '../../services/ai-service';
 import { dataService } from '../../services/data-service';
+import { userService } from '../../../services/user-service.js';
+
+// Type assertion for the imported service
+const service = userService as any;
 
 interface CreateUserProps {
     onBack?: () => void;
@@ -15,7 +19,7 @@ export function CreateUser({ onBack }: CreateUserProps) {
         email: '',
         phone: '',
         department: '',
-        role: 'Clerk',
+        role: 'user',
         status: 'Active',
         password: '',
         confirmPassword: '',
@@ -112,7 +116,7 @@ export function CreateUser({ onBack }: CreateUserProps) {
         }));
     };
 
-    const handleSubmit = (event: React.FormEvent) => {
+    const handleSubmit = async (event: React.FormEvent) => {
         event.preventDefault();
 
         // Basic validation
@@ -126,16 +130,45 @@ export function CreateUser({ onBack }: CreateUserProps) {
             return;
         }
 
-        console.log('New User Data:', formData);
-        // Here you would typically send this data to a backend API
-        alert('User Created Successfully! Check console for details.');
+        try {
+            // Prepare user data for API - match backend User model
+            const userData = {
+                username: formData.email.split('@')[0], // Generate username from email
+                email: formData.email,
+                password: formData.password,
+                firstName: formData.firstName,
+                lastName: formData.lastName,
+                fullName: `${formData.firstName} ${formData.lastName}`,
+                role: formData.role.toLowerCase(), // Convert to lowercase for backend enum
+                department: formData.department,
+                position: formData.role, // Use role as position for now
+                employeeId: formData.employeeId || `EMP${Date.now()}`, // Generate if not provided
+                phone: formData.phone,
+                address: formData.address || `${formData.city}, ${formData.state}`,
+                isActive: formData.status === 'Active'
+            };
+
+            // Create user in database
+            const response = await service.createUser(userData);
+
+            if (response.success) {
+                alert('User Created Successfully!');
+                if (onBack) {
+                    onBack(); // Go back to users list
+                }
+            } else {
+                alert('Failed to create user: ' + (response.message || 'Unknown error'));
+            }
+        } catch (error) {
+            console.error('Error creating user:', error);
+            alert('Failed to create user. Please try again.');
+        }
     };
 
     const roles = [
-        { value: 'Admin', label: 'Administrator' },
-        { value: 'HOD', label: 'Head of Department' },
-        { value: 'Officer', label: 'Officer' },
-        { value: 'Clerk', label: 'Clerk' }
+        { value: 'admin', label: 'Administrator' },
+        { value: 'manager', label: 'Manager' },
+        { value: 'user', label: 'User' }
     ];
 
     return (

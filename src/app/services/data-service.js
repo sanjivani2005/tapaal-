@@ -1,5 +1,5 @@
 // Data Service for API calls
-const API_BASE_URL = 'http://localhost:3001/api';
+const API_BASE_URL = 'http://localhost:5000/api';
 
 class DataService {
     // Generic request method
@@ -31,6 +31,18 @@ class DataService {
     async getMails(params = {}) {
         const queryString = new URLSearchParams(params).toString();
         const endpoint = `/mails${queryString ? `?${queryString}` : ''}`;
+        return this.request(endpoint);
+    }
+
+    async getInwardMails(params = {}) {
+        const queryString = new URLSearchParams(params).toString();
+        const endpoint = `/inward-mails${queryString ? `?${queryString}` : ''}`;
+        return this.request(endpoint);
+    }
+
+    async getOutwardMails(params = {}) {
+        const queryString = new URLSearchParams(params).toString();
+        const endpoint = `/outward-mails${queryString ? `?${queryString}` : ''}`;
         return this.request(endpoint);
     }
 
@@ -89,7 +101,7 @@ class DataService {
 
     // Dashboard API
     async getDashboardData() {
-        return this.request('/dashboard');
+        return this.request('/dashboard/stats');
     }
 
     // Health check

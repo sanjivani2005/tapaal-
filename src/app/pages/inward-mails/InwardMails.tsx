@@ -1,11 +1,15 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Search, Plus, Pencil, Trash2, Eye, AlertCircle } from 'lucide-react';
+import { Search, Plus, Pencil, Trash2, Eye, AlertCircle, RefreshCw } from 'lucide-react';
 import { Card } from '../../components/ui/card';
 import { Input } from '../../components/ui/input';
 import { Button } from '../../components/ui/button';
 import { Badge } from '../../components/ui/badge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../../components/ui/select';
+import { inwardMailService } from '../../../services/inward-mail-service.js';
+
+// Type assertion for the imported service
+const service = inwardMailService as any;
 import {
   Table,
   TableBody,
@@ -14,69 +18,8 @@ import {
   TableHeader,
   TableRow,
 } from '../../components/ui/table';
-
-const inwardMails = [
-  {
-    id: 'INW-2024-001',
-    trackingId: 'TRK-1234',
-    receivedBy: 'Kumar M',
-    handoverTo: 'Thuzharajan M',
-    sender: 'BigEye Global Solutions - BGS',
-    date: '2024-01-15 10:30:00',
-    type: 'Inward',
-    deliveryMode: 'Courier',
-    details: 'Tax details for Q4 2023',
-    referenceDetails: 'TAX-Q4-2023-045',
-    status: 'pending',
-    priority: 'Important',
-    department: 'Finance',
-  },
-  {
-    id: 'INW-2024-002',
-    trackingId: 'TRK-1235',
-    receivedBy: 'Sarah Williams',
-    handoverTo: 'John Doe',
-    sender: 'ABC Corporation Ltd',
-    date: '2024-01-16 09:15:00',
-    type: 'Inward',
-    deliveryMode: 'Hand Delivery',
-    details: 'Invoice documents for December',
-    referenceDetails: 'INV-2023-045',
-    status: 'approved',
-    priority: 'High',
-    department: 'Accounts',
-  },
-  {
-    id: 'INW-2024-003',
-    trackingId: 'TRK-1236',
-    receivedBy: 'Mike Johnson',
-    handoverTo: 'Jane Smith',
-    sender: 'XYZ Enterprises Pvt Ltd',
-    date: '2024-01-17 14:20:00',
-    type: 'Inward',
-    deliveryMode: 'Post',
-    details: 'Contract papers for new project',
-    referenceDetails: 'CON-2024-089',
-    status: 'waiting',
-    priority: 'Important',
-    department: 'Legal',
-  },
-  {
-    id: 'INW-2024-004',
-    trackingId: 'TRK-1237',
-    receivedBy: 'Emily Davis',
-    handoverTo: 'Robert Brown',
-    sender: 'Tech Solutions Inc',
-    date: '2024-01-18 11:45:00',
-    type: 'Inward',
-    deliveryMode: 'Courier',
-    details: 'Technical documentation',
-    referenceDetails: 'TECH-2024-12',
-    status: 'in-progress',
-    priority: 'Medium',
-    department: 'IT',
-  }
-];
+import { InwardMailDetail } from './InwardMailDetail';
+import { EditInwardMail } from './EditInwardMail';
 
 const getStatusBadge = (status: string) => {
   const variants: Record<string, string> = {
@@ -101,6 +44,60 @@ export function InwardMails({ onViewMail, onEditMail, onCreateMail }: InwardMail
   const [selectedPriority, setSelectedPriority] = useState('all');
   const [selectedStatus, setSelectedStatus] = useState('all');
   const [selectedDepartment, setSelectedDepartment] = useState('all');
+  const [inwardMails, setInwardMails] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+  const [refreshKey, setRefreshKey] = useState(0);
+
+  // Fetch inward mails from API
+  const fetchInwardMails = async () => {
+    try {
+      setLoading(true);
+      const response = await service.getInwardMails({
+        search: searchTerm,
+        priority: selectedPriority !== 'all' ? selectedPriority : undefined,
+        status: selectedStatus !== 'all' ? selectedStatus : undefined,
+        department: selectedDepartment !== 'all' ? selectedDepartment : undefined,
+      });
+
+      if (response.success && response.data) {
+        setInwardMails(response.data);
+      } else {
+        console.warn('No inward mails data received, using empty array');
+        setInwardMails([]);
+      }
+    } catch (error) {
+      console.error('Error fetching inward mails:', error);
+      setError('Failed to load inward mails');
+      setInwardMails([]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Fetch data on component mount
+  useEffect(() => {
+    fetchInwardMails();
+  }, []);
+
+  // Refetch when filters change
+  useEffect(() => {
+    fetchInwardMails();
+  }, [searchTerm, selectedPriority, selectedStatus, selectedDepartment]);
+
+  // Refresh when page becomes visible (user returns from create page)
+  useEffect(() => {
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === 'visible') {
+        fetchInwardMails();
+      }
+    };
+
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    return () => {
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+    };
+  }, []);
 
   const filteredMails = inwardMails.filter((mail) => {
     const matchesSearch = searchTerm === '' ||
@@ -123,6 +120,10 @@ export function InwardMails({ onViewMail, onEditMail, onCreateMail }: InwardMail
         <Button className="bg-green-600 hover:bg-green-700" onClick={onCreateMail}>
           <Plus className="w-4 h-4 mr-2" />
           {t('common.add')} {t('inwardMails.addInward')}
+        </Button>
+        <Button variant="outline" onClick={fetchInwardMails} className="ml-2">
+          <RefreshCw className="w-4 h-4 mr-2" />
+          Refresh
         </Button>
       </div>
 
@@ -167,9 +168,10 @@ export function InwardMails({ onViewMail, onEditMail, onCreateMail }: InwardMail
               <SelectContent>
                 <SelectItem value="all">{t('filters.allDepartments')}</SelectItem>
                 <SelectItem value="Finance">Finance</SelectItem>
-                <SelectItem value="Accounts">Accounts</SelectItem>
+                <SelectItem value="Administration">Administration</SelectItem>
                 <SelectItem value="Legal">Legal</SelectItem>
                 <SelectItem value="IT">IT</SelectItem>
+                <SelectItem value="Procurement">Procurement</SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -209,9 +211,24 @@ export function InwardMails({ onViewMail, onEditMail, onCreateMail }: InwardMail
               </TableRow>
             </TableHeader>
             <TableBody>
-              {filteredMails.length > 0 ? (
+              {loading ? (
+                <TableRow>
+                  <TableCell colSpan={8} className="text-center py-8">
+                    <div className="flex items-center justify-center">
+                      <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mr-2"></div>
+                      Loading...
+                    </div>
+                  </TableCell>
+                </TableRow>
+              ) : error ? (
+                <TableRow>
+                  <TableCell colSpan={8} className="text-center py-8 text-red-500">
+                    {error}
+                  </TableCell>
+                </TableRow>
+              ) : filteredMails.length > 0 ? (
                 filteredMails.map((mail) => (
-                  <TableRow key={mail.id}>
+                  <TableRow key={mail.id} className="hover:bg-gray-50">
                     <TableCell className="font-medium text-blue-600">{mail.id}</TableCell>
                     <TableCell>{mail.receivedBy}</TableCell>
                     <TableCell className="max-w-[150px] truncate">{mail.sender}</TableCell>

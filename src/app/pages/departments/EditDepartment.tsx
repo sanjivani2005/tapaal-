@@ -57,13 +57,15 @@ export function EditDepartment({ onBack, departmentId, onDepartmentUpdated }: Ed
 
     const fetchDepartmentData = async () => {
         try {
-            const response = await fetch(`http://localhost:3001/api/departments/${departmentId}`);
+            const response = await fetch(`http://localhost:5000/api/departments/${departmentId}`);
             if (response.ok) {
                 const data = await response.json();
                 const dept = data.data;
                 setDepartmentName(dept.name || '');
                 setDepartmentCode(dept.code || '');
-                setDepartmentHead(dept.head || '');
+                setDepartmentHead(dept.headOfDepartment || '');
+                setHeadEmail(dept.email || '');
+                setHeadPhone(dept.phone || '');
                 setDescription(dept.description || '');
                 setLocation(dept.location || '');
                 setStatus(dept.status || 'Active');
@@ -241,7 +243,9 @@ export function EditDepartment({ onBack, departmentId, onDepartmentUpdated }: Ed
         const departmentData = {
             name: departmentName,
             code: departmentCode,
-            head: departmentHead,
+            headOfDepartment: departmentHead,
+            email: headEmail,
+            phone: headPhone,
             description,
             location,
             status,
@@ -250,7 +254,7 @@ export function EditDepartment({ onBack, departmentId, onDepartmentUpdated }: Ed
         try {
             setSaving(true);
             // Call the API to update the department
-            const response = await fetch(`http://localhost:3001/api/departments/${departmentId}`, {
+            const response = await fetch(`http://localhost:5000/api/departments/${departmentId}`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',

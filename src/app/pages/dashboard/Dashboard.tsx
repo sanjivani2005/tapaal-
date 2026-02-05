@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import { Mail, Send, Users, Clock, ArrowUpRight, ArrowDownRight, Database, Plus } from 'lucide-react';
+import { Mail, Send, Users, Clock, ArrowUpRight, ArrowDownRight, Database } from 'lucide-react';
 
 // UI components
 import { Card, CardHeader, CardTitle, CardContent } from '../../components/ui/card';
@@ -18,25 +18,31 @@ import {
 import { cn } from '../../components/ui/utils';
 
 // Database services
-import { fetchDashboardData, addSampleData } from '../../services/mock-api';
+import { dataService } from '../../services/data-service';
 
 // --- DATA DEFINITIONS ---
 
 // --- HELPER COMPONENTS ---
 const StatusBadge = ({ status }: { status: string }) => {
   const styles: Record<string, string> = {
+    'pending': 'bg-red-100 text-red-700 border-red-200',
+    'approved': 'bg-blue-100 text-blue-700 border-blue-200',
+    'in-progress': 'bg-orange-100 text-orange-700 border-orange-200',
+    'delivered': 'bg-green-100 text-green-700 border-green-200',
+    'waiting': 'bg-purple-100 text-purple-700 border-purple-200',
+    'rejected': 'bg-gray-100 text-gray-700 border-gray-200',
+    // Fallback for UI states
     'Registered': 'bg-blue-100 text-blue-700 border-blue-200',
     'Assigned': 'bg-orange-100 text-orange-700 border-orange-200',
     'In Progress': 'bg-purple-100 text-purple-700 border-purple-200',
     'Closed': 'bg-green-100 text-green-700 border-green-200',
   };
-  return <Badge className={cn("border shadow-none font-medium", styles[status])}>{status}</Badge>;
+  return <Badge className={cn("border shadow-none font-medium", styles[status] || styles.pending)}>{status}</Badge>;
 };
 
 // --- MAIN DASHBOARD ---
 export function Dashboard() {
   const { t } = useTranslation();
-  const [isLoading, setIsLoading] = React.useState(false);
   const [message, setMessage] = React.useState('');
   const [dbStats, setDbStats] = React.useState({
     totalUsers: 0,
@@ -70,46 +76,26 @@ export function Dashboard() {
     { name: 'Closed', value: 200, color: '#10b981' },
   ];
 
-  const handleAddSampleData = async () => {
-    setIsLoading(true);
-    setMessage('Adding sample data to database...');
-
-    try {
-      const result = await addSampleData();
-      if (result.success) {
-        setMessage(`✅ ${result.message}`);
-
-        // Show verification details
-        if (result.verification) {
-          console.log('📊 Database Verification:', result.verification);
-          const { counts } = result.verification;
-          setMessage(`✅ Data saved to database! Users: ${counts.users}, Departments: ${counts.departments}, Mails: ${counts.mails}, Events: ${counts.trackingEvents}`);
-        }
-
-        // Refresh stats and real data
-        const apiData = await fetchDashboardData();
-        if (apiData.success) {
-          setDbStats(apiData.data.stats);
-          setRealData(apiData.data.realData);
-        }
-      } else {
-        setMessage(`❌ Error: ${result.error}`);
-      }
-    } catch (error) {
-      setMessage(`❌ Error: ${error.message}`);
-    } finally {
-      setIsLoading(false);
-      setTimeout(() => setMessage(''), 8000); // Longer display time for verification
-    }
-  };
-
   React.useEffect(() => {
     // Load initial stats and real data
     const loadData = async () => {
-      const apiData = await fetchDashboardData();
-      if (apiData.success) {
-        setDbStats(apiData.data.stats);
-        setRealData(apiData.data.realData);
+      try {
+        const apiData = await dataService.getDashboardData();
+        if (apiData.success && apiData.data) {
+          // Handle both direct stats and nested realData.stats
+          const stats = apiData.data.stats || apiData.data.realData?.stats || {};
+          const realDataContent = apiData.data.realData || apiData.data;
+
+          setDbStats({
+            totalUsers: stats.totalUsers || 0,
+            totalDepartments: stats.totalDepartments || 0,
+            totalMails: stats.totalMails || 0,
+            totalTrackingEvents: stats.totalTrackingEvents || 0,
+          });
+          setRealData(realDataContent);
+        }
+      } catch (error) {
+        console.error('Error loading dashboard data:', error);
       }
     };
     loadData();

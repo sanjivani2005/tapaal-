@@ -19,7 +19,7 @@ export function CreateDepartment({ onBack, onDepartmentCreated }: CreateDepartme
     const [location, setLocation] = useState('');
     const [employeeCount, setEmployeeCount] = useState('');
     const [budget, setBudget] = useState('');
-    const [status, setStatus] = useState('Active');
+    const [status, setStatus] = useState('active');
     const [parentDepartment, setParentDepartment] = useState('');
 
     // AI States
@@ -261,7 +261,9 @@ export function CreateDepartment({ onBack, onDepartmentCreated }: CreateDepartme
         const departmentData = {
             name: departmentName,
             code: departmentCode,
-            head: departmentHead,
+            headOfDepartment: departmentHead,
+            email: headEmail,
+            phone: headPhone,
             description,
             location,
             status,
@@ -269,7 +271,7 @@ export function CreateDepartment({ onBack, onDepartmentCreated }: CreateDepartme
 
         try {
             // Call the API to create the department
-            const response = await fetch('http://localhost:3001/api/departments', {
+            const response = await fetch('http://localhost:5000/api/departments', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -439,9 +441,8 @@ export function CreateDepartment({ onBack, onDepartmentCreated }: CreateDepartme
                                         <SelectValue />
                                     </SelectTrigger>
                                     <SelectContent>
-                                        <SelectItem value="Active">Active</SelectItem>
-                                        <SelectItem value="Inactive">Inactive</SelectItem>
-                                        <SelectItem value="Under Review">Under Review</SelectItem>
+                                        <SelectItem value="active">Active</SelectItem>
+                                        <SelectItem value="inactive">Inactive</SelectItem>
                                     </SelectContent>
                                 </Select>
                             </div>

@@ -441,7 +441,7 @@ class AIService {
                 ) > 0.6
             );
 
-            if (similarMails.length > 0) {
+            if (similarMails && similarMails.length > 0) {
                 const recipientCounts = similarMails.reduce((acc, mail) => {
                     if (mail.recipient) {
                         acc[mail.recipient] = (acc[mail.recipient] || 0) + 1;

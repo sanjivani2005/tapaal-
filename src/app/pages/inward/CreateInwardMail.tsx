@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Input, Textarea, Button, Card, CardContent, CardHeader, CardTitle, Select, SelectContent, SelectItem, SelectTrigger, SelectValue, Label } from '../../components/ui';
 import { UploadCloud, Search, ArrowLeft, Send, Calendar, User, Building, Brain } from 'lucide-react';
 import { aiService, DuplicateResult, PriorityResult, DescriptionSuggestion, ContentSuggestion } from '../../services/ai-service';
@@ -6,7 +7,7 @@ import { AIDuplicateAlert } from '../../components/ai/AIDuplicateAlert';
 import { AIPrioritySuggestion } from '../../components/ai/AIPrioritySuggestion';
 import { AIDescriptionSuggestions } from '../../components/ai/AIDescriptionSuggestions';
 import { AIContentSuggestions } from '../../components/ai/AIContentSuggestions';
-import { dataService } from '../../services/data-service';
+import { inwardMailService } from '../../../services/inward-mail-service';
 
 interface CreateInwardMailProps {
     onBack?: () => void;
@@ -42,29 +43,8 @@ export function CreateInwardMail({ onBack }: CreateInwardMailProps) {
 
     const fetchExistingData = async () => {
         try {
-            // Fetch both inward and outward mails for duplicate detection
-            const [inwardResponse, outwardResponse, deptResponse] = await Promise.all([
-                dataService.getMails({ type: 'inward' }),
-                dataService.getMails({ type: 'outward' }),
-                dataService.getDepartments()
-            ]);
-
+            // For now, we'll use static data for AI suggestions
             const allMails = [
-                ...(inwardResponse.data || []).map(mail => ({
-                    subject: mail.subject,
-                    description: mail.description,
-                    sender: mail.sender,
-                    department: mail.department?.name,
-                    priority: mail.priority
-                })),
-                ...(outwardResponse.data || []).map(mail => ({
-                    subject: mail.subject,
-                    description: mail.description,
-                    sender: mail.receiver,
-                    department: mail.department?.name,
-                    priority: mail.priority
-                })),
-                // Add test data for duplicate detection and AI suggestions
                 {
                     subject: 'Meeting Schedule for Next Week',
                     description: 'This is regarding the meeting scheduled for next week',
@@ -96,7 +76,7 @@ export function CreateInwardMail({ onBack }: CreateInwardMailProps) {
             ];
 
             setExistingMails(allMails);
-            setDepartments(deptResponse.data || []);
+            setDepartments(['Finance', 'HR', 'Procurement', 'Administration', 'IT', 'Legal']);
         } catch (error) {
             console.error('Error fetching existing data:', error);
         }
@@ -215,9 +195,27 @@ export function CreateInwardMail({ onBack }: CreateInwardMailProps) {
         setShowDescriptionSuggestions(false);
     };
 
-    const handleSubmit = (event: React.FormEvent) => {
+    const handleSubmit = async (event: React.FormEvent) => {
         event.preventDefault();
-        console.log({
+
+        // Validation
+        if (!senderName.trim()) {
+            alert('Please enter sender name');
+            return;
+        }
+
+        if (!department) {
+            alert('Please select a department');
+            return;
+        }
+
+        if (!description.trim()) {
+            alert('Please enter mail details');
+            return;
+        }
+
+        console.log('🚀 Starting mail submission...');
+        console.log('Form data:', {
             senderName,
             senderAddress,
             subject,
@@ -225,11 +223,51 @@ export function CreateInwardMail({ onBack }: CreateInwardMailProps) {
             department,
             priority,
             receivedDate,
-            referenceNumber,
             attachedFiles,
+            referenceNumber
         });
-        // Here you would typically send this data to a backend API
-        alert('Inward Mail Saved! Check console for details.');
+
+        try {
+            const mailData = {
+                receivedBy: 'System Admin',
+                handoverTo: 'System Admin',
+                sender: senderName,
+                deliveryMode: 'Courier',
+                details: description,
+                referenceDetails: referenceNumber,
+                priority: priority,
+                department: department,
+                date: receivedDate || new Date().toISOString().slice(0, 10)
+            };
+
+            console.log('📤 Sending to API:', mailData);
+
+            const response = await inwardMailService.createInwardMail(mailData, attachedFiles);
+
+            console.log('📥 API Response:', response);
+
+            if (response.success) {
+                console.log('✅ Mail saved successfully!');
+                alert('Inward mail created successfully!');
+                // Clear form fields
+                setSenderName('');
+                setSenderAddress('');
+                setSubject('');
+                setDescription('');
+                setDepartment('');
+                setPriority('Normal');
+                setReceivedDate('');
+                setReferenceNumber('');
+                setAttachedFiles([]);
+                onBack?.();
+            } else {
+                console.log('❌ API returned error:', response.message);
+                alert('Failed to create inward mail: ' + response.message);
+            }
+        } catch (error) {
+            console.error('💥 Error creating inward mail:', error);
+            alert('Failed to create inward mail. Please try again.');
+        }
     };
 
     return (
@@ -300,7 +338,7 @@ export function CreateInwardMail({ onBack }: CreateInwardMailProps) {
                                 <Label htmlFor="department">Department *</Label>
                                 <Select value={department} onValueChange={setDepartment}>
                                     <SelectTrigger>
-                                        <SelectValue placeholder="Select department" />
+                                        <SelectValue placeholder="Select department *" />
                                     </SelectTrigger>
                                     <SelectContent>
                                         <SelectItem value="Finance">Finance</SelectItem>
