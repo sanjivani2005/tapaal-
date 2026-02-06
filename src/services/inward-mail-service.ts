@@ -40,7 +40,8 @@ export class InwardMailService {
 
   // Get file download URL
   getFileUrl(filename: string, type: string = 'inward'): string {
-    return `http://localhost:5000/uploads/${type}/${filename}`;
+    const baseUrl = import.meta.env.VITE_API_URL?.replace('/api', '') || 'http://localhost:5000';
+    return `${baseUrl}/uploads/${type}/${filename}`;
   }
 }
 

@@ -28,7 +28,8 @@ export function UsersList() {
   const fetchUsers = async () => {
     try {
       console.log('🔍 Fetching users from API...');
-      const response = await fetch('http://localhost:5000/api/users');
+      const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+      const response = await fetch(`${apiUrl}/users`);
       const data = await response.json();
 
       if (data.success) {

@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { Input, Button, Card, CardContent, CardHeader, CardTitle, Label, Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../../components/ui';
 import { ArrowLeft, User, Mail, Phone, Building, Shield, Key, Eye, EyeOff, Brain, AlertTriangle, Users, Globe } from 'lucide-react';
 import { aiService } from '../../services/ai-service';
-import { dataService } from '../../services/data-service';
+import { apiService } from '../../../services/api-service';
 import { userService } from '../../../services/user-service.js';
 
 // Type assertion for the imported service

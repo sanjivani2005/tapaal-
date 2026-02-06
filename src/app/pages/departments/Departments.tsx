@@ -14,7 +14,7 @@ import {
 } from '../../components/ui/table';
 import { CreateDepartment } from './CreateDepartment';
 import { EditDepartment } from './EditDepartment';
-import { dataService } from '../../services/data-service';
+import { apiService } from '../../../services/api-service';
 
 export function Departments() {
   const { t } = useTranslation();
@@ -32,7 +32,7 @@ export function Departments() {
   const fetchDepartments = async () => {
     try {
       setLoading(true);
-      const response = await dataService.getDepartments();
+      const response = await apiService.getDepartments();
 
       if (response.success && response.data) {
         setDepartments(response.data);

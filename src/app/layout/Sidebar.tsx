@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { LayoutDashboard, Mail, Users, BarChart3, Map, Building2, Bell, ChevronLeft, ChevronRight } from 'lucide-react';
+import { LayoutDashboard, Mail, Users, BarChart3, Map, Building2, Bell, ChevronLeft, ChevronRight, Menu, X } from 'lucide-react';
 
 interface SidebarProps {
     currentPage: string;
@@ -26,21 +26,21 @@ export function Sidebar({ currentPage, onNavigate }: SidebarProps) {
     };
 
     return (
-        <aside className={`${isCollapsed ? 'w-16' : 'w-64'} bg-slate-900 text-white flex flex-col transition-all duration-300 ease-in-out relative`}>
+        <aside className={`${isCollapsed ? 'w-16' : 'w-64'} bg-blue-900 text-white flex flex-col transition-all duration-300 ease-in-out relative shadow-xl`}>
             {/* Toggle Button */}
             <button
                 onClick={toggleSidebar}
-                className="absolute -right-3 top-8 bg-slate-800 text-white rounded-full p-1.5 hover:bg-slate-700 transition-colors z-10 border border-slate-600"
+                className="absolute top-4 right-4 text-white hover:text-gray-300 transition-colors z-10 p-2"
             >
                 {isCollapsed ? (
-                    <ChevronRight className="w-4 h-4" />
+                    <Menu className="w-6 h-6" />
                 ) : (
-                    <ChevronLeft className="w-4 h-4" />
+                    <X className="w-6 h-6" />
                 )}
             </button>
 
             {/* Header */}
-            <div className="p-6 border-b border-slate-700">
+            <div className="p-6 border-b border-blue-700">
                 <h1 className={`font-bold transition-all duration-300 ${isCollapsed ? 'text-lg text-center' : 'text-xl'}`}>
                     {isCollapsed ? 'T' : 'Tapaal'}
                 </h1>

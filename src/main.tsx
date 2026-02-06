@@ -1,7 +1,7 @@
 import { createRoot } from "react-dom/client";
 import App from "./app/App";
+import "./styles/fonts.css";
 import "./styles/index.css";
-import "./styles/tailwind.css";
 import "./i18n/config"; // Import i18n configuration
 
 console.log('Main.tsx loaded');

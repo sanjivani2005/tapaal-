@@ -83,11 +83,11 @@ export default function App() {
   }
 
   return (
-    <div className="flex h-screen bg-gray-50 overflow-hidden">
+    <div className="flex h-screen bg-gray-100">
       <Sidebar currentPage={currentPage} onNavigate={handleNavigate} />
-      <div className="flex-1 flex flex-col overflow-hidden">
+      <div className="flex-1 flex flex-col">
         <Header onNavigate={handleNavigate} />
-        <main className="flex-1 overflow-y-auto">
+        <main className="flex-1 overflow-y-auto bg-white">
           {renderPage()}
         </main>
       </div>

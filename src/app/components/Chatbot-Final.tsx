@@ -56,7 +56,7 @@ export function Chatbot() {
         setIsTyping(true);
 
         try {
-            const response = await fetch('http://localhost:5002/api/chatbot/chat', {
+            const response = await fetch('http://localhost:5000/api/chatbot/chat', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
@@ -169,8 +169,8 @@ export function Chatbot() {
                             >
                                 <div
                                     className={`max-w-[80%] p-3 rounded-2xl text-sm ${msg.sender === 'user'
-                                            ? 'bg-blue-600 text-white rounded-tr-none'
-                                            : 'bg-white text-gray-800 border rounded-tl-none'
+                                        ? 'bg-blue-600 text-white rounded-tr-none'
+                                        : 'bg-white text-gray-800 border rounded-tl-none'
                                         }`}
                                 >
                                     <p>{msg.text}</p>
@@ -313,9 +313,10 @@ export function Chatbot() {
                                 </div>
                             </div>
                         </div>
-                    </div>
-                </>
-            )}
-        </div>
+                </div>
+        </>
+    )
+}
+        </div >
     );
 }

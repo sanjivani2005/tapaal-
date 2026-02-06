@@ -17,9 +17,9 @@ export function Header({ onNavigate }: { onNavigate?: (page: string) => void }) 
     const unreadCount = notifications.filter(n => !n.read).length;
 
     return (
-        <header className="bg-white border-b border-gray-200 px-6 py-4 shadow-sm">
+        <header className="bg-white border-b border-gray-200 px-6 py-4 shadow-lg">
             <div className="flex items-center justify-between">
-                <h2 className="text-lg font-semibold text-gray-800">{t('navigation.dashboard')}</h2>
+                <h1 className="text-2xl font-bold text-gray-900 tracking-tight">{t('navigation.dashboard')}</h1>
                 <div className="flex items-center gap-4">
                     {/* Language Switcher */}
                     <LanguageSwitcher />
@@ -28,11 +28,11 @@ export function Header({ onNavigate }: { onNavigate?: (page: string) => void }) 
                     <div className="relative">
                         <button
                             onClick={() => setShowNotifications(!showNotifications)}
-                            className="relative p-2 text-gray-600 hover:text-gray-800 hover:bg-gray-100 rounded-lg transition-colors"
+                            className="relative p-3 text-gray-600 hover:text-gray-800 hover:bg-gray-100 rounded-xl transition-all duration-200 shadow-sm border border-gray-200"
                         >
                             <Bell className="w-5 h-5" />
                             {unreadCount > 0 && (
-                                <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center font-medium">
+                                <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center font-bold">
                                     {unreadCount}
                                 </span>
                             )}

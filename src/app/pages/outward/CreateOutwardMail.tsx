@@ -6,7 +6,7 @@ import { AIDuplicateAlert } from '../../components/ai/AIDuplicateAlert';
 import { AIPrioritySuggestion } from '../../components/ai/AIPrioritySuggestion';
 import { AIDescriptionSuggestions } from '../../components/ai/AIDescriptionSuggestions';
 import { AIContentSuggestions } from '../../components/ai/AIContentSuggestions';
-import { dataService } from '../../services/data-service';
+import { apiService } from '../../../services/api-service';
 
 interface CreateOutwardMailProps {
     onBack?: () => void;
@@ -45,9 +45,9 @@ export function CreateOutwardMail({ onBack }: CreateOutwardMailProps) {
         try {
             // Fetch both inward and outward mails for duplicate detection
             const [inwardResponse, outwardResponse, deptResponse] = await Promise.all([
-                dataService.getMails({ type: 'inward' }),
-                dataService.getMails({ type: 'outward' }),
-                dataService.getDepartments()
+                apiService.getInwardMails(),
+                apiService.getOutwardMails(),
+                apiService.getDepartments()
             ]);
 
             const allMails = [

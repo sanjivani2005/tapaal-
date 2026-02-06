@@ -18,7 +18,7 @@ import {
 import { cn } from '../../components/ui/utils';
 
 // Database services
-import { dataService } from '../../services/data-service';
+import { apiService } from '../../../services/api-service';
 
 // --- DATA DEFINITIONS ---
 
@@ -45,10 +45,10 @@ export function Dashboard() {
   const { t } = useTranslation();
   const [message, setMessage] = React.useState('');
   const [dbStats, setDbStats] = React.useState({
-    totalUsers: 0,
-    totalDepartments: 0,
-    totalMails: 0,
-    totalTrackingEvents: 0,
+    users: 0,
+    departments: 0,
+    mails: 0,
+    trackingEvents: 0,
   });
   const [realData, setRealData] = React.useState(null);
 
@@ -80,17 +80,17 @@ export function Dashboard() {
     // Load initial stats and real data
     const loadData = async () => {
       try {
-        const apiData = await dataService.getDashboardData();
+        const apiData = await apiService.getDashboardStats();
         if (apiData.success && apiData.data) {
           // Handle both direct stats and nested realData.stats
           const stats = apiData.data.stats || apiData.data.realData?.stats || {};
           const realDataContent = apiData.data.realData || apiData.data;
 
           setDbStats({
-            totalUsers: stats.totalUsers || 0,
-            totalDepartments: stats.totalDepartments || 0,
-            totalMails: stats.totalMails || 0,
-            totalTrackingEvents: stats.totalTrackingEvents || 0,
+            users: (stats as any).totalUsers || 0,
+            departments: (stats as any).totalDepartments || 0,
+            mails: (stats as any).totalMails || 0,
+            trackingEvents: (stats as any).totalTrackingEvents || 0,
           });
           setRealData(realDataContent);
         }
@@ -142,15 +142,15 @@ export function Dashboard() {
   ] : fallbackSummaryData;
 
   return (
-    <div className="p-8 space-y-8 bg-gray-50/50 min-h-screen">
+    <div className="p-8 space-y-8 bg-gray-50 min-h-screen">
       {/* Header */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
         <div>
           <h1 className="text-3xl font-bold text-gray-900 tracking-tight">{t('dashboard.title')}</h1>
-          <p className="text-gray-500 mt-1 font-medium">{t('dashboard.subtitle')}</p>
+          <p className="text-gray-500 mt-2 font-medium">{t('dashboard.subtitle')}</p>
         </div>
         <div className="flex items-center gap-3">
-          <span className="flex items-center gap-2 text-xs font-bold text-gray-400 uppercase tracking-widest">
+          <span className="flex items-center gap-2 text-xs font-bold text-green-600 uppercase tracking-widest bg-green-50 px-3 py-1 rounded-full">
             <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
             {t('dashboard.liveFeed')}
           </span>
@@ -159,54 +159,54 @@ export function Dashboard() {
 
       {/* Status Message */}
       {message && (
-        <div className="p-4 bg-blue-50 border border-blue-200 rounded-lg text-blue-700 font-medium">
+        <div className="p-6 bg-blue-50 border border-blue-200 rounded-xl shadow-lg">
           {message}
         </div>
       )}
 
       {/* Database Stats */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <Card className="shadow-sm border-gray-200/60">
-          <CardContent className="p-4">
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+        <Card className="shadow-lg border-0 bg-white rounded-xl hover:shadow-xl transition-all duration-300">
+          <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-gray-600">{t('dashboard.totalUsers')}</p>
-                <p className="text-2xl font-bold text-gray-900">{dbStats.totalUsers}</p>
+                <p className="text-sm font-medium text-gray-600">{t('dashboard.totalUsers')}</p>
+                <p className="text-3xl font-bold text-gray-900">{dbStats.users}</p>
               </div>
-              <Users className="w-8 h-8 text-purple-600" />
+              <Users className="w-10 h-10 text-purple-600" />
             </div>
           </CardContent>
         </Card>
-        <Card className="shadow-sm border-gray-200/60">
-          <CardContent className="p-4">
+        <Card className="shadow-lg border-0 bg-white rounded-xl hover:shadow-xl transition-all duration-300">
+          <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-gray-600">{t('dashboard.departments')}</p>
-                <p className="text-2xl font-bold text-gray-900">{dbStats.totalDepartments}</p>
+                <p className="text-sm font-medium text-gray-600">{t('dashboard.departments')}</p>
+                <p className="text-3xl font-bold text-gray-900">{dbStats.departments}</p>
               </div>
-              <Database className="w-8 h-8 text-blue-600" />
+              <Database className="w-10 h-10 text-blue-600" />
             </div>
           </CardContent>
         </Card>
-        <Card className="shadow-sm border-gray-200/60">
-          <CardContent className="p-4">
+        <Card className="shadow-lg border-0 bg-white rounded-xl hover:shadow-xl transition-all duration-300">
+          <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-gray-600">{t('dashboard.totalMails')}</p>
-                <p className="text-2xl font-bold text-gray-900">{dbStats.totalMails}</p>
+                <p className="text-sm font-medium text-gray-600">{t('dashboard.totalMails')}</p>
+                <p className="text-3xl font-bold text-gray-900">{dbStats.mails}</p>
               </div>
-              <Mail className="w-8 h-8 text-green-600" />
+              <Mail className="w-10 h-10 text-green-600" />
             </div>
           </CardContent>
         </Card>
-        <Card className="shadow-sm border-gray-200/60">
-          <CardContent className="p-4">
+        <Card className="shadow-lg border-0 bg-white rounded-xl hover:shadow-xl transition-all duration-300">
+          <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-gray-600">{t('dashboard.trackingEvents')}</p>
-                <p className="text-2xl font-bold text-gray-900">{dbStats.totalTrackingEvents}</p>
+                <p className="text-sm font-medium text-gray-600">{t('dashboard.trackingEvents')}</p>
+                <p className="text-3xl font-bold text-gray-900">{dbStats.trackingEvents}</p>
               </div>
-              <Clock className="w-8 h-8 text-orange-600" />
+              <Clock className="w-10 h-10 text-orange-600" />
             </div>
           </CardContent>
         </Card>
@@ -215,11 +215,11 @@ export function Dashboard() {
       {/* Stats Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         {realSummaryData.map((item) => (
-          <Card key={item.title} className="shadow-sm border-gray-200/60">
-            <CardContent className="p-4">
+          <Card key={item.title} className="shadow-lg border-0 bg-white rounded-xl hover:shadow-xl transition-all duration-300">
+            <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-gray-600">{item.title}</p>
+                  <p className="text-sm font-medium text-gray-600">{item.title}</p>
                   <p className="text-2xl font-bold text-gray-900">{item.value}</p>
                   <div className="flex items-center gap-1 mt-2">
                     {item.isPositive ? (

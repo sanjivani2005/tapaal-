@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Input, Button, Card, CardContent, CardHeader, CardTitle, Label, Select, SelectContent, SelectItem, SelectTrigger, SelectValue, Textarea, Badge } from '../../components/ui';
 import { ArrowLeft, Building, User, Mail, Phone, MapPin, Users, Settings, Brain, AlertTriangle, Save } from 'lucide-react';
 import { aiService } from '../../services/ai-service';
-import { dataService } from '../../services/data-service';
+import { apiService } from '../../../services/api-service';
 
 interface EditDepartmentProps {
     onBack?: () => void;
@@ -48,7 +48,7 @@ export function EditDepartment({ onBack, departmentId, onDepartmentUpdated }: Ed
 
     const fetchExistingDepartments = async () => {
         try {
-            const response = await dataService.getDepartments();
+            const response = await apiService.getDepartments();
             setExistingDepartments(response.data || []);
         } catch (error) {
             console.error('Error fetching departments:', error);
@@ -57,7 +57,8 @@ export function EditDepartment({ onBack, departmentId, onDepartmentUpdated }: Ed
 
     const fetchDepartmentData = async () => {
         try {
-            const response = await fetch(`http://localhost:5000/api/departments/${departmentId}`);
+            const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+            const response = await fetch(`${apiUrl}/departments/${departmentId}`);
             if (response.ok) {
                 const data = await response.json();
                 const dept = data.data;
@@ -254,7 +255,8 @@ export function EditDepartment({ onBack, departmentId, onDepartmentUpdated }: Ed
         try {
             setSaving(true);
             // Call the API to update the department
-            const response = await fetch(`http://localhost:5000/api/departments/${departmentId}`, {
+            const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+            const response = await fetch(`${apiUrl}/departments/${departmentId}`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',

@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { Input, Button, Card, CardContent, CardHeader, CardTitle, Label, Select, SelectContent, SelectItem, SelectTrigger, SelectValue, Textarea, Badge } from '../../components/ui';
 import { ArrowLeft, Building, User, Mail, Phone, MapPin, Users, Settings, Brain, AlertTriangle, TrendingUp, Globe } from 'lucide-react';
 import { aiService } from '../../services/ai-service';
-import { dataService } from '../../services/data-service';
+import { apiService } from '../../../services/api-service';
 
 interface CreateDepartmentProps {
     onBack?: () => void;
@@ -44,7 +44,7 @@ export function CreateDepartment({ onBack, onDepartmentCreated }: CreateDepartme
 
     const fetchExistingDepartments = async () => {
         try {
-            const response = await dataService.getDepartments();
+            const response = await apiService.getDepartments();
             setExistingDepartments(response.data || []);
         } catch (error) {
             console.error('Error fetching departments:', error);
@@ -273,7 +273,8 @@ export function CreateDepartment({ onBack, onDepartmentCreated }: CreateDepartme
 
         try {
             // Call the API to create the department
-            const response = await fetch('http://localhost:5000/api/departments', {
+            const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+            const response = await fetch(`${apiUrl}/departments`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
