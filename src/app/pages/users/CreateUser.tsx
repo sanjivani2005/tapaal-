@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Input, Button, Card, CardContent, CardHeader, CardTitle, Label, Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../../components/ui';
-import { ArrowLeft, User, Mail, Phone, Building, Shield, Key, Eye, EyeOff, Brain, AlertTriangle, Users } from 'lucide-react';
+import { ArrowLeft, User, Mail, Phone, Building, Shield, Key, Eye, EyeOff, Brain, AlertTriangle, Users, Globe } from 'lucide-react';
 import { aiService } from '../../services/ai-service';
 import { dataService } from '../../services/data-service';
 import { userService } from '../../../services/user-service.js';
@@ -13,6 +14,7 @@ interface CreateUserProps {
 }
 
 export function CreateUser({ onBack }: CreateUserProps) {
+    const { t, i18n } = useTranslation();
     const [formData, setFormData] = useState({
         firstName: '',
         lastName: '',
@@ -121,12 +123,12 @@ export function CreateUser({ onBack }: CreateUserProps) {
 
         // Basic validation
         if (formData.password !== formData.confirmPassword) {
-            alert('Passwords do not match!');
+            alert(t('createUser.validation.passwordMismatch'));
             return;
         }
 
         if (formData.password.length < 8) {
-            alert('Password must be at least 8 characters long!');
+            alert(t('createUser.validation.passwordTooShort'));
             return;
         }
 
@@ -152,16 +154,16 @@ export function CreateUser({ onBack }: CreateUserProps) {
             const response = await service.createUser(userData);
 
             if (response.success) {
-                alert('User Created Successfully!');
+                alert(t('createUser.success'));
                 if (onBack) {
                     onBack(); // Go back to users list
                 }
             } else {
-                alert('Failed to create user: ' + (response.message || 'Unknown error'));
+                alert(t('createUser.error') + ': ' + (response.message || 'Unknown error'));
             }
         } catch (error) {
             console.error('Error creating user:', error);
-            alert('Failed to create user. Please try again.');
+            alert(t('createUser.error') + '. Please try again.');
         }
     };
 
@@ -178,8 +180,35 @@ export function CreateUser({ onBack }: CreateUserProps) {
                     <ArrowLeft className="w-5 h-5" />
                 </Button>
                 <div>
-                    <h1 className="text-2xl font-semibold text-gray-800">Create New User</h1>
-                    <p className="text-gray-500 text-sm">Add a new user to the system with appropriate permissions</p>
+                    <h1 className="text-2xl font-semibold text-gray-800">{t('createUser.title')}</h1>
+                    <p className="text-gray-500 text-sm">{t('createUser.subtitle')}</p>
+                </div>
+                <div className="ml-auto">
+                    <Select value={i18n.language} onValueChange={(value) => i18n.changeLanguage(value)}>
+                        <SelectTrigger className="w-32">
+                            <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                            <SelectItem value="en">
+                                <div className="flex items-center gap-2">
+                                    <Globe className="w-4 h-4" />
+                                    <span>English</span>
+                                </div>
+                            </SelectItem>
+                            <SelectItem value="hi">
+                                <div className="flex items-center gap-2">
+                                    <Globe className="w-4 h-4" />
+                                    <span>हिंदी</span>
+                                </div>
+                            </SelectItem>
+                            <SelectItem value="mr">
+                                <div className="flex items-center gap-2">
+                                    <Globe className="w-4 h-4" />
+                                    <span>मराठी</span>
+                                </div>
+                            </SelectItem>
+                        </SelectContent>
+                    </Select>
                 </div>
             </div>
 
@@ -188,41 +217,41 @@ export function CreateUser({ onBack }: CreateUserProps) {
                     <CardHeader>
                         <CardTitle className="flex items-center gap-2">
                             <User className="w-5 h-5" />
-                            Personal Information
+                            {t('createUser.personalInformation')}
                         </CardTitle>
                     </CardHeader>
                     <CardContent className="space-y-4">
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div>
-                                <Label htmlFor="firstName">First Name *</Label>
+                                <Label htmlFor="firstName">{t('createUser.firstName')} {t('createUser.required')}</Label>
                                 <Input
                                     id="firstName"
                                     value={formData.firstName}
                                     onChange={(e) => handleInputChange('firstName', e.target.value)}
-                                    placeholder="Enter first name"
+                                    placeholder={t('createUser.firstNamePlaceholder')}
                                     required
                                 />
                             </div>
                             <div>
-                                <Label htmlFor="lastName">Last Name *</Label>
+                                <Label htmlFor="lastName">{t('createUser.lastName')} {t('createUser.required')}</Label>
                                 <Input
                                     id="lastName"
                                     value={formData.lastName}
                                     onChange={(e) => handleInputChange('lastName', e.target.value)}
-                                    placeholder="Enter last name"
+                                    placeholder={t('createUser.lastNamePlaceholder')}
                                     required
                                 />
                             </div>
                         </div>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div>
-                                <Label htmlFor="email">Email Address *</Label>
+                                <Label htmlFor="email">{t('createUser.emailAddress')} {t('createUser.required')}</Label>
                                 <Input
                                     id="email"
                                     type="email"
                                     value={formData.email}
                                     onChange={(e) => handleInputChange('email', e.target.value)}
-                                    placeholder="user@gov.in"
+                                    placeholder={t('createUser.emailPlaceholder')}
                                     className={emailDuplicate ? 'border-red-500' : ''}
                                     required
                                 />
@@ -230,36 +259,36 @@ export function CreateUser({ onBack }: CreateUserProps) {
                                     <div className="mt-1 p-2 bg-red-50 border border-red-200 rounded-md flex items-center gap-2">
                                         <AlertTriangle className="w-4 h-4 text-red-600" />
                                         <span className="text-sm text-red-700">
-                                            Email already exists! Try a different email address.
+                                            {t('createUser.aiWarnings.emailDuplicate')}
                                         </span>
                                     </div>
                                 )}
                             </div>
                             <div>
-                                <Label htmlFor="phone">Phone Number</Label>
+                                <Label htmlFor="phone">{t('createUser.phoneNumber')}</Label>
                                 <Input
                                     id="phone"
                                     type="tel"
                                     value={formData.phone}
                                     onChange={(e) => handleInputChange('phone', e.target.value)}
-                                    placeholder="+91 98765 43210"
+                                    placeholder={t('createUser.phonePlaceholder')}
                                 />
                             </div>
                         </div>
                         <div>
-                            <Label htmlFor="employeeId">Employee ID</Label>
+                            <Label htmlFor="employeeId">{t('createUser.employeeId')}</Label>
                             <Input
                                 id="employeeId"
                                 value={formData.employeeId}
                                 onChange={(e) => handleInputChange('employeeId', e.target.value)}
-                                placeholder="EMP-2024-001"
+                                placeholder={t('createUser.employeeIdPlaceholder')}
                                 className={employeeIdDuplicate ? 'border-red-500' : ''}
                             />
                             {employeeIdDuplicate && (
                                 <div className="mt-1 p-2 bg-red-50 border border-red-200 rounded-md flex items-center gap-2">
                                     <AlertTriangle className="w-4 h-4 text-red-600" />
                                     <span className="text-sm text-red-700">
-                                        Employee ID already exists! Use a unique ID.
+                                        {t('createUser.aiWarnings.employeeIdDuplicate')}
                                     </span>
                                 </div>
                             )}
@@ -271,16 +300,16 @@ export function CreateUser({ onBack }: CreateUserProps) {
                     <CardHeader>
                         <CardTitle className="flex items-center gap-2">
                             <Building className="w-5 h-5" />
-                            Department & Role
+                            {t('createUser.departmentRole')}
                         </CardTitle>
                     </CardHeader>
                     <CardContent className="space-y-4">
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div>
-                                <Label htmlFor="department">Department *</Label>
+                                <Label htmlFor="department">{t('createUser.department')} {t('createUser.required')}</Label>
                                 <Select value={formData.department} onValueChange={(value) => handleInputChange('department', value)}>
                                     <SelectTrigger>
-                                        <SelectValue placeholder="Select department" />
+                                        <SelectValue placeholder={t('createUser.selectDepartment')} />
                                     </SelectTrigger>
                                     <SelectContent>
                                         {departments.map(dept => (
@@ -290,10 +319,10 @@ export function CreateUser({ onBack }: CreateUserProps) {
                                 </Select>
                             </div>
                             <div>
-                                <Label htmlFor="role">Role *</Label>
+                                <Label htmlFor="role">{t('createUser.role')} {t('createUser.required')}</Label>
                                 <Select value={formData.role} onValueChange={(value) => handleInputChange('role', value)}>
                                     <SelectTrigger>
-                                        <SelectValue placeholder="Select role" />
+                                        <SelectValue placeholder={t('createUser.selectRole')} />
                                     </SelectTrigger>
                                     <SelectContent>
                                         {roles.map(role => (
@@ -305,27 +334,27 @@ export function CreateUser({ onBack }: CreateUserProps) {
                                     <div className="mt-1 p-2 bg-blue-50 border border-blue-200 rounded-md flex items-center gap-2">
                                         <Brain className="w-4 h-4 text-blue-600" />
                                         <span className="text-sm text-blue-700">
-                                            AI Suggestion: {suggestedRole} for {formData.department}
+                                            {t('createUser.aiSuggestions.suggests')}: {suggestedRole} {t('createUser.department')}
                                         </span>
                                         <button
                                             onClick={() => handleInputChange('role', suggestedRole)}
                                             className="ml-auto text-xs bg-blue-600 text-white px-2 py-1 rounded hover:bg-blue-700"
                                         >
-                                            Apply
+                                            {t('createUser.aiSuggestions.apply')}
                                         </button>
                                     </div>
                                 )}
                             </div>
                         </div>
                         <div>
-                            <Label htmlFor="status">Status</Label>
+                            <Label htmlFor="status">{t('createUser.status')}</Label>
                             <Select value={formData.status} onValueChange={(value) => handleInputChange('status', value)}>
                                 <SelectTrigger>
                                     <SelectValue />
                                 </SelectTrigger>
                                 <SelectContent>
-                                    <SelectItem value="Active">Active</SelectItem>
-                                    <SelectItem value="Inactive">Inactive</SelectItem>
+                                    <SelectItem value="Active">{t('createUser.active')}</SelectItem>
+                                    <SelectItem value="Inactive">{t('createUser.inactive')}</SelectItem>
                                 </SelectContent>
                             </Select>
                         </div>
@@ -336,20 +365,20 @@ export function CreateUser({ onBack }: CreateUserProps) {
                     <CardHeader>
                         <CardTitle className="flex items-center gap-2">
                             <Key className="w-5 h-5" />
-                            Security Settings
+                            {t('createUser.securitySettings')}
                         </CardTitle>
                     </CardHeader>
                     <CardContent className="space-y-4">
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div>
-                                <Label htmlFor="password">Password *</Label>
+                                <Label htmlFor="password">{t('createUser.password')} {t('createUser.required')}</Label>
                                 <div className="relative">
                                     <Input
                                         id="password"
                                         type={showPassword ? 'text' : 'password'}
                                         value={formData.password}
                                         onChange={(e) => handleInputChange('password', e.target.value)}
-                                        placeholder="Enter password"
+                                        placeholder={t('createUser.passwordPlaceholder')}
                                         required
                                         className="pr-10"
                                     />
@@ -363,17 +392,17 @@ export function CreateUser({ onBack }: CreateUserProps) {
                                         {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                                     </Button>
                                 </div>
-                                <p className="text-xs text-gray-500 mt-1">Minimum 8 characters</p>
+                                <p className="text-xs text-gray-500 mt-1">{t('createUser.passwordMinLength')}</p>
                             </div>
                             <div>
-                                <Label htmlFor="confirmPassword">Confirm Password *</Label>
+                                <Label htmlFor="confirmPassword">{t('createUser.confirmPassword')} {t('createUser.required')}</Label>
                                 <div className="relative">
                                     <Input
                                         id="confirmPassword"
                                         type={showConfirmPassword ? 'text' : 'password'}
                                         value={formData.confirmPassword}
                                         onChange={(e) => handleInputChange('confirmPassword', e.target.value)}
-                                        placeholder="Confirm password"
+                                        placeholder={t('createUser.confirmPasswordPlaceholder')}
                                         required
                                         className="pr-10"
                                     />
@@ -396,45 +425,45 @@ export function CreateUser({ onBack }: CreateUserProps) {
                     <CardHeader>
                         <CardTitle className="flex items-center gap-2">
                             <Mail className="w-5 h-5" />
-                            Address Information
+                            {t('createUser.addressInformation')}
                         </CardTitle>
                     </CardHeader>
                     <CardContent className="space-y-4">
                         <div>
-                            <Label htmlFor="address">Address</Label>
+                            <Label htmlFor="address">{t('createUser.address')}</Label>
                             <Input
                                 id="address"
                                 value={formData.address}
                                 onChange={(e) => handleInputChange('address', e.target.value)}
-                                placeholder="Enter street address"
+                                placeholder={t('createUser.addressPlaceholder')}
                             />
                         </div>
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                             <div>
-                                <Label htmlFor="city">City</Label>
+                                <Label htmlFor="city">{t('createUser.city')}</Label>
                                 <Input
                                     id="city"
                                     value={formData.city}
                                     onChange={(e) => handleInputChange('city', e.target.value)}
-                                    placeholder="Enter city"
+                                    placeholder={t('createUser.cityPlaceholder')}
                                 />
                             </div>
                             <div>
-                                <Label htmlFor="state">State</Label>
+                                <Label htmlFor="state">{t('createUser.state')}</Label>
                                 <Input
                                     id="state"
                                     value={formData.state}
                                     onChange={(e) => handleInputChange('state', e.target.value)}
-                                    placeholder="Enter state"
+                                    placeholder={t('createUser.statePlaceholder')}
                                 />
                             </div>
                             <div>
-                                <Label htmlFor="zipCode">ZIP Code</Label>
+                                <Label htmlFor="zipCode">{t('createUser.zipCode')}</Label>
                                 <Input
                                     id="zipCode"
                                     value={formData.zipCode}
                                     onChange={(e) => handleInputChange('zipCode', e.target.value)}
-                                    placeholder="Enter ZIP code"
+                                    placeholder={t('createUser.zipCodePlaceholder')}
                                 />
                             </div>
                         </div>
@@ -445,13 +474,13 @@ export function CreateUser({ onBack }: CreateUserProps) {
                     <div className="flex items-start gap-3">
                         <Shield className="w-5 h-5 text-blue-600 mt-0.5" />
                         <div>
-                            <h4 className="font-semibold text-blue-900">User Account Summary</h4>
+                            <h4 className="font-semibold text-blue-900">{t('createUser.userAccountSummary')}</h4>
                             <div className="mt-2 text-sm text-blue-700">
-                                <p><strong>Name:</strong> {formData.firstName} {formData.lastName}</p>
-                                <p><strong>Email:</strong> {formData.email}</p>
-                                <p><strong>Role:</strong> {formData.role}</p>
-                                <p><strong>Department:</strong> {formData.department}</p>
-                                <p><strong>Status:</strong> {formData.status}</p>
+                                <p><strong>{t('createUser.summaryName')}:</strong> {formData.firstName} {formData.lastName}</p>
+                                <p><strong>{t('createUser.summaryEmail')}:</strong> {formData.email}</p>
+                                <p><strong>{t('createUser.summaryRole')}:</strong> {formData.role}</p>
+                                <p><strong>{t('createUser.summaryDepartment')}:</strong> {formData.department}</p>
+                                <p><strong>{t('createUser.summaryStatus')}:</strong> {formData.status}</p>
                             </div>
                         </div>
                     </div>
@@ -460,10 +489,10 @@ export function CreateUser({ onBack }: CreateUserProps) {
                 <div className="flex gap-4">
                     <Button type="submit" className="bg-blue-600 hover:bg-blue-700">
                         <User className="w-4 h-4 mr-2" />
-                        Create User
+                        {t('createUser.createUser')}
                     </Button>
                     <Button type="button" variant="outline" onClick={onBack}>
-                        Cancel
+                        {t('createUser.cancel')}
                     </Button>
                 </div>
             </form>

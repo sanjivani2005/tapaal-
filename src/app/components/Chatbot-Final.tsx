@@ -169,8 +169,8 @@ export function Chatbot() {
                             >
                                 <div
                                     className={`max-w-[80%] p-3 rounded-2xl text-sm ${msg.sender === 'user'
-                                        ? 'bg-blue-600 text-white rounded-tr-none'
-                                        : 'bg-white text-gray-800 border rounded-tl-none'
+                                            ? 'bg-blue-600 text-white rounded-tr-none'
+                                            : 'bg-white text-gray-800 border rounded-tl-none'
                                         }`}
                                 >
                                     <p>{msg.text}</p>
@@ -313,21 +313,9 @@ export function Chatbot() {
                                 </div>
                             </div>
                         </div>
-                </div>
+                    </div>
+                </>
+            )}
         </div>
-        
-        {/* Footer */ }
-    <div className="bg-gradient-to-r from-gray-800 to-gray-900 border-t border-gray-200 p-2 text-center">
-        <div className="flex items-center justify-between">
-            <span className="text-xs text-gray-400">
-                Powered by Tapaal Database
-            </span>
-            <span className="text-xs text-gray-500 ml-2"> 2024</span>
-        </div>
-    </div>
     );
-}
-        </div >
-    )
-}
 }

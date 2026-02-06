@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Input, Textarea, Button, Card, CardContent, CardHeader, CardTitle, Select, SelectContent, SelectItem, SelectTrigger, SelectValue, Label } from '../../components/ui';
-import { UploadCloud, Search, ArrowLeft, Send, Calendar, User, Building, Brain } from 'lucide-react';
+import { UploadCloud, Search, ArrowLeft, Send, Calendar, User, Building, Brain, Globe } from 'lucide-react';
 import { aiService, DuplicateResult, PriorityResult, DescriptionSuggestion, ContentSuggestion } from '../../services/ai-service';
 import { AIDuplicateAlert } from '../../components/ai/AIDuplicateAlert';
 import { AIPrioritySuggestion } from '../../components/ai/AIPrioritySuggestion';
@@ -14,6 +14,7 @@ interface CreateInwardMailProps {
 }
 
 export function CreateInwardMail({ onBack }: CreateInwardMailProps) {
+    const { t, i18n } = useTranslation();
     const [senderName, setSenderName] = useState('');
     const [senderAddress, setSenderAddress] = useState('');
     const [subject, setSubject] = useState('');
@@ -200,17 +201,17 @@ export function CreateInwardMail({ onBack }: CreateInwardMailProps) {
 
         // Validation
         if (!senderName.trim()) {
-            alert('Please enter sender name');
+            alert(t('createInwardMail.validation.senderNameRequired'));
             return;
         }
 
         if (!department) {
-            alert('Please select a department');
+            alert(t('createInwardMail.validation.departmentRequired'));
             return;
         }
 
         if (!description.trim()) {
-            alert('Please enter mail details');
+            alert(t('createInwardMail.validation.descriptionRequired'));
             return;
         }
 
@@ -228,27 +229,32 @@ export function CreateInwardMail({ onBack }: CreateInwardMailProps) {
         });
 
         try {
-            const mailData = {
-                receivedBy: 'System Admin',
-                handoverTo: 'System Admin',
-                sender: senderName,
-                deliveryMode: 'Courier',
-                details: description,
-                referenceDetails: referenceNumber,
-                priority: priority,
-                department: department,
-                date: receivedDate || new Date().toISOString().slice(0, 10)
-            };
+            // Create FormData for file upload
+            const formData = new FormData();
+            formData.append('receivedBy', 'System Admin');
+            formData.append('handoverTo', 'System Admin');
+            formData.append('sender', senderName);
+            formData.append('deliveryMode', 'Courier');
+            formData.append('details', description);
+            formData.append('referenceDetails', referenceNumber);
+            formData.append('priority', priority);
+            formData.append('department', department);
+            formData.append('date', receivedDate || new Date().toISOString().slice(0, 10));
 
-            console.log('📤 Sending to API:', mailData);
+            // Append files
+            attachedFiles.forEach((file, index) => {
+                formData.append(`file${index}`, file);
+            });
 
-            const response = await inwardMailService.createInwardMail(mailData, attachedFiles);
+            console.log('📤 Sending to API:', Object.fromEntries(formData));
+
+            const response = await inwardMailService.createInwardMail(formData);
 
             console.log('📥 API Response:', response);
 
             if (response.success) {
                 console.log('✅ Mail saved successfully!');
-                alert('Inward mail created successfully!');
+                alert(t('createInwardMail.success'));
                 // Clear form fields
                 setSenderName('');
                 setSenderAddress('');
@@ -262,23 +268,40 @@ export function CreateInwardMail({ onBack }: CreateInwardMailProps) {
                 onBack?.();
             } else {
                 console.log('❌ API returned error:', response.message);
-                alert('Failed to create inward mail: ' + response.message);
+                alert(t('createInwardMail.error') + ': ' + response.message);
             }
         } catch (error) {
             console.error('💥 Error creating inward mail:', error);
-            alert('Failed to create inward mail. Please try again.');
+            alert(t('createInwardMail.error'));
         }
     };
 
     return (
         <div className="p-6 max-w-4xl mx-auto">
-            <div className="flex items-center gap-4 mb-6">
-                <Button variant="ghost" onClick={onBack} className="p-2">
-                    <ArrowLeft className="w-5 h-5" />
-                </Button>
-                <div>
-                    <h1 className="text-2xl font-semibold text-gray-800">Create Inward Mail</h1>
-                    <p className="text-gray-500 text-sm">Record new correspondence received from external sources</p>
+            <div className="flex items-center justify-between mb-6">
+                <div className="flex items-center gap-4">
+                    <Button variant="ghost" onClick={onBack} className="p-2">
+                        <ArrowLeft className="w-5 h-5" />
+                    </Button>
+                    <div>
+                        <h1 className="text-2xl font-semibold text-gray-800">{t('createInwardMail.title')}</h1>
+                        <p className="text-gray-500 text-sm">{t('createInwardMail.subtitle')}</p>
+                    </div>
+                </div>
+
+                {/* Language Selector */}
+                <div className="flex items-center gap-2">
+                    <Globe className="w-4 h-4 text-gray-600" />
+                    <Select value={i18n.language} onValueChange={(lang) => i18n.changeLanguage(lang)}>
+                        <SelectTrigger className="w-32">
+                            <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                            <SelectItem value="en">English</SelectItem>
+                            <SelectItem value="hi">हिंदी</SelectItem>
+                            <SelectItem value="mr">मराठी</SelectItem>
+                        </SelectContent>
+                    </Select>
                 </div>
             </div>
 
@@ -319,45 +342,45 @@ export function CreateInwardMail({ onBack }: CreateInwardMailProps) {
                     <CardHeader>
                         <CardTitle className="flex items-center gap-2">
                             <User className="w-5 h-5" />
-                            Sender Information
+                            {t('createInwardMail.senderInformation')}
                         </CardTitle>
                     </CardHeader>
                     <CardContent className="space-y-4">
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div>
-                                <Label htmlFor="senderName">Sender Name *</Label>
+                                <Label htmlFor="senderName">{t('createInwardMail.senderName')} {t('createInwardMail.required')}</Label>
                                 <Input
                                     id="senderName"
                                     value={senderName}
                                     onChange={(e) => setSenderName(e.target.value)}
-                                    placeholder="Enter sender name"
+                                    placeholder={t('createInwardMail.senderNamePlaceholder')}
                                     required
                                 />
                             </div>
                             <div>
-                                <Label htmlFor="department">Department *</Label>
+                                <Label htmlFor="department">{t('createInwardMail.department')} {t('createInwardMail.required')}</Label>
                                 <Select value={department} onValueChange={setDepartment}>
                                     <SelectTrigger>
-                                        <SelectValue placeholder="Select department *" />
+                                        <SelectValue placeholder={t('createInwardMail.selectDepartment')} />
                                     </SelectTrigger>
                                     <SelectContent>
-                                        <SelectItem value="Finance">Finance</SelectItem>
-                                        <SelectItem value="HR">Human Resources</SelectItem>
-                                        <SelectItem value="Procurement">Procurement</SelectItem>
-                                        <SelectItem value="Administration">Administration</SelectItem>
-                                        <SelectItem value="IT">Information Technology</SelectItem>
-                                        <SelectItem value="Legal">Legal</SelectItem>
+                                        <SelectItem value="Finance">{t('departments.finance')}</SelectItem>
+                                        <SelectItem value="HR">{t('departments.hr')}</SelectItem>
+                                        <SelectItem value="Procurement">{t('departments.procurement')}</SelectItem>
+                                        <SelectItem value="Administration">{t('departments.administration')}</SelectItem>
+                                        <SelectItem value="IT">{t('departments.it')}</SelectItem>
+                                        <SelectItem value="Legal">{t('departments.legal')}</SelectItem>
                                     </SelectContent>
                                 </Select>
                             </div>
                         </div>
                         <div>
-                            <Label htmlFor="senderAddress">Sender Address</Label>
+                            <Label htmlFor="senderAddress">{t('createInwardMail.senderAddress')}</Label>
                             <Textarea
                                 id="senderAddress"
                                 value={senderAddress}
                                 onChange={(e) => setSenderAddress(e.target.value)}
-                                placeholder="Enter complete sender address"
+                                placeholder={t('createInwardMail.senderAddressPlaceholder')}
                                 rows={3}
                             />
                         </div>
@@ -366,46 +389,46 @@ export function CreateInwardMail({ onBack }: CreateInwardMailProps) {
 
                 <Card>
                     <CardHeader>
-                        <CardTitle>Mail Details</CardTitle>
+                        <CardTitle>{t('createInwardMail.mailDetails')}</CardTitle>
                     </CardHeader>
                     <CardContent className="space-y-4">
                         <div>
-                            <Label htmlFor="subject">Subject *</Label>
+                            <Label htmlFor="subject">{t('createInwardMail.subject')} {t('createInwardMail.required')}</Label>
                             <Input
                                 id="subject"
                                 value={subject}
                                 onChange={(e) => setSubject(e.target.value)}
-                                placeholder="Enter mail subject"
+                                placeholder={t('createInwardMail.subjectPlaceholder')}
                                 required
                             />
                         </div>
                         <div>
-                            <Label htmlFor="description">Description/Content</Label>
+                            <Label htmlFor="description">{t('createInwardMail.description')}</Label>
                             <Textarea
                                 id="description"
                                 value={description}
                                 onChange={(e) => setDescription(e.target.value)}
-                                placeholder="Enter mail content or description"
+                                placeholder={t('createInwardMail.descriptionPlaceholder')}
                                 rows={5}
                             />
                         </div>
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                             <div>
-                                <Label htmlFor="priority">Priority</Label>
+                                <Label htmlFor="priority">{t('createInwardMail.priority')}</Label>
                                 <Select value={priority} onValueChange={setPriority}>
                                     <SelectTrigger>
                                         <SelectValue />
                                     </SelectTrigger>
                                     <SelectContent>
-                                        <SelectItem value="Low">Low</SelectItem>
-                                        <SelectItem value="Normal">Normal</SelectItem>
-                                        <SelectItem value="High">High</SelectItem>
-                                        <SelectItem value="Important">Important</SelectItem>
+                                        <SelectItem value="Low">{t('createInwardMail.low')}</SelectItem>
+                                        <SelectItem value="Normal">{t('createInwardMail.normal')}</SelectItem>
+                                        <SelectItem value="High">{t('createInwardMail.high')}</SelectItem>
+                                        <SelectItem value="Important">{t('createInwardMail.important')}</SelectItem>
                                     </SelectContent>
                                 </Select>
                             </div>
                             <div>
-                                <Label htmlFor="receivedDate">Received Date</Label>
+                                <Label htmlFor="receivedDate">{t('createInwardMail.receivedDate')}</Label>
                                 <Input
                                     id="receivedDate"
                                     type="date"
@@ -414,12 +437,12 @@ export function CreateInwardMail({ onBack }: CreateInwardMailProps) {
                                 />
                             </div>
                             <div>
-                                <Label htmlFor="referenceNumber">Reference Number</Label>
+                                <Label htmlFor="referenceNumber">{t('createInwardMail.referenceNumber')}</Label>
                                 <Input
                                     id="referenceNumber"
                                     value={referenceNumber}
                                     onChange={(e) => setReferenceNumber(e.target.value)}
-                                    placeholder="Enter reference number"
+                                    placeholder={t('createInwardMail.referenceNumberPlaceholder')}
                                 />
                             </div>
                         </div>
@@ -430,7 +453,7 @@ export function CreateInwardMail({ onBack }: CreateInwardMailProps) {
                     <CardHeader>
                         <CardTitle className="flex items-center gap-2">
                             <UploadCloud className="w-5 h-5" />
-                            Attachments
+                            {t('createInwardMail.attachments')}
                         </CardTitle>
                     </CardHeader>
                     <CardContent>
@@ -440,7 +463,7 @@ export function CreateInwardMail({ onBack }: CreateInwardMailProps) {
                             onDrop={handleDrop}
                         >
                             <UploadCloud className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-                            <p className="text-gray-600 mb-2">Drag and drop files here, or click to browse</p>
+                            <p className="text-gray-600 mb-2">{t('createInwardMail.dragDropText')}</p>
                             <input
                                 type="file"
                                 multiple
@@ -453,12 +476,12 @@ export function CreateInwardMail({ onBack }: CreateInwardMailProps) {
                                 variant="outline"
                                 onClick={() => document.getElementById('file-upload')?.click()}
                             >
-                                Browse Files
+                                {t('createInwardMail.browseFiles')}
                             </Button>
                         </div>
                         {attachedFiles.length > 0 && (
                             <div className="mt-4">
-                                <p className="text-sm font-medium text-gray-700 mb-2">Attached Files:</p>
+                                <p className="text-sm font-medium text-gray-700 mb-2">{t('createInwardMail.attachedFiles')}</p>
                                 <ul className="space-y-1">
                                     {attachedFiles.map((file, index) => (
                                         <li key={index} className="text-sm text-gray-600">
@@ -474,10 +497,10 @@ export function CreateInwardMail({ onBack }: CreateInwardMailProps) {
                 <div className="flex gap-4">
                     <Button type="submit" className="bg-blue-600 hover:bg-blue-700">
                         <Send className="w-4 h-4 mr-2" />
-                        Save Inward Mail
+                        {t('createInwardMail.saveInwardMail')}
                     </Button>
                     <Button type="button" variant="outline" onClick={onBack}>
-                        Cancel
+                        {t('common.cancel')}
                     </Button>
                 </div>
             </form>

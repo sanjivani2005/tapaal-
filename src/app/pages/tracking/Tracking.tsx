@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Search, Eye, Clock, User, MapPin, Filter, Download, RefreshCw, X } from 'lucide-react';
+import { Search, Eye, Clock, User, MapPin, Filter, Download, RefreshCw, X, Globe } from 'lucide-react';
 import { Card } from '../../components/ui/card';
 import { Input } from '../../components/ui/input';
 import { Button } from '../../components/ui/button';
@@ -41,7 +41,7 @@ interface TrackingHistory {
 }
 
 export function Tracking() {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
   const [typeFilter, setTypeFilter] = useState('all');
@@ -74,7 +74,7 @@ export function Tracking() {
   const fetchTrackingData = async () => {
     try {
       setLoading(true);
-      
+
       // Fetch both inward and outward mails
       const [inwardResponse, outwardResponse] = await Promise.all([
         inwardService.getInwardMails(),
@@ -84,7 +84,7 @@ export function Tracking() {
       if (inwardResponse.success && outwardResponse.success) {
         const inwardMails = inwardResponse.data || [];
         const outwardMails = outwardResponse.data || [];
-        
+
         // Combine and format tracking data
         const allMails = [...inwardMails, ...outwardMails];
         const trackingData: TrackingHistory[] = allMails.map((mail, index) => ({
@@ -108,7 +108,7 @@ export function Tracking() {
             }
           ]
         }));
-        
+
         setTrackingHistory(trackingData);
       }
     } catch (error) {
@@ -134,9 +134,23 @@ export function Tracking() {
 
   return (
     <div className="p-6 space-y-6">
-      <div>
-        <h1 className="text-2xl font-semibold text-gray-800">Mail Tracking</h1>
-        <p className="text-gray-600 mt-1">Track all inward and outward mails</p>
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-2xl font-semibold text-gray-800">{t('tracking.title')}</h1>
+          <p className="text-gray-600 mt-1">{t('tracking.subtitle')}</p>
+        </div>
+        <div className="flex items-center gap-2">
+          <select
+            value={i18n.language}
+            onChange={(e) => i18n.changeLanguage(e.target.value)}
+            className="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+          >
+            <option value="en">English</option>
+            <option value="hi">हिंदी</option>
+            <option value="mr">मराठी</option>
+          </select>
+          <Globe className="w-4 h-4 text-gray-500" />
+        </div>
       </div>
 
       {/* Filters */}
@@ -147,7 +161,7 @@ export function Tracking() {
               <div className="relative">
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
                 <Input
-                  placeholder="Search by tracking ID, mail ID, or subject..."
+                  placeholder={t('tracking.searchPlaceholder')}
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                   className="pl-10"
@@ -160,11 +174,11 @@ export function Tracking() {
                 onChange={(e) => setStatusFilter(e.target.value)}
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
               >
-                <option value="all">All Statuses</option>
-                <option value="pending">Pending</option>
-                <option value="in-progress">In Progress</option>
-                <option value="approved">Approved</option>
-                <option value="completed">Completed</option>
+                <option value="all">{t('tracking.allStatuses')}</option>
+                <option value="pending">{t('tracking.statuses.pending')}</option>
+                <option value="in-progress">{t('tracking.statuses.inProgress')}</option>
+                <option value="approved">{t('tracking.statuses.approved')}</option>
+                <option value="completed">{t('tracking.statuses.completed')}</option>
               </select>
             </div>
             <div className="min-w-[150px]">
@@ -173,9 +187,9 @@ export function Tracking() {
                 onChange={(e) => setTypeFilter(e.target.value)}
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
               >
-                <option value="all">All Types</option>
-                <option value="INWARD">Inward</option>
-                <option value="OUTWARD">Outward</option>
+                <option value="all">{t('tracking.allTypes')}</option>
+                <option value="INWARD">{t('tracking.types.inward')}</option>
+                <option value="OUTWARD">{t('tracking.types.outward')}</option>
               </select>
             </div>
             <Button
@@ -184,7 +198,7 @@ export function Tracking() {
               className="flex items-center gap-2"
             >
               <RefreshCw className="w-4 h-4" />
-              Refresh
+              {t('tracking.refresh')}
             </Button>
           </div>
         </div>
@@ -196,25 +210,25 @@ export function Tracking() {
           {loading ? (
             <div className="flex items-center justify-center py-8">
               <RefreshCw className="w-6 h-6 animate-spin text-blue-500" />
-              <span className="ml-2 text-gray-600">Loading tracking data...</span>
+              <span className="ml-2 text-gray-600">{t('tracking.loading')}</span>
             </div>
           ) : filteredTracking.length === 0 ? (
             <div className="text-center py-8 text-gray-500">
-              <p>No tracking records found matching your filters.</p>
+              <p>{t('tracking.noRecords')}</p>
             </div>
           ) : (
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>Tracking ID</TableHead>
-                  <TableHead>Mail ID</TableHead>
-                  <TableHead>Type</TableHead>
-                  <TableHead>Subject</TableHead>
-                  <TableHead>Sender</TableHead>
-                  <TableHead>Status</TableHead>
-                  <TableHead>Priority</TableHead>
-                  <TableHead>Department</TableHead>
-                  <TableHead>Actions</TableHead>
+                  <TableHead>{t('tracking.trackingId')}</TableHead>
+                  <TableHead>{t('tracking.mailId')}</TableHead>
+                  <TableHead>{t('tracking.type')}</TableHead>
+                  <TableHead>{t('tracking.subject')}</TableHead>
+                  <TableHead>{t('tracking.sender')}</TableHead>
+                  <TableHead>{t('tracking.status')}</TableHead>
+                  <TableHead>{t('tracking.priority')}</TableHead>
+                  <TableHead>{t('tracking.department')}</TableHead>
+                  <TableHead>{t('tracking.actions')}</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -264,7 +278,7 @@ export function Tracking() {
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white rounded-lg p-6 max-w-2xl w-full max-h-[80vh] overflow-y-auto">
             <div className="flex justify-between items-center mb-4">
-              <h2 className="text-xl font-semibold">Tracking Details</h2>
+              <h2 className="text-xl font-semibold">{t('tracking.trackingDetails')}</h2>
               <Button
                 variant="ghost"
                 size="sm"
@@ -273,56 +287,56 @@ export function Tracking() {
                 <X className="w-4 h-4" />
               </Button>
             </div>
-            
+
             <div className="space-y-4">
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <p className="text-sm text-gray-600">Tracking ID</p>
+                  <p className="text-sm text-gray-600">{t('tracking.trackingId')}</p>
                   <p className="font-medium">{selectedTracking.id}</p>
                 </div>
                 <div>
-                  <p className="text-sm text-gray-600">Mail ID</p>
+                  <p className="text-sm text-gray-600">{t('tracking.mailId')}</p>
                   <p className="font-medium">{selectedTracking.mailId}</p>
                 </div>
                 <div>
-                  <p className="text-sm text-gray-600">Type</p>
+                  <p className="text-sm text-gray-600">{t('tracking.type')}</p>
                   <Badge variant="outline">{selectedTracking.mailType}</Badge>
                 </div>
                 <div>
-                  <p className="text-sm text-gray-600">Status</p>
+                  <p className="text-sm text-gray-600">{t('tracking.status')}</p>
                   <Badge className={getStatusBadge(selectedTracking.currentStatus)}>
                     {selectedTracking.currentStatus}
                   </Badge>
                 </div>
                 <div>
-                  <p className="text-sm text-gray-600">Priority</p>
+                  <p className="text-sm text-gray-600">{t('tracking.priority')}</p>
                   <Badge className={getPriorityBadge(selectedTracking.priority)}>
                     {selectedTracking.priority}
                   </Badge>
                 </div>
                 <div>
-                  <p className="text-sm text-gray-600">Department</p>
+                  <p className="text-sm text-gray-600">{t('tracking.department')}</p>
                   <p className="font-medium">{selectedTracking.department}</p>
                 </div>
               </div>
-              
+
               <div>
-                <p className="text-sm text-gray-600">Subject</p>
+                <p className="text-sm text-gray-600">{t('tracking.subject')}</p>
                 <p className="font-medium">{selectedTracking.subject}</p>
               </div>
-              
+
               <div>
-                <p className="text-sm text-gray-600">Sender</p>
+                <p className="text-sm text-gray-600">{t('tracking.sender')}</p>
                 <p className="font-medium">{selectedTracking.sender}</p>
               </div>
-              
+
               <div>
-                <p className="text-sm text-gray-600">Assigned To</p>
+                <p className="text-sm text-gray-600">{t('tracking.assignedTo')}</p>
                 <p className="font-medium">{selectedTracking.assignedTo}</p>
               </div>
-              
+
               <div>
-                <h3 className="text-lg font-medium mb-2">Timeline</h3>
+                <h3 className="text-lg font-medium mb-2">{t('tracking.timeline')}</h3>
                 <div className="space-y-2">
                   {selectedTracking.timeline.map((event, index) => (
                     <div key={index} className="flex items-start gap-3 p-3 bg-gray-50 rounded">

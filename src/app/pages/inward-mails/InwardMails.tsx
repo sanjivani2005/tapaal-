@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Search, Plus, Pencil, Trash2, Eye, AlertCircle, RefreshCw } from 'lucide-react';
+import { Search, Plus, Pencil, Trash2, Eye, AlertCircle, RefreshCw, Globe } from 'lucide-react';
 import { Card } from '../../components/ui/card';
 import { Input } from '../../components/ui/input';
 import { Button } from '../../components/ui/button';
@@ -39,7 +39,7 @@ interface InwardMailsProps {
 }
 
 export function InwardMails({ onViewMail, onEditMail, onCreateMail }: InwardMailsProps) {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedPriority, setSelectedPriority] = useState('all');
   const [selectedStatus, setSelectedStatus] = useState('all');
@@ -117,14 +117,28 @@ export function InwardMails({ onViewMail, onEditMail, onCreateMail }: InwardMail
           <h1 className="text-2xl font-semibold text-gray-800">{t('inwardMails.title')}</h1>
           <p className="text-gray-500 text-sm mt-1">{t('inwardMails.subtitle')}</p>
         </div>
-        <Button className="bg-green-600 hover:bg-green-700" onClick={onCreateMail}>
-          <Plus className="w-4 h-4 mr-2" />
-          {t('common.add')} {t('inwardMails.addInward')}
-        </Button>
-        <Button variant="outline" onClick={fetchInwardMails} className="ml-2">
-          <RefreshCw className="w-4 h-4 mr-2" />
-          Refresh
-        </Button>
+        <div className="flex items-center gap-2">
+          <select
+            value={i18n.language}
+            onChange={(e) => i18n.changeLanguage(e.target.value)}
+            className="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+          >
+            <option value="en">English</option>
+            <option value="hi">हिंदी</option>
+            <option value="mr">मराठी</option>
+          </select>
+          <Globe className="w-4 h-4 text-gray-500" />
+        </div>
+        <div className="flex items-center gap-2">
+          <Button className="bg-green-600 hover:bg-green-700" onClick={onCreateMail}>
+            <Plus className="w-4 h-4 mr-2" />
+            {t('common.add')} {t('inwardMails.addInward')}
+          </Button>
+          <Button variant="outline" onClick={fetchInwardMails} className="ml-2">
+            <RefreshCw className="w-4 h-4 mr-2" />
+            {t('common.refresh')}
+          </Button>
+        </div>
       </div>
 
       {/* Filter Section */}
@@ -216,7 +230,7 @@ export function InwardMails({ onViewMail, onEditMail, onCreateMail }: InwardMail
                   <TableCell colSpan={8} className="text-center py-8">
                     <div className="flex items-center justify-center">
                       <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mr-2"></div>
-                      Loading...
+                      {t('common.loading')}
                     </div>
                   </TableCell>
                 </TableRow>
@@ -258,7 +272,7 @@ export function InwardMails({ onViewMail, onEditMail, onCreateMail }: InwardMail
               ) : (
                 <TableRow>
                   <TableCell colSpan={8} className="text-center py-8 text-gray-500">
-                    No inward mails found matching your filters.
+                    {t('inwardMails.noMails')}
                   </TableCell>
                 </TableRow>
               )}

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Input, Button, Card, CardContent, CardHeader, CardTitle, Label, Select, SelectContent, SelectItem, SelectTrigger, SelectValue, Textarea, Badge } from '../../components/ui';
-import { ArrowLeft, Building, User, Mail, Phone, MapPin, Users, Settings, Brain, AlertTriangle, TrendingUp } from 'lucide-react';
+import { ArrowLeft, Building, User, Mail, Phone, MapPin, Users, Settings, Brain, AlertTriangle, TrendingUp, Globe } from 'lucide-react';
 import { aiService } from '../../services/ai-service';
 import { dataService } from '../../services/data-service';
 
@@ -10,6 +11,7 @@ interface CreateDepartmentProps {
 }
 
 export function CreateDepartment({ onBack, onDepartmentCreated }: CreateDepartmentProps) {
+    const { t, i18n } = useTranslation();
     const [departmentName, setDepartmentName] = useState('');
     const [departmentCode, setDepartmentCode] = useState('');
     const [departmentHead, setDepartmentHead] = useState('');
@@ -162,7 +164,7 @@ export function CreateDepartment({ onBack, onDepartmentCreated }: CreateDepartme
         if (nameDuplicate) {
             warnings.push({
                 type: 'name',
-                message: 'Department name already exists',
+                message: t('createDepartment.aiWarnings.nameExists'),
                 severity: 'high'
             });
         }
@@ -170,7 +172,7 @@ export function CreateDepartment({ onBack, onDepartmentCreated }: CreateDepartme
         if (codeDuplicate) {
             warnings.push({
                 type: 'code',
-                message: 'Department code already exists',
+                message: t('createDepartment.aiWarnings.codeExists'),
                 severity: 'high'
             });
         }
@@ -178,7 +180,7 @@ export function CreateDepartment({ onBack, onDepartmentCreated }: CreateDepartme
         if (headDuplicate) {
             warnings.push({
                 type: 'head',
-                message: 'This person is already head of another department',
+                message: t('createDepartment.aiWarnings.headExists'),
                 severity: 'medium'
             });
         }
@@ -186,7 +188,7 @@ export function CreateDepartment({ onBack, onDepartmentCreated }: CreateDepartme
         if (emailDuplicate) {
             warnings.push({
                 type: 'email',
-                message: 'Email already exists in system',
+                message: t('createDepartment.aiWarnings.emailExists'),
                 severity: 'medium'
             });
         }
@@ -194,7 +196,7 @@ export function CreateDepartment({ onBack, onDepartmentCreated }: CreateDepartme
         if (phoneDuplicate) {
             warnings.push({
                 type: 'phone',
-                message: 'Phone number already exists in system',
+                message: t('createDepartment.aiWarnings.phoneExists'),
                 severity: 'medium'
             });
         }
@@ -202,7 +204,7 @@ export function CreateDepartment({ onBack, onDepartmentCreated }: CreateDepartme
         if (locationDuplicate) {
             warnings.push({
                 type: 'location',
-                message: 'This location is already assigned to another department',
+                message: t('createDepartment.aiWarnings.locationExists'),
                 severity: 'low'
             });
         }
@@ -253,7 +255,7 @@ export function CreateDepartment({ onBack, onDepartmentCreated }: CreateDepartme
         // Check for high-severity warnings before submission
         const highSeverityWarnings = aiWarnings.filter(w => w.severity === 'high');
         if (highSeverityWarnings.length > 0) {
-            alert('Please resolve high-severity conflicts before creating the department:\n' +
+            alert(t('createDepartment.aiWarnings.resolveConflicts') +
                 highSeverityWarnings.map(w => `• ${w.message}`).join('\n'));
             return;
         }
@@ -287,7 +289,7 @@ export function CreateDepartment({ onBack, onDepartmentCreated }: CreateDepartme
             const result = await response.json();
             console.log('Department created successfully:', result);
 
-            alert('Department Created successfully!');
+            alert(t('createDepartment.success'));
 
             // Call the callback to refresh the department list
             if (onDepartmentCreated) {
@@ -300,7 +302,7 @@ export function CreateDepartment({ onBack, onDepartmentCreated }: CreateDepartme
             }
         } catch (error) {
             console.error('Error creating department:', error);
-            alert(`Error creating department: ${error.message}`);
+            alert(`${t('createDepartment.error')}: ${error.message}`);
         }
     };
 
@@ -311,8 +313,23 @@ export function CreateDepartment({ onBack, onDepartmentCreated }: CreateDepartme
                     <ArrowLeft className="w-5 h-5" />
                 </Button>
                 <div>
-                    <h1 className="text-2xl font-semibold text-gray-800">Create Department</h1>
-                    <p className="text-gray-500 text-sm">Add a new department to the organization</p>
+                    <h1 className="text-2xl font-semibold text-gray-800">{t('createDepartment.title')}</h1>
+                    <p className="text-gray-500 text-sm">{t('createDepartment.subtitle')}</p>
+                </div>
+
+                {/* Language Selector */}
+                <div className="flex items-center gap-2">
+                    <Globe className="w-4 h-4 text-gray-600" />
+                    <Select value={i18n.language} onValueChange={(lang) => i18n.changeLanguage(lang)}>
+                        <SelectTrigger className="w-32">
+                            <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                            <SelectItem value="en">English</SelectItem>
+                            <SelectItem value="hi">हिंदी</SelectItem>
+                            <SelectItem value="mr">मराठी</SelectItem>
+                        </SelectContent>
+                    </Select>
                 </div>
             </div>
 
@@ -325,13 +342,13 @@ export function CreateDepartment({ onBack, onDepartmentCreated }: CreateDepartme
                                 <Brain className="w-5 h-5 mt-0.5 flex-shrink-0" />
                                 <div className="flex-1">
                                     <div className="flex items-center gap-2 mb-2">
-                                        <h4 className="font-semibold">AI Detection Alert</h4>
+                                        <h4 className="font-semibold">{t('createDepartment.aiWarnings.title')}</h4>
                                         <Badge className={aiWarnings.some(w => w.severity === 'high') ? 'bg-red-100 text-red-800' : aiWarnings.some(w => w.severity === 'medium') ? 'bg-orange-100 text-orange-800' : 'bg-yellow-100 text-yellow-800'}>
-                                            {aiWarnings.length} Potential Issue{aiWarnings.length > 1 ? 's' : ''} Found
+                                            {aiWarnings.length} {t('createDepartment.aiWarnings.issuesFound', { count: aiWarnings.length })}
                                         </Badge>
                                     </div>
                                     <p className="text-sm mb-3">
-                                        AI has detected potential conflicts with existing department information. Please review before proceeding.
+                                        {t('createDepartment.aiWarnings.description')}
                                     </p>
                                     <div className="space-y-2">
                                         {aiWarnings.map((warning, index) => (
@@ -352,18 +369,18 @@ export function CreateDepartment({ onBack, onDepartmentCreated }: CreateDepartme
                     <CardHeader>
                         <CardTitle className="flex items-center gap-2">
                             <Building className="w-5 h-5" />
-                            Basic Information
+                            {t('createDepartment.basicInformation')}
                         </CardTitle>
                     </CardHeader>
                     <CardContent className="space-y-4">
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div>
-                                <Label htmlFor="departmentName">Department Name *</Label>
+                                <Label htmlFor="departmentName">{t('createDepartment.departmentName')} {t('createDepartment.required')}</Label>
                                 <Input
                                     id="departmentName"
                                     value={departmentName}
                                     onChange={(e) => setDepartmentName(e.target.value)}
-                                    placeholder="Enter department name"
+                                    placeholder={t('createDepartment.departmentNamePlaceholder')}
                                     className={nameDuplicate ? 'border-red-500' : ''}
                                     required
                                 />
@@ -371,18 +388,18 @@ export function CreateDepartment({ onBack, onDepartmentCreated }: CreateDepartme
                                     <div className="mt-1 p-2 bg-red-50 border border-red-200 rounded-md flex items-center gap-2">
                                         <AlertTriangle className="w-4 h-4 text-red-600" />
                                         <span className="text-sm text-red-700">
-                                            Department name already exists! Choose a different name.
+                                            {t('createDepartment.aiWarnings.nameDuplicate')}
                                         </span>
                                     </div>
                                 )}
                             </div>
                             <div>
-                                <Label htmlFor="departmentCode">Department Code *</Label>
+                                <Label htmlFor="departmentCode">{t('createDepartment.departmentCode')} {t('createDepartment.required')}</Label>
                                 <Input
                                     id="departmentCode"
                                     value={departmentCode}
                                     onChange={(e) => setDepartmentCode(e.target.value)}
-                                    placeholder="e.g., IT, HR, FIN"
+                                    placeholder={t('createDepartment.departmentCodePlaceholder')}
                                     maxLength={10}
                                     className={codeDuplicate ? 'border-red-500' : ''}
                                     required
@@ -391,7 +408,7 @@ export function CreateDepartment({ onBack, onDepartmentCreated }: CreateDepartme
                                     <div className="mt-1 p-2 bg-red-50 border border-red-200 rounded-md flex items-center gap-2">
                                         <AlertTriangle className="w-4 h-4 text-red-600" />
                                         <span className="text-sm text-red-700">
-                                            Department code already exists! Use a unique code.
+                                            {t('createDepartment.aiWarnings.codeDuplicate')}
                                         </span>
                                     </div>
                                 )}
@@ -399,50 +416,50 @@ export function CreateDepartment({ onBack, onDepartmentCreated }: CreateDepartme
                                     <div className="mt-1 p-2 bg-green-50 border border-green-200 rounded-md flex items-center gap-2">
                                         <Brain className="w-4 h-4 text-green-600" />
                                         <span className="text-sm text-green-700">
-                                            AI-generated code from department name
+                                            {t('createDepartment.aiWarnings.aiGeneratedCode')}
                                         </span>
                                     </div>
                                 )}
                             </div>
                         </div>
                         <div>
-                            <Label htmlFor="description">Description</Label>
+                            <Label htmlFor="description">{t('createDepartment.description')}</Label>
                             <Textarea
                                 id="description"
                                 value={description}
                                 onChange={(e) => setDescription(e.target.value)}
-                                placeholder="Enter department description and responsibilities"
+                                placeholder={t('createDepartment.descriptionPlaceholder')}
                                 rows={3}
                             />
                         </div>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div>
-                                <Label htmlFor="location">Location</Label>
+                                <Label htmlFor="location">{t('createDepartment.location')}</Label>
                                 <Input
                                     id="location"
                                     value={location}
                                     onChange={(e) => setLocation(e.target.value)}
-                                    placeholder="e.g., Floor 3, Building A"
+                                    placeholder={t('createDepartment.locationPlaceholder')}
                                     className={locationDuplicate ? 'border-red-500' : ''}
                                 />
                                 {locationDuplicate && (
                                     <div className="mt-1 p-2 bg-yellow-50 border border-yellow-200 rounded-md flex items-center gap-2">
                                         <AlertTriangle className="w-4 h-4 text-yellow-600" />
                                         <span className="text-sm text-yellow-700">
-                                            This location is already assigned to another department!
+                                            {t('createDepartment.aiWarnings.locationDuplicate')}
                                         </span>
                                     </div>
                                 )}
                             </div>
                             <div>
-                                <Label htmlFor="status">Status</Label>
+                                <Label htmlFor="status">{t('createDepartment.status')}</Label>
                                 <Select value={status} onValueChange={setStatus}>
                                     <SelectTrigger>
                                         <SelectValue />
                                     </SelectTrigger>
                                     <SelectContent>
-                                        <SelectItem value="active">Active</SelectItem>
-                                        <SelectItem value="inactive">Inactive</SelectItem>
+                                        <SelectItem value="active">{t('createDepartment.active')}</SelectItem>
+                                        <SelectItem value="inactive">{t('createDepartment.inactive')}</SelectItem>
                                     </SelectContent>
                                 </Select>
                             </div>
@@ -454,17 +471,17 @@ export function CreateDepartment({ onBack, onDepartmentCreated }: CreateDepartme
                     <CardHeader>
                         <CardTitle className="flex items-center gap-2">
                             <User className="w-5 h-5" />
-                            Department Head Information
+                            {t('createDepartment.departmentHeadInformation')}
                         </CardTitle>
                     </CardHeader>
                     <CardContent className="space-y-4">
                         <div>
-                            <Label htmlFor="departmentHead">Department Head *</Label>
+                            <Label htmlFor="departmentHead">{t('createDepartment.departmentHead')} {t('createDepartment.required')}</Label>
                             <Input
                                 id="departmentHead"
                                 value={departmentHead}
                                 onChange={(e) => setDepartmentHead(e.target.value)}
-                                placeholder="Enter department head name"
+                                placeholder={t('createDepartment.departmentHeadPlaceholder')}
                                 className={headDuplicate ? 'border-red-500' : ''}
                                 required
                             />
@@ -472,46 +489,46 @@ export function CreateDepartment({ onBack, onDepartmentCreated }: CreateDepartme
                                 <div className="mt-1 p-2 bg-orange-50 border border-orange-200 rounded-md flex items-center gap-2">
                                     <AlertTriangle className="w-4 h-4 text-orange-600" />
                                     <span className="text-sm text-orange-700">
-                                        This person is already head of another department!
+                                        {t('createDepartment.aiWarnings.headDuplicate')}
                                     </span>
                                 </div>
                             )}
                         </div>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div>
-                                <Label htmlFor="headEmail">Email Address</Label>
+                                <Label htmlFor="headEmail">{t('createDepartment.emailAddress')}</Label>
                                 <Input
                                     id="headEmail"
                                     type="email"
                                     value={headEmail}
                                     onChange={(e) => setHeadEmail(e.target.value)}
-                                    placeholder="head@company.com"
+                                    placeholder={t('createDepartment.emailPlaceholder')}
                                     className={emailDuplicate ? 'border-red-500' : ''}
                                 />
                                 {emailDuplicate && (
                                     <div className="mt-1 p-2 bg-orange-50 border border-orange-200 rounded-md flex items-center gap-2">
                                         <AlertTriangle className="w-4 h-4 text-orange-600" />
                                         <span className="text-sm text-orange-700">
-                                            Email already exists in system!
+                                            {t('createDepartment.aiWarnings.emailDuplicate')}
                                         </span>
                                     </div>
                                 )}
                             </div>
                             <div>
-                                <Label htmlFor="headPhone">Phone Number</Label>
+                                <Label htmlFor="headPhone">{t('createDepartment.phoneNumber')}</Label>
                                 <Input
                                     id="headPhone"
                                     type="tel"
                                     value={headPhone}
                                     onChange={(e) => setHeadPhone(e.target.value)}
-                                    placeholder="+1 234 567 8900"
+                                    placeholder={t('createDepartment.phonePlaceholder')}
                                     className={phoneDuplicate ? 'border-red-500' : ''}
                                 />
                                 {phoneDuplicate && (
                                     <div className="mt-1 p-2 bg-orange-50 border border-orange-200 rounded-md flex items-center gap-2">
                                         <AlertTriangle className="w-4 h-4 text-orange-600" />
                                         <span className="text-sm text-orange-700">
-                                            Phone number already exists in system!
+                                            {t('createDepartment.aiWarnings.phoneDuplicate')}
                                         </span>
                                     </div>
                                 )}
@@ -524,13 +541,13 @@ export function CreateDepartment({ onBack, onDepartmentCreated }: CreateDepartme
                     <CardHeader>
                         <CardTitle className="flex items-center gap-2">
                             <Settings className="w-5 h-5" />
-                            Department Details
+                            {t('createDepartment.departmentDetails')}
                         </CardTitle>
                     </CardHeader>
                     <CardContent className="space-y-4">
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                             <div>
-                                <Label htmlFor="employeeCount">Employee Count</Label>
+                                <Label htmlFor="employeeCount">{t('createDepartment.employeeCount')}</Label>
                                 <Input
                                     id="employeeCount"
                                     type="number"
@@ -543,19 +560,19 @@ export function CreateDepartment({ onBack, onDepartmentCreated }: CreateDepartme
                                     <div className="mt-1 p-2 bg-blue-50 border border-blue-200 rounded-md flex items-center gap-2">
                                         <TrendingUp className="w-4 h-4 text-blue-600" />
                                         <span className="text-sm text-blue-700">
-                                            AI Suggests: {suggestedEmployeeCount} employees
+                                            {t('createDepartment.aiSuggestions.suggests')} {suggestedEmployeeCount} {t('createDepartment.aiSuggestions.employees')}
                                         </span>
                                         <button
                                             onClick={() => setEmployeeCount(suggestedEmployeeCount.split('-')[0])}
                                             className="ml-auto text-xs bg-blue-600 text-white px-2 py-1 rounded hover:bg-blue-700"
                                         >
-                                            Apply
+                                            {t('createDepartment.aiSuggestions.apply')}
                                         </button>
                                     </div>
                                 )}
                             </div>
                             <div>
-                                <Label htmlFor="budget">Annual Budget (₹)</Label>
+                                <Label htmlFor="budget">{t('createDepartment.annualBudget')}</Label>
                                 <Input
                                     id="budget"
                                     type="number"
@@ -569,29 +586,29 @@ export function CreateDepartment({ onBack, onDepartmentCreated }: CreateDepartme
                                     <div className="mt-1 p-2 bg-blue-50 border border-blue-200 rounded-md flex items-center gap-2">
                                         <TrendingUp className="w-4 h-4 text-blue-600" />
                                         <span className="text-sm text-blue-700">
-                                            AI Suggests: {suggestedBudget} budget
+                                            {t('createDepartment.aiSuggestions.suggests')} {suggestedBudget} {t('createDepartment.aiSuggestions.budget')}
                                         </span>
                                         <button
                                             onClick={() => setBudget(suggestedBudget.replace(/[₹,]/g, ''))}
                                             className="ml-auto text-xs bg-blue-600 text-white px-2 py-1 rounded hover:bg-blue-700"
                                         >
-                                            Apply
+                                            {t('createDepartment.aiSuggestions.apply')}
                                         </button>
                                     </div>
                                 )}
                             </div>
                             <div>
-                                <Label htmlFor="parentDepartment">Parent Department</Label>
+                                <Label htmlFor="parentDepartment">{t('createDepartment.parentDepartment')}</Label>
                                 <Select value={parentDepartment} onValueChange={setParentDepartment}>
                                     <SelectTrigger>
-                                        <SelectValue placeholder="Select parent department" />
+                                        <SelectValue placeholder={t('createDepartment.selectParentDepartment')} />
                                     </SelectTrigger>
                                     <SelectContent>
                                         <SelectItem value="">None</SelectItem>
-                                        <SelectItem value="Administration">Administration</SelectItem>
-                                        <SelectItem value="Finance">Finance</SelectItem>
-                                        <SelectItem value="Operations">Operations</SelectItem>
-                                        <SelectItem value="Legal">Legal</SelectItem>
+                                        <SelectItem value="Administration">{t('departments.administration')}</SelectItem>
+                                        <SelectItem value="Finance">{t('departments.finance')}</SelectItem>
+                                        <SelectItem value="Operations">{t('departments.operations')}</SelectItem>
+                                        <SelectItem value="Legal">{t('departments.legal')}</SelectItem>
                                     </SelectContent>
                                 </Select>
                             </div>
@@ -603,14 +620,14 @@ export function CreateDepartment({ onBack, onDepartmentCreated }: CreateDepartme
                     <div className="flex items-start gap-3">
                         <MapPin className="w-5 h-5 text-blue-600 mt-0.5" />
                         <div>
-                            <h4 className="font-semibold text-blue-900">Department Setup Summary</h4>
+                            <h4 className="font-semibold text-blue-900">{t('createDepartment.setupSummary')}</h4>
                             <div className="mt-2 text-sm text-blue-700">
-                                <p><strong>Name:</strong> {departmentName || 'Not specified'}</p>
-                                <p><strong>Code:</strong> {departmentCode || 'Not specified'}</p>
-                                <p><strong>Head:</strong> {departmentHead || 'Not specified'}</p>
-                                <p><strong>Status:</strong> {status}</p>
-                                {employeeCount && <p><strong>Employees:</strong> {employeeCount}</p>}
-                                {budget && <p><strong>Budget:</strong> ₹{parseFloat(budget).toLocaleString()}</p>}
+                                <p><strong>{t('createDepartment.name')}:</strong> {departmentName || t('createDepartment.notSpecified')}</p>
+                                <p><strong>{t('createDepartment.code')}:</strong> {departmentCode || t('createDepartment.notSpecified')}</p>
+                                <p><strong>{t('createDepartment.head')}:</strong> {departmentHead || t('createDepartment.notSpecified')}</p>
+                                <p><strong>{t('createDepartment.status')}:</strong> {status}</p>
+                                {employeeCount && <p><strong>{t('createDepartment.employees')}:</strong> {employeeCount}</p>}
+                                {budget && <p><strong>{t('createDepartment.budget')}:</strong> ₹{parseFloat(budget).toLocaleString()}</p>}
                             </div>
                         </div>
                     </div>
@@ -619,10 +636,10 @@ export function CreateDepartment({ onBack, onDepartmentCreated }: CreateDepartme
                 <div className="flex gap-4">
                     <Button type="submit" className="bg-blue-600 hover:bg-blue-700">
                         <Building className="w-4 h-4 mr-2" />
-                        Create Department
+                        {t('createDepartment.createDepartment')}
                     </Button>
                     <Button type="button" variant="outline" onClick={onBack}>
-                        Cancel
+                        {t('common.cancel')}
                     </Button>
                 </div>
             </form>
