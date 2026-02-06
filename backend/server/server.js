@@ -13,7 +13,8 @@ const dashboardRoutes = require('./routes/dashboard');
 const chatbotRoutes = require('./routes/chatbot');
 
 const app = express();
-const PORT = process.env.PORT || 5002;
+const PORT = process.env.PORT || 5000;
+const HOST = process.env.HOST || 'localhost';
 
 // MongoDB Connection
 mongoose.connect(process.env.MONGODB_URI)
@@ -97,11 +98,11 @@ app.use('*', (req, res) => {
 });
 
 // Start server
-app.listen(PORT, () => {
-  console.log(`🚀 Tapaal Server is running on port ${PORT}`);
-  console.log(`📊 Health check: http://localhost:${PORT}/api/health`);
-  console.log(`📧 Inward Mails API: http://localhost:${PORT}/api/inward-mails`);
-  console.log(`📤 Outward Mails API: http://localhost:${PORT}/api/outward-mails`);
-  console.log(`🏢 Departments API: http://localhost:${PORT}/api/departments`);
-  console.log(`👥 Users API: http://localhost:${PORT}/api/users`);
+app.listen(PORT, HOST, () => {
+  console.log(`🚀 Tapaal Server is running on http://${HOST}:${PORT}`);
+  console.log(`📊 Health check: http://${HOST}:${PORT}/api/health`);
+  console.log(`📧 Inward Mails API: http://${HOST}:${PORT}/api/inward-mails`);
+  console.log(`📤 Outward Mails API: http://${HOST}:${PORT}/api/outward-mails`);
+  console.log(`🏢 Departments API: http://${HOST}:${PORT}/api/departments`);
+  console.log(`👥 Users API: http://${HOST}:${PORT}/api/users`);
 });

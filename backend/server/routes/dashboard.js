@@ -4,6 +4,7 @@ const InwardMail = require('../models/InwardMail');
 const OutwardMail = require('../models/OutwardMail');
 const Department = require('../models/Department');
 const User = require('../models/User');
+const DashboardConfig = require('../models/DashboardConfig'); // For future dashboard customization
 
 // GET dashboard statistics
 router.get('/stats', async (req, res) => {
