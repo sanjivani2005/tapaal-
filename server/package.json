@@ -15,12 +15,23 @@
     "bcryptjs": "^2.4.3",
     "jsonwebtoken": "^9.0.2",
     "multer": "^1.4.5-lts.1",
-    "uuid": "^9.0.0"
+    "uuid": "^9.0.0",
+    "rimraf": "^6.0.1"
+  },
+  "overrides": {
+    "rimraf": "^6.0.1",
+    "@npmcli/move-file": "^3.0.0",
+    "cacache": "^18.0.0"
   },
   "devDependencies": {
     "nodemon": "^3.0.1"
   },
-  "keywords": ["tapaal", "mail", "management", "system"],
+  "keywords": [
+    "tapaal",
+    "mail",
+    "management",
+    "system"
+  ],
   "author": "Tapaal Team",
   "license": "MIT"
 }
