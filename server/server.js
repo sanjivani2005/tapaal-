@@ -10,15 +10,26 @@ const outwardMailsRoutes = require('./routes/outwardMails');
 const departmentsRoutes = require('./routes/departments');
 const usersRoutes = require('./routes/users'); // Uncommented
 const dashboardRoutes = require('./routes/dashboard');
+const chatbotRoutes = require('./routes/chatbot');
 
 const app = express();
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 5002;
+
+// MongoDB Connection
+mongoose.connect(process.env.MONGODB_URI)
+  .then(() => {
+    console.log('Connected to MongoDB successfully');
+  })
+  .catch((err) => {
+    console.error('MongoDB connection error:', err);
+    process.exit(1);
+  });
 
 // Middleware
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-
+app.use('/api/chatbot', chatbotRoutes);
 // Serve uploaded files
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 

@@ -112,3 +112,14 @@ model TimelineEvent {
   remarks    String?
   timestamp  DateTime      @default(now())
 }
+
+model ChatHistory {
+  id        String   @id @default(cuid())
+  userId    String
+  message   String
+  sender    String // 'user' or 'bot'
+  timestamp DateTime @default(now())
+  sessionId String
+
+  @@map("chat_history")
+}

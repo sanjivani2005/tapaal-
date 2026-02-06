@@ -55,8 +55,9 @@ const userSchema = new mongoose.Schema({
   },
   employeeId: {
     type: String,
-    required: true,
-    unique: true
+    required: false,
+    unique: false,
+    sparse: true
   },
   phone: {
     type: String,
