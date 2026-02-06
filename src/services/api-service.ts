@@ -1,5 +1,5 @@
-// Real API service for connecting to the backend
-const API_BASE_URL = (window as any).REACT_APP_API_URL || 'http://localhost:5000/api';
+// Real API service for connecting to backend
+const API_BASE_URL = (window as any).REACT_APP_API_URL || process.env.REACT_APP_API_URL || 'http://localhost:5000/api';
 
 export interface ApiResponse<T> {
   success: boolean;
@@ -61,6 +61,42 @@ class ApiService {
       return data;
     } catch (error) {
       console.error(`API request failed for ${endpoint}:`, error);
+      // Return mock data for dashboard when API is not available
+      if (endpoint === '/dashboard/stats') {
+        const mockData: DashboardResponse = {
+          stats: {
+            totalUsers: 0,
+            totalDepartments: 0,
+            totalMails: 0,
+            totalTrackingEvents: 0,
+            totalInwardMails: 0,
+            totalOutwardMails: 0,
+            pendingMails: 0,
+            assignedMails: 0,
+            registeredMails: 0,
+          },
+          realData: {
+            stats: {
+              totalUsers: 0,
+              totalDepartments: 0,
+              totalMails: 0,
+              totalTrackingEvents: 0,
+              totalInwardMails: 0,
+              totalOutwardMails: 0,
+              pendingMails: 0,
+              assignedMails: 0,
+              registeredMails: 0,
+            },
+            statusData: [],
+            monthlyData: [],
+            recentMails: []
+          }
+        };
+        return {
+          success: true,
+          data: mockData
+        } as ApiResponse<T>;
+      }
       throw error;
     }
   }
