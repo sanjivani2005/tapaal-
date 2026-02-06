@@ -237,7 +237,7 @@ export function Tracking() {
                     <TableCell className="font-medium">{item.id}</TableCell>
                     <TableCell>{item.mailId}</TableCell>
                     <TableCell>
-                      <Badge variant="outline">
+                      <Badge className="bg-blue-100 text-blue-800">
                         {item.mailType}
                       </Badge>
                     </TableCell>
