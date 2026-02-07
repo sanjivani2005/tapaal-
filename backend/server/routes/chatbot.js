@@ -30,7 +30,10 @@ router.post('/chat', async (req, res) => {
         const { message } = req.body;
 
         if (!message) {
-            return res.status(400).json({ response: 'Message is required' });
+            return res.status(400).json({
+                success: false,
+                response: 'Message is required'
+            });
         }
 
         const lower = message.toLowerCase();
@@ -40,6 +43,7 @@ router.post('/chat', async (req, res) => {
         =============================== */
         if (['hello', 'hi', 'hey', 'namaste', 'good morning', 'good afternoon', 'good evening'].some(w => lower.includes(w))) {
             return res.json({
+                success: true,
                 response: '👋 Hello! I am your Tapaal Mail Management Assistant. How can I help you today?\n\n💡 Try: "show users", "show statistics", "show inward mails", "help"'
             });
         }
@@ -49,6 +53,7 @@ router.post('/chat', async (req, res) => {
         =============================== */
         if (['help', 'what can you do', 'commands', 'features'].some(w => lower.includes(w))) {
             return res.json({
+                success: true,
                 response: '🤖 **Tapaal Assistant Commands:**\n\n' +
                     '👥 **Users:** "show users", "user list", "how many users"\n' +
                     '📥 **Inward Mails:** "show inward mails", "inward mail list"\n' +
@@ -68,7 +73,10 @@ router.post('/chat', async (req, res) => {
             const users = await User.find().lean();
 
             if (!users.length) {
-                return res.json({ response: '👥 No users found in the system.' });
+                return res.json({
+                    success: true,
+                    response: '👥 No users found in the system.'
+                });
             }
 
             const userText = users.map(u =>
@@ -76,6 +84,7 @@ router.post('/chat', async (req, res) => {
             ).join('\n');
 
             return res.json({
+                success: true,
                 response: `👥 **Users List** (${new Date().toLocaleTimeString()})\n\n${userText}\n\n**Total:** ${users.length} users`
             });
         }
@@ -88,7 +97,10 @@ router.post('/chat', async (req, res) => {
             const mails = await InwardMail.find().populate('department').lean();
 
             if (!mails.length) {
-                return res.json({ response: '📥 No inward mails found in the system.' });
+                return res.json({
+                    success: true,
+                    response: '📥 No inward mails found in the system.'
+                });
             }
 
             const mailText = mails.map(m =>
@@ -96,6 +108,7 @@ router.post('/chat', async (req, res) => {
             ).join('\n\n');
 
             return res.json({
+                success: true,
                 response: `📥 **Inward Mails** (${new Date().toLocaleTimeString()})\n\n${mailText}\n\n**Total:** ${mails.length} inward mails`
             });
         }
@@ -108,7 +121,10 @@ router.post('/chat', async (req, res) => {
             const mails = await OutwardMail.find().populate('department').lean();
 
             if (!mails.length) {
-                return res.json({ response: '📤 No outward mails found in the system.' });
+                return res.json({
+                    success: true,
+                    response: '📤 No outward mails found in the system.'
+                });
             }
 
             const mailText = mails.map(m =>
@@ -116,6 +132,7 @@ router.post('/chat', async (req, res) => {
             ).join('\n\n');
 
             return res.json({
+                success: true,
                 response: `📤 **Outward Mails** (${new Date().toLocaleTimeString()})\n\n${mailText}\n\n**Total:** ${mails.length} outward mails`
             });
         }
@@ -128,7 +145,10 @@ router.post('/chat', async (req, res) => {
             const departments = await Department.find().lean();
 
             if (!departments.length) {
-                return res.json({ response: '🏢 No departments found in the system.' });
+                return res.json({
+                    success: true,
+                    response: '🏢 No departments found in the system.'
+                });
             }
 
             const deptText = departments.map(d =>
@@ -136,6 +156,7 @@ router.post('/chat', async (req, res) => {
             ).join('\n\n');
 
             return res.json({
+                success: true,
                 response: `🏢 **Departments** (${new Date().toLocaleTimeString()})\n\n${deptText}\n\n**Total:** ${departments.length} departments`
             });
         }
@@ -169,6 +190,7 @@ router.post('/chat', async (req, res) => {
             };
 
             return res.json({
+                success: true,
                 response: `📊 **System Statistics** (${new Date().toLocaleTimeString()})\n\n` +
                     `👥 **Users:** ${stats.totalUsers} (${stats.activeUsers} active, ${stats.inactiveUsers} inactive)\n` +
                     `📥 **Inward Mails:** ${stats.totalInwardMails}\n` +
@@ -184,6 +206,7 @@ router.post('/chat', async (req, res) => {
         =============================== */
         if (!model) {
             return res.json({
+                success: true,
                 response: '🤖 AI service is not configured right now. Please try:\n\n' +
                     '• "show users" - See all users\n' +
                     '• "show statistics" - See system stats\n' +
@@ -193,24 +216,52 @@ router.post('/chat', async (req, res) => {
 
         console.log('🧠 Using AI for complex query...');
 
-        // Simple AI prompt for open questions
-        const prompt = `You are a helpful assistant for a Government Tapaal (Mail Management) System.
+        // Fetch DB Data for AI context
+        const [
+            inwardMails,
+            outwardMails,
+            users,
+            departments
+        ] = await Promise.all([
+            InwardMail.find().lean(),
+            OutwardMail.find().lean(),
+            User.find().lean(),
+            Department.find().lean()
+        ]);
 
-The system has:
-- Users with roles and departments
-- Inward and outward mails with tracking
-- Multiple departments
-- Mail priority and status tracking
+        const systemStats = {
+            totalInwardMails: inwardMails.length,
+            totalOutwardMails: outwardMails.length,
+            totalUsers: users.length,
+            totalDepartments: departments.length,
+            activeUsers: users.filter(u => u.isActive).length
+        };
 
-User question: "${message}"
+        // AI prompt for open questions
+        const prompt = `
+You are an intelligent AI assistant for a Government Tapaal (Mail Management) System.
 
-Please provide a helpful, brief answer about the Tapaal system. If you're not sure about specific data, suggest they use "show statistics" or "help" commands.`;
+SYSTEM STATISTICS:
+- Total Inward Mails: ${systemStats.totalInwardMails}
+- Total Outward Mails: ${systemStats.totalOutwardMails}
+- Total Users: ${systemStats.totalUsers}
+- Active Users: ${systemStats.activeUsers}
+- Total Departments: ${systemStats.totalDepartments}
+
+User Question:
+"${message}"
+
+Respond professionally and clearly. Always provide helpful guidance.
+`;
 
         const result = await model.generateContent(prompt);
         const responseText = result.response.text();
 
         console.log('🤖 AI response sent successfully');
-        return res.json({ response: responseText });
+        return res.json({
+            success: true,
+            response: responseText
+        });
 
     } catch (error) {
         console.error('🔥 GEMINI ERROR:', error);
@@ -219,6 +270,7 @@ Please provide a helpful, brief answer about the Tapaal system. If you're not su
         // Check for specific Gemini errors
         if (error.message?.includes('API_KEY')) {
             return res.json({
+                success: false,
                 response: '🔑 Gemini API key issue. Please check configuration.\n\n' +
                     '💡 You can still use: "show users", "show statistics", "help"'
             });
@@ -226,6 +278,7 @@ Please provide a helpful, brief answer about the Tapaal system. If you're not su
 
         if (error.message?.includes('quota')) {
             return res.json({
+                success: false,
                 response: '📊 AI quota exceeded. Please try again later.\n\n' +
                     '💡 You can still use: "show users", "show statistics", "help"'
             });
@@ -233,6 +286,7 @@ Please provide a helpful, brief answer about the Tapaal system. If you're not su
 
         // Generic fallback
         return res.json({
+            success: false,
             response: '🤖 AI service temporarily unavailable.\n\n' +
                 '💡 Try these commands:\n' +
                 '• "show users" - See all users\n' +
