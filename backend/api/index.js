@@ -10,7 +10,7 @@ module.exports = async (req, res) => {
         process.env.VERCEL = 'true';
 
         // Handle serverless function execution
-        server(req, res);
+        await server(req, res);
     } catch (error) {
         console.error('❌ Serverless function error:', error);
         res.status(500).json({
