@@ -13,12 +13,7 @@ import {
   TableHeader,
   TableRow,
 } from '../../components/ui/table';
-import { inwardMailService } from '../../../services/inward-mail-service.js';
-import { outwardMailService } from '../../../services/outward-mail-service.js';
-
-// Type assertions for the imported services
-const inwardService = inwardMailService as any;
-const outwardService = outwardMailService as any;
+import { apiService } from '../../../services/api-service';
 
 interface TrackingHistory {
   id: string;
@@ -26,6 +21,7 @@ interface TrackingHistory {
   mailType: string;
   subject: string;
   sender: string;
+  receiver: string;
   currentStatus: string;
   priority: string;
   department: string;
@@ -77,8 +73,8 @@ export function Tracking() {
 
       // Fetch both inward and outward mails
       const [inwardResponse, outwardResponse] = await Promise.all([
-        inwardService.getInwardMails(),
-        outwardService.getOutwardMails()
+        apiService.getInwardMails(),
+        apiService.getOutwardMails()
       ]);
 
       if (inwardResponse.success && outwardResponse.success) {
@@ -87,27 +83,34 @@ export function Tracking() {
 
         // Combine and format tracking data
         const allMails = [...inwardMails, ...outwardMails];
-        const trackingData: TrackingHistory[] = allMails.map((mail, index) => ({
-          id: `TRK-${index + 1}`,
-          mailId: mail.id || mail._id,
-          mailType: mail.type || 'INWARD',
-          subject: mail.details || mail.subject,
-          sender: mail.type === 'INWARD' ? mail.sender : mail.senderName || mail.receiver,
-          currentStatus: mail.status,
-          priority: mail.priority || 'Normal',
-          department: mail.department,
-          assignedTo: mail.type === 'INWARD' ? 'Department Head' : 'Recipient',
-          createdAt: mail.createdAt || new Date().toISOString(),
-          lastUpdated: mail.updatedAt || new Date().toISOString(),
-          timeline: [
-            {
-              status: mail.status,
-              timestamp: new Date().toISOString(),
-              user: 'System',
-              remarks: `${mail.type || 'INWARD'} mail processed`
-            }
-          ]
-        }));
+        const trackingData: TrackingHistory[] = allMails.map((mail, index) => {
+          // Determine mail type based on available fields
+          const isInward = mail.sender !== undefined || mail.receivedBy !== undefined || mail.deliveryMode !== undefined;
+          const mailType = isInward ? 'INWARD' : 'OUTWARD';
+
+          return {
+            id: `TRK-${index + 1}`,
+            mailId: mail.id || mail._id,
+            mailType: mailType,
+            subject: mail.details || mail.subject || 'No Subject',
+            sender: isInward ? mail.sender : mail.sentBy || mail.receiver || 'Unknown',
+            receiver: isInward ? mail.receiver || 'Unknown' : mail.receiver || 'Unknown',
+            currentStatus: mail.status || 'pending',
+            priority: mail.priority || 'Normal',
+            department: mail.department || 'Unassigned',
+            assignedTo: isInward ? mail.receivedBy || 'Department Head' : mail.sentBy || 'Unknown',
+            createdAt: mail.createdAt || mail.date || new Date().toISOString(),
+            lastUpdated: mail.updatedAt || new Date().toISOString(),
+            timeline: [
+              {
+                status: mail.status || 'pending',
+                timestamp: mail.createdAt || mail.date || new Date().toISOString(),
+                user: 'System',
+                remarks: `${mailType} mail processed`
+              }
+            ]
+          };
+        });
 
         setTrackingHistory(trackingData);
       }
@@ -133,8 +136,8 @@ export function Tracking() {
   );
 
   return (
-    <div className="p-6 space-y-6">
-      <div className="flex items-center justify-between">
+    <div className="p-4 sm:p-6 max-w-6xl mx-auto h-full flex flex-col">
+      <div className="flex items-center justify-between shrink-0">
         <div>
           <h1 className="text-2xl font-semibold text-gray-800">{t('tracking.title')}</h1>
           <p className="text-gray-600 mt-1">{t('tracking.subtitle')}</p>
@@ -154,7 +157,7 @@ export function Tracking() {
       </div>
 
       {/* Filters */}
-      <Card>
+      <Card className="shrink-0">
         <div className="p-4 space-y-4">
           <div className="flex flex-wrap gap-4">
             <div className="flex-1 min-w-[200px]">
@@ -205,8 +208,8 @@ export function Tracking() {
       </Card>
 
       {/* Tracking Table */}
-      <Card>
-        <div className="p-4">
+      <Card className="flex-1 min-h-0">
+        <div className="p-4 h-full flex flex-col">
           {loading ? (
             <div className="flex items-center justify-center py-8">
               <RefreshCw className="w-6 h-6 animate-spin text-blue-500" />
@@ -217,58 +220,67 @@ export function Tracking() {
               <p>{t('tracking.noRecords')}</p>
             </div>
           ) : (
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>{t('tracking.trackingId')}</TableHead>
-                  <TableHead>{t('tracking.mailId')}</TableHead>
-                  <TableHead>{t('tracking.type')}</TableHead>
-                  <TableHead>{t('tracking.subject')}</TableHead>
-                  <TableHead>{t('tracking.sender')}</TableHead>
-                  <TableHead>{t('tracking.status')}</TableHead>
-                  <TableHead>{t('tracking.priority')}</TableHead>
-                  <TableHead>{t('tracking.department')}</TableHead>
-                  <TableHead>{t('tracking.actions')}</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {filteredTracking.map((item) => (
-                  <TableRow key={item.id}>
-                    <TableCell className="font-medium">{item.id}</TableCell>
-                    <TableCell>{item.mailId}</TableCell>
-                    <TableCell>
-                      <Badge className="bg-blue-100 text-blue-800">
-                        {item.mailType}
-                      </Badge>
-                    </TableCell>
-                    <TableCell className="max-w-xs truncate">{item.subject}</TableCell>
-                    <TableCell>{item.sender}</TableCell>
-                    <TableCell>
-                      <Badge className={getStatusBadge(item.currentStatus)}>
-                        {item.currentStatus}
-                      </Badge>
-                    </TableCell>
-                    <TableCell>
-                      <Badge className={getPriorityBadge(item.priority)}>
-                        {item.priority}
-                      </Badge>
-                    </TableCell>
-                    <TableCell>{item.department}</TableCell>
-                    <TableCell>
-                      <div className="flex items-center gap-2">
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => setSelectedTracking(item)}
-                        >
-                          <Eye className="w-4 h-4" />
-                        </Button>
-                      </div>
-                    </TableCell>
+            <div className="overflow-x-auto flex-1">
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>{t('tracking.trackingId')}</TableHead>
+                    <TableHead>{t('tracking.mailId')}</TableHead>
+                    <TableHead>{t('tracking.type')}</TableHead>
+                    <TableHead>{t('tracking.subject')}</TableHead>
+                    <TableHead>{t('tracking.senderReceiver')}</TableHead>
+                    <TableHead>{t('tracking.status')}</TableHead>
+                    <TableHead>{t('tracking.priority')}</TableHead>
+                    <TableHead>{t('tracking.department')}</TableHead>
+                    <TableHead>{t('tracking.actions')}</TableHead>
                   </TableRow>
-                ))}
-              </TableBody>
-            </Table>
+                </TableHeader>
+                <TableBody>
+                  {filteredTracking.map((item) => (
+                    <TableRow key={item.id}>
+                      <TableCell className="font-medium">{item.id}</TableCell>
+                      <TableCell>{item.mailId}</TableCell>
+                      <TableCell>
+                        <Badge className="bg-blue-100 text-blue-800">
+                          {item.mailType}
+                        </Badge>
+                      </TableCell>
+                      <TableCell className="max-w-xs truncate">{item.subject}</TableCell>
+                      <TableCell>
+                        <div className="text-sm">
+                          <div className="font-medium">{item.sender}</div>
+                          {item.receiver && item.receiver !== 'Unknown' && (
+                            <div className="text-gray-500 text-xs">→ {item.receiver}</div>
+                          )}
+                        </div>
+                      </TableCell>
+                      <TableCell>
+                        <Badge className={getStatusBadge(item.currentStatus)}>
+                          {item.currentStatus}
+                        </Badge>
+                      </TableCell>
+                      <TableCell>
+                        <Badge className={getPriorityBadge(item.priority)}>
+                          {item.priority}
+                        </Badge>
+                      </TableCell>
+                      <TableCell>{item.department}</TableCell>
+                      <TableCell>
+                        <div className="flex items-center gap-2">
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => setSelectedTracking(item)}
+                          >
+                            <Eye className="w-4 h-4" />
+                          </Button>
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </div>
           )}
         </div>
       </Card>

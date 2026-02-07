@@ -22,8 +22,25 @@ console.log("🗄 Mongo URI:", process.env.MONGODB_URI ? "SET" : "NOT SET");
 // Middleware
 app.use(cors({
   origin: ['http://localhost:3000', 'http://localhost:3001', 'https://tapaal-frontend.vercel.app', 'https://tapaal.vercel.app'],
-  credentials: true
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization']
 }));
+
+// Additional CORS middleware for serverless
+app.use((req, res, next) => {
+  res.header('Access-Control-Allow-Origin', '*');
+  res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+  res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+  res.header('Access-Control-Allow-Credentials', 'true');
+
+  if (req.method === 'OPTIONS') {
+    res.status(200).end();
+    return;
+  }
+
+  next();
+});
 app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ extended: true, limit: '50mb' }));
 
@@ -34,27 +51,49 @@ const connectDB = async () => {
   if (isConnected) return;
 
   try {
-    await mongoose.connect(process.env.MONGODB_URI, {
-      useNewUrlParser: true,
-      useUnifiedTopology: true,
-    });
+    // Updated MongoDB connection options for newer versions
+    const options = {
+      maxPoolSize: 10, // Connection pooling for serverless
+      serverSelectionTimeoutMS: 5000, // Faster timeout
+      socketTimeoutMS: 45000, // Socket timeout
+      bufferCommands: true, // Enable buffering for serverless functions
+    };
+
+    await mongoose.connect(process.env.MONGODB_URI, options);
     isConnected = true;
     console.log('✅ MongoDB connected');
   } catch (error) {
     console.error('❌ MongoDB connection error:', error);
-    throw error;
+    // Don't throw error in serverless, just log it
+    isConnected = false;
+    throw error; // Re-throw to let middleware handle it
   }
 };
 
 // Connect to DB before handling requests
 app.use(async (req, res, next) => {
   try {
-    await connectDB();
+    // For serverless, always ensure connection is ready
+    if (process.env.VERCEL) {
+      if (mongoose.connection.readyState !== 1) {
+        await connectDB();
+      }
+    } else if (!isConnected) {
+      await connectDB();
+    }
+
+    // Final connection check
+    if (mongoose.connection.readyState !== 1) {
+      throw new Error(`Database not connected. State: ${mongoose.connection.readyState}`);
+    }
+
     next();
   } catch (error) {
+    console.error('❌ Database middleware error:', error);
     res.status(500).json({
       success: false,
-      message: 'Database connection failed'
+      message: 'Database connection failed',
+      error: error.message
     });
   }
 });
@@ -65,6 +104,7 @@ app.use('/api/outward-mails', outwardMailsRoutes);
 app.use('/api/departments', departmentsRoutes);
 app.use('/api/users', usersRoutes);
 app.use('/api/dashboard', dashboardRoutes);
+app.use('/api/chatbot', chatbotRoutes);
 
 // Health route
 app.get('/api/health', (req, res) => {

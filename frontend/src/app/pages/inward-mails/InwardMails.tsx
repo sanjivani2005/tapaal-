@@ -6,10 +6,7 @@ import { Input } from '../../components/ui/input';
 import { Button } from '../../components/ui/button';
 import { Badge } from '../../components/ui/badge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../../components/ui/select';
-import { inwardMailService } from '../../../services/inward-mail-service.js';
-
-// Type assertion for the imported service
-const service = inwardMailService as any;
+import { apiService } from '../../../services/api-service';
 import {
   Table,
   TableBody,
@@ -53,17 +50,23 @@ export function InwardMails({ onViewMail, onEditMail, onCreateMail }: InwardMail
   const fetchInwardMails = async () => {
     try {
       setLoading(true);
-      const response = await service.getInwardMails({
-        search: searchTerm,
-        priority: selectedPriority !== 'all' ? selectedPriority : undefined,
-        status: selectedStatus !== 'all' ? selectedStatus : undefined,
-        department: selectedDepartment !== 'all' ? selectedDepartment : undefined,
-      });
+
+      // Build params object, excluding 'all' values
+      const params: any = {};
+      if (searchTerm) params.search = searchTerm;
+      if (selectedPriority !== 'all') params.priority = selectedPriority;
+      if (selectedStatus !== 'all') params.status = selectedStatus;
+      if (selectedDepartment !== 'all') params.department = selectedDepartment;
+
+      const response = await apiService.getInwardMails(
+        Object.keys(params).length > 0 ? params : undefined
+      );
 
       if (response.success && response.data) {
         setInwardMails(response.data);
+        console.log('Inward mails loaded:', response.data);
       } else {
-        console.warn('No inward mails data received, using empty array');
+        console.warn('No inward mails data received, response:', response);
         setInwardMails([]);
       }
     } catch (error) {

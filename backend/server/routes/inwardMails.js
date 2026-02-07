@@ -5,6 +5,133 @@ const path = require('path');
 const { v4: uuidv4 } = require('uuid');
 const InwardMail = require('../models/InwardMail');
 
+// SEED DATA: Add sample inward mails if database is empty
+router.post('/seed', async (req, res) => {
+  try {
+    const existingCount = await InwardMail.countDocuments();
+    if (existingCount > 0) {
+      return res.json({
+        success: true,
+        message: `Database already has ${existingCount} inward mails`,
+        count: existingCount
+      });
+    }
+
+    const sampleMails = [
+      {
+        id: 'IN-2026-001',
+        mailId: 'IN-2026-001',
+        sender: 'John Doe',
+        subject: 'Application for Leave',
+        details: 'Request for medical leave for 3 days due to health reasons',
+        department: 'Human Resources',
+        priority: 'Normal',
+        status: 'Pending',
+        date: '2026-02-07',
+        createdAt: new Date('2026-02-07T10:00:00Z'),
+        updatedAt: new Date('2026-02-07T10:00:00Z'),
+        attachments: [],
+        receiver: 'HR Manager',
+        referenceNumber: 'REF-001',
+        dueDate: '2026-02-10'
+      },
+      {
+        id: 'IN-2026-002',
+        mailId: 'IN-2026-002',
+        sender: 'Jane Smith',
+        subject: 'Budget Proposal Q2 2026',
+        details: 'Quarterly budget proposal for marketing department including campaign expenses and resource allocation',
+        department: 'Finance',
+        priority: 'High',
+        status: 'Under Review',
+        date: '2026-02-06',
+        createdAt: new Date('2026-02-06T14:30:00Z'),
+        updatedAt: new Date('2026-02-06T14:30:00Z'),
+        attachments: [
+          { filename: 'budget.pdf', originalName: 'Q2_Budget_2026.pdf', size: 1024000 }
+        ],
+        receiver: 'Finance Director',
+        referenceNumber: 'REF-002',
+        dueDate: '2026-02-15'
+      },
+      {
+        id: 'IN-2026-003',
+        mailId: 'IN-2026-003',
+        sender: 'Mike Johnson',
+        subject: 'Project Status Report - January 2026',
+        details: 'Monthly project status report including milestones achieved, budget utilization, and upcoming deliverables',
+        department: 'Operations',
+        priority: 'Medium',
+        status: 'Approved',
+        date: '2026-02-05',
+        createdAt: new Date('2026-02-05T09:15:00Z'),
+        updatedAt: new Date('2026-02-05T16:30:00Z'),
+        attachments: [
+          { filename: 'report.pdf', originalName: 'Project_Report_Jan_2026.pdf', size: 2048000 },
+          { filename: 'metrics.xlsx', originalName: 'Project_Metrics_Jan.xlsx', size: 512000 }
+        ],
+        receiver: 'Operations Manager',
+        referenceNumber: 'REF-003',
+        dueDate: '2026-02-08'
+      },
+      {
+        id: 'IN-2026-004',
+        mailId: 'IN-2026-004',
+        sender: 'Sarah Williams',
+        subject: 'Supplier Contract Review',
+        details: 'New supplier contract for office supplies and equipment requiring legal review and approval',
+        department: 'Legal',
+        priority: 'High',
+        status: 'In Progress',
+        date: '2026-02-04',
+        createdAt: new Date('2026-02-04T11:20:00Z'),
+        updatedAt: new Date('2026-02-04T11:20:00Z'),
+        attachments: [
+          { filename: 'contract.pdf', originalName: 'Supplier_Contract_2026.pdf', size: 3072000 }
+        ],
+        receiver: 'Legal Head',
+        referenceNumber: 'REF-004',
+        dueDate: '2026-02-12'
+      },
+      {
+        id: 'IN-2026-005',
+        mailId: 'IN-2026-005',
+        sender: 'Robert Chen',
+        subject: 'IT Infrastructure Upgrade Request',
+        details: 'Request for server upgrade and network infrastructure improvements to support growing business needs',
+        department: 'Information Technology',
+        priority: 'Critical',
+        status: 'Pending',
+        date: '2026-02-03',
+        createdAt: new Date('2026-02-03T13:45:00Z'),
+        updatedAt: new Date('2026-02-03T13:45:00Z'),
+        attachments: [
+          { filename: 'requirements.docx', originalName: 'IT_Upgrade_Requirements.docx', size: 256000 }
+        ],
+        receiver: 'IT Manager',
+        referenceNumber: 'REF-005',
+        dueDate: '2026-02-07'
+      }
+    ];
+
+    const insertedMails = await InwardMail.insertMany(sampleMails);
+
+    res.json({
+      success: true,
+      message: `Successfully seeded ${insertedMails.length} inward mails`,
+      count: insertedMails.length,
+      data: insertedMails
+    });
+  } catch (error) {
+    console.error('Error seeding inward mails:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to seed inward mails',
+      error: error.message
+    });
+  }
+});
+
 // Configure multer for file uploads
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
@@ -95,14 +222,30 @@ router.get('/:id', async (req, res) => {
 });
 
 // POST create new inward mail
-router.post('/', upload.array('attachments', 5), async (req, res) => {
+router.post('/', async (req, res) => {
   try {
-    // Handle multipart form data
+    // Handle form data in serverless environment
     let mailData;
-    if (req.body && typeof req.body === 'object') {
+    let attachments = [];
+
+    console.log('📥 Received request body:', req.body);
+    console.log('📁 Request headers:', req.headers);
+
+    // For serverless environment, handle form data differently
+    if (req.body) {
       mailData = req.body;
+
+      // Handle attachments if they exist (base64 or file references)
+      if (req.files && req.files.length > 0) {
+        attachments = req.files.map(file => ({
+          filename: file.filename || file.originalname,
+          originalName: file.originalname,
+          size: file.size || 0,
+          mimetype: file.mimetype || 'application/octet-stream'
+        }));
+      }
     } else {
-      return res.status(400).json({ success: false, message: 'Invalid form data' });
+      return res.status(400).json({ success: false, message: 'No form data received' });
     }
 
     const {
@@ -117,20 +260,9 @@ router.post('/', upload.array('attachments', 5), async (req, res) => {
       date
     } = mailData;
 
-    console.log('📥 Received request body:', mailData);
-    console.log('📁 Files:', req.files);
-
     // Generate unique IDs
     const id = `INW-${new Date().getFullYear()}-${String(Math.floor(Math.random() * 1000)).padStart(3, '0')}`;
     const trackingId = `TRK-${new Date().getFullYear()}${String(Math.floor(Math.random() * 10000)).padStart(4, '0')}`;
-
-    // Process attachments
-    const attachments = req.files ? req.files.map(file => ({
-      filename: file.filename,
-      originalName: file.originalname,
-      path: file.path,
-      size: file.size
-    })) : [];
 
     const newInwardMail = new InwardMail({
       id,
@@ -144,7 +276,9 @@ router.post('/', upload.array('attachments', 5), async (req, res) => {
       priority: priority || 'Normal',
       department: department || 'Administration',
       date: date || new Date().toISOString().slice(0, 19).replace('T', ' '),
-      attachments
+      attachments,
+      createdAt: new Date(),
+      updatedAt: new Date()
     });
 
     const savedMail = await newInwardMail.save();
