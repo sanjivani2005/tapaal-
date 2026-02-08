@@ -47,7 +47,10 @@ const connectDB = async () => {
       bufferCommands: true, // Enable buffering for serverless functions
     };
 
-    await mongoose.connect(process.env.MONGODB_URI, options);
+    await mongoose.connect(process.env.MONGODB_URI, {
+      ...options,
+      dbName: "tapaal"
+    });
     isConnected = true;
     console.log('✅ MongoDB connected');
   } catch (error) {
@@ -121,12 +124,10 @@ app.use('*', (req, res) => {
   });
 });
 
-// Only start server if not in serverless environment
-if (process.env.NODE_ENV !== 'production' || !process.env.VERCEL) {
-  app.listen(PORT, () => {
-    console.log(`🚀 Tapaal Server is running on port ${PORT}`);
-    console.log(`📊 Health check: http://localhost:${PORT}/api/health`);
-  });
+// Only start server if not in production (Vercel serverless)
+if (process.env.NODE_ENV !== "production") {
+  const PORT = process.env.PORT || 5000;
+  app.listen(PORT, () => console.log("Local server running on", PORT));
 }
 
 module.exports = app;
