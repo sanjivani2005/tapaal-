@@ -2,6 +2,7 @@
     "name": "tapaal-fullstack",
     "version": "1.0.0",
     "description": "Tapaal Management System - Full Stack Application",
+    "type": "module",
     "scripts": {
         "dev": "concurrently \"npm run dev:backend\" \"npm run dev:frontend\"",
         "dev:frontend": "cd frontend && npm run dev",
