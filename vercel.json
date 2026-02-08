@@ -16,6 +16,15 @@
   "functions": {
     "api/index.js": {
       "runtime": "nodejs18.x"
+    },
+    "api/users.js": {
+      "runtime": "nodejs18.x"
+    },
+    "api/departments.js": {
+      "runtime": "nodejs18.x"
+    },
+    "api/inward-mails.js": {
+      "runtime": "nodejs18.x"
     }
   },
   "headers": [
